@@ -139,7 +139,7 @@
             if ( array_key_exists('mode', $_GET) && $_GET['mode'] != '') {
                 $this->mode         = $_GET ['mode'];
             } else {
-                if ( array_key_exists('mode', $_POST) &&  $_POST['mmd_id'] != '') {
+                if ( array_key_exists('mode', $_POST) &&  $_POST['mode'] != '') {
                     $this->mode     = $_POST['mode'];
                 } else {
                     $this->mode     = 'view';
@@ -209,7 +209,7 @@
     <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
     <section class='main'>
         <article class='Maze_view2D'>
-            <?php display_maze(); ?>
+            <?php /* display_maze(); */ ?>
             <pre id='Maze_view2D'></pre>
         </article>
         <article class='Maze_view3D'>

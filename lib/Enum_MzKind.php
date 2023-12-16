@@ -8,6 +8,8 @@
     // Floor: 床
     // Unexp: 未踏地
     // Stone: 石壁
+    // StrUp: 上り階段
+    // StrDn: 下り階段
     // Empty: 初期状態・何もなし
     // 
     // function to_int(MzKind):      int        列挙型に対応する値(整数値)を返す
@@ -20,6 +22,8 @@
         case Unexp  =   2;
         case Stone  =   3;
         case Unkwn  =   4;
+        case StrUp  =   5;
+        case StrDn  =   6;
         case Empty  = 255;
 
         public function to_int(MzKind|null $kind = null): int {
@@ -38,6 +42,8 @@
                 MzKind::Unexp => '・',
                 MzKind::Stone => '＃',
                 MzKind::Unkwn => '？',
+                MzKind::StrUp => 'Ｕ',
+                MzKind::StrDn => 'Ｄ',
                 MzKind::Empty => 'Ｏ',
                 MzKind::NoDef => 'Ｘ',
                 default       => 'Ｘ',
@@ -50,9 +56,11 @@
                 '・'     => MzKind::Unexp,
                 '＃'     => MzKind::Stone,
                 '？'     => MzKind::Unkwn,
+                'Ｕ'     => MzKind::StrUp,
+                'Ｄ'     => MzKind::StrDn,
                 'Ｏ'     => MzKind::Empty,
                 'Ｘ'     => MzKind::NoDef,
-                default => MzKind::NoDef,
+                default  => MzKind::NoDef,
             };
         }
     }
