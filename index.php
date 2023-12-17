@@ -210,7 +210,7 @@
     <article class='Maze_view' id='Maze_view_pane'>
         <dev id='Maze_view2D'><pre id='Maze_view2D_pre'></pre></dev>
         <dev id='Maze_view3D'>
-            <!-- canvas id='Maze_view3D_canvas' width='800' height='480'></canvas -->
+            <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
             <p id='Maze_view3D_message'></p>
         </dev>
         <?php /* display_maze(); */ ?>
