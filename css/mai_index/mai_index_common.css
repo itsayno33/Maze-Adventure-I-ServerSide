@@ -1,0 +1,159 @@
+@charset "utf-8";
+
+
+/* 標準レイアウト */
+
+* {
+    margin: 0;
+}
+
+img {
+    width: 200px;
+    height: auto;
+}
+
+/* レイアウトCSSの判別　*/
+h1::after {
+    content: "\A『" var(--layout_mode, "Common") "』レイアウト\A";
+    white-space: pre;
+
+    color: var(--h1_text_color, darkgoldenrod);
+    font-family: var(--header_font_family, sans-serif);
+    font-size: var(--header_font_size, 18px);
+    line-height: var(--header_line_heght, 23px);
+}
+
+
+/* 全体のレイアウト関係 */
+body {
+    background-color: var(--body_lyt_bgcolor,#ccffcc);
+    width: 100%;
+
+    display: grid;
+
+    gap: 1rem 1.5rem;
+    grid-template-columns: 
+        var(--body_lyt_left_gap, 3rem)
+        [h1-start message-start footer-start view-start]
+        var(--body_lyt_col_left_width,  auto)
+        [view-end info-start]
+        var(--body_lyt_col_right_width, auto)
+        [h1-end message-end footer-end info-end]
+        var(--body_lyt_right_gap, 3rem)
+        ;
+
+    grid-template-rows: 
+        [h1-start]
+        var(--body_lyt_row_header_height,  100px)
+        [h1-end view-start info-start]
+        var(--body_lyt_row_main_height_,    auto)
+        [view-end info-end message-start]
+        var(--body_lyt_row_mewssage_height,  1fr)
+        [message-end footer-start]
+        var(--body_lyt_row_footer_height,  100px)
+        [footer-end]
+        ;
+}
+
+h1 {
+    grid-area: h1;
+}
+
+article#Maze_view_pane {
+    grid-area: view;
+}
+
+article#Maze_info_pane {
+    grid-area: info;
+}
+
+article#message_pane {
+    grid-area: message;
+}
+
+footer#footer_pane {
+    grid-area: footer;
+}
+
+/* Headerの見栄え */
+header {
+    justify-self: center;
+    align-self: baseline;
+
+    display:grid;
+}
+
+/* Footerの見栄え */
+footer {
+    justify-self:center;
+    align-self: auto;
+}
+
+footer img {
+    width: 50px;
+}
+
+footer a {
+    text-decoration: none;
+}
+footer p {
+    text-align: right;
+
+    color: var(--footer_text_color, darkgreen);
+    font-family: var(--footer_font_family, serif);
+    font-size: var(--footer_font_size, 12px);
+    line-height: var(--footer_line_heght, 158px);
+}
+
+/* 大タイトルのスタイル */
+h1 {
+    margin: var(--h1_margin, 10px);
+    text-align: center;
+
+    color: var(--h1_text_color, darkgreen);
+    font-family: var(--h1_font_family, serif);
+    font-size: var(--h1_font_size, 22px);
+    line-height: var(--h1_line_heght, 26px);
+}
+
+dev#ctl_panel {
+    display: grid;
+
+    gap: 0.5rem 0.5rem;
+    grid-template-columns: 
+        [l_arrow-start]
+        var(--lr_arrow_width, 2.3rem)
+        [l_arrow-end u_arrow-start d_arrow-start]
+        var(--ud_arrow_width, 2.3rem)
+        [u_arrow-end d_arrow-end r_arrow-start]
+        var(--lr_arrow_width, 2.3rem)
+        [r_arrow-end]
+        ;
+
+    grid-template-rows: 
+        [u_arrow-start]
+        var(--ud_arrow_height,  2.3rem)
+        [u_arrow-end l_arrow-start r_arrow-start]
+        var(--lr_arrow_height,  2.3rem)
+        [l_arrow-end r_arrow-end d_arrow-start]
+        var(--ud_arrow_height,  2.3rem)
+        [d_arrow-end]
+        ;
+
+}
+
+button#u_arrow {
+    grid-area: u_arrow;
+}
+
+button#d_arrow {
+    grid-area: d_arrow;
+}
+
+button#l_arrow {
+    grid-area: l_arrow;
+}
+
+button#r_arrow {
+    grid-area: r_arrow;
+}

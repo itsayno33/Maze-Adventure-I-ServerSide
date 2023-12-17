@@ -51,4 +51,5 @@ typings/
 
 # 共通
 /**/_ord_src/*
-/js/*
+js/*
+icon-img/*

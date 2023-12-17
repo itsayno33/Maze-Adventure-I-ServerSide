@@ -1,0 +1,44 @@
+@charset "utf-8";
+
+/* 定数定義(基本値) */
+
+:root {
+    --layout_mode: "Default";
+    
+    --body_lyt_bgcolor: azure;
+
+    --body_lyt_col_left_gap:   30px;
+    --body_lyt_col_right_gap:  30px;
+    --body_lyt_col_main_width: auto;
+
+    --body_lyt_row_header_height: 100px;
+    --body_lyt_row_main_height  :  auto;
+    --body_lyt_row_footer_height:  20px;
+
+    --header_text_color:darkgreen;
+    --header_font_family: sans-serif;
+    --header_font_size: 12px;
+    --header_line_height: 15px;
+
+    --icon_image_width:  50px;
+    --icon_cell_padding: 10px;
+    --icon_cell_width:   calc( var(--icon_image_width, 50px) + calc( var(--icon_cell_padding) * 2));
+
+    --body_lyt_row_header_height: calc( var(--icon_image_width, 50px) + var(--header_line_heght, 15px) * 2);
+
+    --footer_text_color: darkgreen;
+    --footer_font_family: 'Times New Roman', Times, serif;
+    --footer_font_size: 12px;
+    --footer_line_heght: 15px;
+
+    --h1_margin: 10px;
+    --h1_text_color: darkgoldenrod;
+    --h1_font_family: serif;
+    --h1_font_size: 36px;
+    --h1_line_heght: 38px;
+
+    --main_list_margin: 10px;
+    --main_list_font_famiry: serif;
+    --main_list_font_size: 20px;
+    --main_list_line_height: 32px;
+}
