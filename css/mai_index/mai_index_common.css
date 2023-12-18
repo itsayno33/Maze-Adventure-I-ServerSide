@@ -116,6 +116,16 @@ h1 {
     line-height: var(--h1_line_heght, 26px);
 }
 
+pre#Maze_view2D_pre {
+    margin: var(--view2D_pre_margin,    1rem);
+}
+
+canvas#Maze_view3D_canvas {
+    margin: var(--view3D_canvas_margin, 1rem);
+    width:  320px;
+    height: 200px;
+}
+
 div#move_ctl_panel {
     display: grid;
 
