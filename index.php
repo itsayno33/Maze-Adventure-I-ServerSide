@@ -203,26 +203,26 @@
     <meta charset="utf-8" />
     <title>Random List of MMD VIDEO Page</title>
     <link rel="stylesheet" href="css.php?time=<?php echo date("Y-m-d_H:i:s"); ?>&file=mai_index" />
-    <script type="module" src="./js/bundle.js"></script>
+    <script type="module" src="./js/bundle.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
 </head>
 <body>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
     <article class='Maze_view' id='Maze_view_pane'>
-        <dev id='Maze_view2D'><pre id='Maze_view2D_pre'></pre></dev>
-        <dev id='Maze_view3D'>
+        <div id='Maze_view2D'><pre id='Maze_view2D_pre'></pre></div>
+        <div id='Maze_view3D'>
             <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
             <p id='Maze_view3D_message'></p>
-        </dev>
+        </div>
         <?php /* display_maze(); */ ?>
     </article>
     <article class='Maze_info' id='Maze_info_pane'>
         <h2>ダンジョン探索</h2>
-        <dev id ='ctl_panel'>
+        <div id ='move_ctl_view'><div id='move_ctl_panel'>
             <button id='u_arrow' type='button' name='u_arrow' value='U'>↑</button>
             <button id='d_arrow' type='button' name='d_arrow' value='D'>↓</button>
             <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
             <button id='l_arrow' type='button' name='l_arrow' value='L'>←</button>
-        </dev>
+        </div></div>
         <?php /* display_cntl(); */ ?>
     </article>
     <article class='message_pane' id='message_pane'>

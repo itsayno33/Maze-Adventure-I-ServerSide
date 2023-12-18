@@ -205,10 +205,10 @@
             $rooms_array = [];
             $num_of_room = random_int(0, $this->limit_of_room);
             for ($cnt = 0; $cnt < $num_of_room; $cnt++) {
-                $leng_x = random_int(1, $this->max_size_of_room) * 2 + 1;
-                $leng_y = random_int(1, $this->max_size_of_room) * 2 + 1;
-                $room_x = random_int(0, ($size_x - $size_x) / 2) * 2;
-                $room_y = random_int(0, ($size_y - $size_y) / 2) * 2;
+                $leng_x = random_int(1,  $this->max_size_of_room) * 2 + 1;
+                $leng_y = random_int(1,  $this->max_size_of_room) * 2 + 1;
+                $room_x = random_int(0, ($size_x - $leng_x) / 2) * 2;
+                $room_y = random_int(0, ($size_y - $leng_y) / 2) * 2;
                 array_push($rooms_array, ['tx' => $room_x, 'ty' => $room_y, 'sx' => $leng_x, 'sy' => $leng_y]);
             }
     

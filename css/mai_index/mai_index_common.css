@@ -116,7 +116,7 @@ h1 {
     line-height: var(--h1_line_heght, 26px);
 }
 
-dev#ctl_panel {
+div#move_ctl_panel {
     display: grid;
 
     gap: 0.5rem 0.5rem;
@@ -142,18 +142,18 @@ dev#ctl_panel {
 
 }
 
-button#u_arrow {
+div#move_ctl_panel button#u_arrow {
     grid-area: u_arrow;
 }
 
-button#d_arrow {
+div#move_ctl_panel button#d_arrow {
     grid-area: d_arrow;
 }
 
-button#l_arrow {
+div#move_ctl_panel button#l_arrow {
     grid-area: l_arrow;
 }
 
-button#r_arrow {
+div#move_ctl_panel button#r_arrow {
     grid-area: r_arrow;
 }
