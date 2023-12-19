@@ -87,41 +87,70 @@
 
 
     class Maze {
-        protected int   $maze_id;
-        protected int   $maze_floor;
+        protected int    $maze_id;
+        protected int    $maze_floor;
+        protected string $title;
 
-        protected int   $size_x;  /* 外壁も含めたセルの数(横) */ 
-        protected int   $size_y; /* 外壁も含めたセルの数(縦) */
-        protected int   $limit_of_room; /* ランダム生成の際の部屋の数の最大数 */
-        protected int   $max_size_of_room; /* ランダム生成の際の部屋の大きさ */
-        protected array $cells;
+        protected int    $size_x;  /* 外壁も含めたセルの数(横) */ 
+        protected int    $size_y;  /* 外壁も含めたセルの数(縦) */
+        protected int    $size_z;  /* Mazeの階層の数 */
+        protected int    $limit_of_room; /* ランダム生成の際の部屋の数の最大数 */
+        protected int    $max_size_of_room; /* ランダム生成の際の部屋の大きさ */
+        protected array  $cells;
+        protected array  $masks;
 
-        protected const Max_x    = 21;
-        protected const Max_y    = 21;
-        protected const Limit_of_room =  5;
-        protected const Max_size_of_room =  3;
+        protected const  Max_x    = 21;
+        protected const  Max_y    = 21;
+        protected const  Max_z    =  1;
+        protected const  Limit_of_room =  5;
+        protected const  Max_size_of_room =  3;
 
         public function __construct(?array $pp = null) {
             global $gv;
 
             $this->maze_id    = 0;
-            $this->maze_floor = 1;
+            $this->maze_floor = 0;
+            $this->title      = 'NewMaze_'. sprintf("%03x",$this->maze_id);
 
-            $fill_kind              = MzKind::Empty;
+
             $this->size_x           = Maze::Max_x;
             $this->size_y           = Maze::Max_y;
+            $this->size_z           = Maze::Max_z;
             $this->limit_of_room    = Maze::Limit_of_room;
             $this->max_size_of_room = Maze::Max_size_of_room;
 
+            $this->cells = [];
+            $this->masks = [];
+
+            $this->set_maze($pp);
+        }
+
+        public function set_maze(?array $pp = null) {
+
+            $fill_kind              = MzKind::Empty;
             if (!is_null($pp) && is_array($pp)) {
                 if(array_key_exists('fill_kind', $pp) && ($pp['fill_kind'] instanceof MzKind)) {
                     $fill_kind = $pp['fill_kind'];
+                }
+                if(array_key_exists('id', $pp) && (is_numeric($pp['id']))) {
+                    $this->maze_id    = $pp['id'];
+                }
+                if(array_key_exists('floor', $pp) && (is_numeric($pp['floor']) && $pp['floor'] > 0)) {
+                    $this->maze_floor = $pp['floor'];
+                }
+                if(array_key_exists('title', $pp) && ($pp['title'] != '')) {
+                    $this->title      = $pp['title'];
+                } else {
+                    $this->title      = 'NewMaze_'. sprintf("%x03",$this->maze_id);
                 }
                 if(array_key_exists('size_x', $pp) && is_numeric($pp['size_x']) && $pp['size_x'] > 3) {
                     $this->size_x     = $pp['size_x'];
                 }
                 if(array_key_exists('size_y', $pp) && is_numeric($pp['size_y']) && $pp['size_y'] > 3) {
                     $this->size_y     = $pp['size_y'];
+                }
+                if(array_key_exists('size_z', $pp) && is_numeric($pp['size_z']) && $pp['size_z'] > 0) {
+                    $this->size_z     = $pp['size_z'];
                 }
                 if(array_key_exists('limit_room', $pp) && is_numeric($pp['limit_room']) && $pp['limit_room'] > 0) {
                     $this->limit_of_room = $pp['limit_room'];
@@ -130,12 +159,18 @@
                     $this->max_size_of_room = $pp['room_size'];
                 }
             }
-
             $this->cells = [];
-            for ($i = 0; $i < $this->size_y; $i++) {
-                $this->cells[$i] = [];
-                for ($j = 0; $j < $this->size_x; $j++) {
-                    array_push($this->cells[$i], new MazeCell($fill_kind));
+            $this->masks = [];
+            for ($z = 0; $z < $this->size_z; $z++) {
+                $this->cells[$z] = [];
+                $this->masks[$z] = [];
+                for ($y = 0; $y < $this->size_y; $y++) {
+                    $this->cells[$z][$y] = [];
+                    $this->masks[$z][$y] = [];
+                    for ($x = 0; $x < $this->size_x; $x++) {
+                        array_push($this->cells[$z][$y], new MazeCell($fill_kind));
+                        array_push($this->masks[$z][$y], true);
+                    }
                 }
             }
         }
@@ -143,22 +178,23 @@
         public function get_size_x(): int {return $this->size_x;}
         public function get_size_y(): int {return $this->size_y;}
 
-        public function get_cell(int $pos_x, int $pos_y): int {
-            return $this->cells[$pos_y][$pos_x]->get_cell();
+        public function get_cell(int $pos_x, int $pos_y, int $pos_z = 0): int {
+            return $this->cells[$pos_z][$pos_y][$pos_x]->get_cell();
         }
 
-        public function set_cell(int $pos_x, int $pos_y, MzKind $kind): bool {
-            return $this->cells[$pos_y][$pos_x]->set_cell($kind);
+        public function set_cell(MzKind $kind, int $pos_x, int $pos_y, int $pos_z = 0): bool {
+                return $this->cells[$pos_z][$pos_y][$pos_x]->set_cell($kind);
         }
 
         public function fill_cell(MzKind $kind): void {
-            for ($h = 0; $h < $this->size_y; $h++)
-                for ($w = 0; $w < $this->size_x; $w++)
-                    $this->set_cell($w, $h, $kind);
+            for ($d = 0; $d < $this->size_z; $d++)
+                for ($h = 0; $h < $this->size_y; $h++)
+                    for ($w = 0; $w < $this->size_x; $w++)
+                        $this->set_cell($kind, $w, $h, $d);
             return;
         }
 
-        public function set_box(MzKind $kind, int $top_x, int $top_y, int $size_x, int $size_y): void {
+        public function set_box(MzKind $kind, int $top_x, int $top_y, int $size_x, int $size_y, int $floor = 0): void {
             if ($top_x + $size_x > $this->size_x) $size_x = $this->size_x  - $top_x + 1; 
             if ($top_y + $size_y > $this->size_y) $size_y = $this->size_y - $top_y + 1;
             
@@ -169,18 +205,18 @@
             
             // 北側(上)と南側(下)を石壁に
             for ($x = 0; $x < $size_x; $x++) {
-                $this->set_cell($x, $top, $kind);
-                $this->set_cell($x, $btm, $kind);
+                $this->set_cell($kind, $x, $top, $floor);
+                $this->set_cell($kind, $x, $btm, $floor);
             }
             // 東側(右)と西側(左)を石壁に
             for ($y = 0; $y < $size_y; $y++) {
-                $this->set_cell($lft, $y, $kind);
-                $this->set_cell($rgt, $y, $kind);
+                $this->set_cell($kind, $lft, $y, $floor);
+                $this->set_cell($kind, $rgt, $y, $floor);
             }
             return;
         }
 
-        public function create_maze(): void {
+        public function create_maze(int $floor = 0): void {
             $size_x       = $this->size_x;
             $size_y       = $this->size_y;
     
@@ -189,7 +225,7 @@
             $this->fill_cell(MzKind::Floor);
     
             // ダンジョンの輪郭を石壁にする
-            $this->set_box(MzKind::Stone, 0, 0, $size_x, $size_y);
+            $this->set_box(MzKind::Stone, 0, 0, $size_x, $size_y, $floor);
     
             // 通路に一つ置きに壁が成長するポイントを設定する
             // ポイントから壁を伸ばす方向をランダムに決める
@@ -233,7 +269,7 @@
                 if (is_null($p)) continue;
                 
                 // ポイントの位置に石壁を置く
-                $this->set_cell($p->x, $p->y, MzKind::Stone);
+                $this->set_cell(MzKind::Stone, $p->x, $p->y, $floor);
                 // 柱の東西南北のいずれかにも石壁を置く
                 $direction = [0, 0, 0, 0];
                 switch ($p->di) {
@@ -252,9 +288,11 @@
                 }
     
                 $this->set_cell(
+                    MzKind::Stone,
                     $p->x - $direction[Direct::W] + $direction[Direct::E], 
                     $p->y - $direction[Direct::N] + $direction[Direct::S], 
-                    MzKind::Stone);
+                    $floor
+                    );
                 
             }
 
@@ -265,7 +303,7 @@
 
                 [$yn, $trace_set] = $this->check_close($set->x, $set->y, $points, new PointSet());
                 if ($yn) {
-                    $this->open_exit($trace_set, MzKind::Floor);
+                    $this->open_exit($trace_set, MzKind::Floor, $floor);
                     foreach ($trace_set->set as $t) $points->remove($t);
                 }
             }
@@ -301,7 +339,7 @@
                 return $this->check_close($next_x, $next_y, $point_set, $trace_set);
         }
 
-        protected function open_exit(PointSet $p, MzKind $kind): void {
+        protected function open_exit(PointSet $p, MzKind $kind, int $floor = 0): void {
             $cnt = random_int(0,count($p->set) - 1);
             $pp  = $p->set[$cnt];
 
@@ -322,24 +360,26 @@
             }
 
             $this->set_cell(
+                $kind, 
                 $pp->x - $direction[Direct::W] + $direction[Direct::E], 
                 $pp->y - $direction[Direct::N] + $direction[Direct::S], 
-                $kind);
+                $floor
+            );
             return;
         }
 
-        public function to_string(): string {
+        public function to_string(int $floor = 0): string {
             $ret_str = '';
-            for ($h = 0; $h < count($this->cells); $h++) {
-                for ($w = 0; $w < count($this->cells[$h]); $w++) {
-                    $ret_str .= $this->cells[$h][$w]->to_letter();
+            for ($h = 0; $h < count($this->cells[$floor]); $h++) {
+                for ($w = 0; $w < count($this->cells[$floor][$h]); $w++) {
+                    $ret_str .= $this->cells[$floor][$h][$w]->to_letter();
                 }
                 $ret_str .= "\n";
             }
             return $ret_str;
         }
 
-        public function from_string(string $s): Maze {
+        public function from_string(string $s, int $floor = 0): Maze {
             $maze_raws = mb_split("\n", $s);
 
             $size_y    = min($this->size_y, count($maze_raws));
@@ -348,39 +388,129 @@
                 
                 $size_x    = min($this->size_x, count($cells));
                 for ($w = 0; $w < $this->size_x; $w++) {
-                    $this->set_cell($w, $h, MzKind::from_letter($cells[$w]));
+                    $this->set_cell(MzKind::from_letter($cells[$w]), $w, $h, $floor);
                     $w++;
                 }
             }
             return $this;
         }
 
-        public function encode(): string {
-            $raw_array = [];
-            for ($h = 0; $h < count($this->cells); $h++) {
-                $col_array = [];
-                for ($w = 0; $w < count($this->cells[$h]); $w++) {
-                    array_push($col_array, $this->cells[$h][$w]->encode());
+        public function encode(): array {
+            // MAZEの文字列化
+            $flr_array = [];
+            for ($d = 0; $d < count($this->cells); $d++) {
+                $raw_array = [];
+                for ($h = 0; $h < count($this->cells[$d]); $h++) {
+                    $col_array = [];
+                    for ($w = 0; $w < count($this->cells[$d][$h]); $w++) {
+                        array_push($col_array, $this->cells[$d][$h][$w]->encode());
+                    }
+                    array_push($raw_array, implode(':', $col_array));
                 }
-                array_push($raw_array, implode(':', $col_array));
+                array_push($flr_array, implode('&', $raw_array));
             }
-            return implode('&', $raw_array);
+            $maze_str = implode('@', $flr_array);
+
+            // MASKの文字列化
+            $flr_array = [];
+            for ($d = 0; $d < count($this->masks); $d++) {
+                $raw_array = [];
+                for ($h = 0; $h < count($this->masks[$d]); $h++) {
+                    $col_array = [];
+                    for ($w = 0; $w < count($this->masks[$d][$h]); $w++) {
+                        if ($this->masks[$d][$h][$w]) {
+                            array_push($col_array, '1');
+                        } else {
+                            array_push($col_array, '0');
+                        }
+                    }
+                    array_push($raw_array, implode(':', $col_array));
+                }
+                array_push($flr_array, implode('&', $raw_array));
+            }
+            $mask_str = implode('@', $flr_array);
+
+            $ret = [    
+                'maze_id' => $this->maze_id,
+                'floor'   => $this->maze_floor,
+                'title'   => $this->title,
+                'size_x'  => $this->size_x,
+                'size_y'  => $this->size_y,
+                'size_z'  => $this->size_z,
+                'maze'    => $maze_str,
+                'mask'    => $mask_str,
+            ];
+            return $ret;
+
         }
 
-        public function decode(string $str): void {
-            for ($h = 0; $h < $this->size_y; $h++) 
-                for ($w = 0; $w < $this->size_x; $w++) 
-                    $this->set_cell($w, $h, MzKind::Empty);
+        public function decode(array $d): void {
+
+            if(array_key_exists('maze_id', $d) && is_numeric($d['maze_id'])) {
+                $this->maze_id    = $d['maze_id'];
+            }
+            if(array_key_exists('floor', $d) && is_numeric($d['floor'])) {
+                $this->maze_floor = $d['floor'];
+            }
+            if(array_key_exists('title', $d) && $d['title'] != '') {
+                $this->title      = $d['title'];
+            }
+            if(array_key_exists('size_x', $d) && is_numeric($d['size_x'])) {
+                $this->size_x     = $d['size_x'];
+            }
+            if(array_key_exists('size_y', $d) && is_numeric($d['size_y'])) {
+                $this->size_y     = $d['size_y'];
+            }
+            if(array_key_exists('size_z', $d) && is_numeric($d['size_z'])) {
+                $this->size_z     = $d['size_z'];
+            }
+
+            // MAZEの復元
+            if(array_key_exists('maze', $d) && $d['maze'] != '') {
+                $maze_str         = $d['maze'];
+
+                for ($d = 0; $d < $this->size_z; $d++) 
+                    for ($h = 0; $h < $this->size_y; $h++) 
+                        for ($w = 0; $w < $this->size_x; $w++) 
+                            $this->set_cell(MzKind::Empty, $w, $h, $d);
             
-            $raw_array = explode('&', $str);
-            $size_y    = min($this->size_y, count($raw_array));
-            for ($h = 0; $h < $size_y; $h++) {
-                $col_array = explode(':', $raw_array[$h]);
-                $size_x    = min($this->size_x, count($col_array));
-                for ($w = 0; $w < $size_x; $w++) {
-                    $this->cells[$h][$w]->decode($col_array[$w]);;
+                $flr_array = explode('@', $maze_str);
+                $size_z    = min($this->size_z, count($flr_array));
+                for ($d = 0; $d < $size_z; $d++) { 
+                    $raw_array = explode('&', $flr_array[$d]);
+                    $size_y    = min($this->size_y, count($raw_array));
+                    for ($h = 0; $h < $size_y; $h++) {
+                        $col_array = explode(':', $raw_array[$h]);
+                        $size_x    = min($this->size_x, count($col_array));
+                        for ($w = 0; $w < $size_x; $w++) {
+                            $this->cells[$d][$h][$w]->decode($col_array[$w]);
+                        }
+                    }
                 }
             }
+
+            // MASKの復元
+            if(array_key_exists('mask', $d) && $d['mask'] != '') {
+                $mask_str         = $d['mask'];
+                $flr_array = explode('@', $mask_str);
+                $size_z    = min($this->size_z, count($flr_array));
+                for ($d = 0; $d < $size_z; $d++) { 
+                    $raw_array = explode('&', $flr_array[$d]);
+                    $size_y    = min($this->size_y, count($raw_array));
+                    for ($h = 0; $h < $size_y; $h++) {
+                        $col_array = explode(':', $raw_array[$h]);
+                        $size_x    = min($this->size_x, count($col_array));
+                        for ($w = 0; $w < $size_x; $w++) {
+                            if ($col_array[$w] == '1') {
+                                $this->masks[$d][$h][$w] = true;
+                            } else {
+                                $this->masks[$d][$h][$w] = false;
+                            }
+                        }
+                    }
+                }
+            }
+
             return;
         }
     }

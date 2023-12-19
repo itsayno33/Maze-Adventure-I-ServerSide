@@ -34,23 +34,21 @@
     switch ($ga->mode) {
         case 'new':
             $gv->maze->create_maze();
-            $ret = [    'maze_id' => 0,
-                        'floor'   => 1,
-                        'size_x'  => $gv->maze->get_size_x(),
-                        'size_y'  => $gv->maze->get_size_y(),
-                        'maze'    => $gv->maze->encode(),
-            ];
-            $ret_JSON = json_encode($ret,  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            $ret = $gv->maze->encode();
+            $ret_JSON = json_encode(['maze' => $ret],  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             break;
         default:
             $ret = [
                 'maze_id' => -1,
                 'floor'   => -1,
+                'title'   => 'No Title',
                 'size_x'  =>  0,
                 'size_y'  =>  0,
-                'maze'    => $ga->mode,
+                'size_z'  =>  0,
+                'maze'    => '',
+                'mask'    => $ga->mode,
             ];
-            $ret_JSON = json_encode($ret,  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            $ret_JSON = json_encode(['maze' => $ret],  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             break;
     }
 
