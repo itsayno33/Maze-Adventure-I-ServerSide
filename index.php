@@ -208,7 +208,10 @@
 <body>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
     <article class='Maze_view' id='Maze_view_pane'>
-        <div id='Maze_view2D'><pre id='Maze_view2D_pre'></pre></div>
+        <div id='Maze_view2D'>
+            <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
+            <pre id='Maze_view2D_pre'></pre>
+        </div>
         <div id='Maze_view3D'>
             <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
             <p id='Maze_view3D_direction_info'></p>
