@@ -117,7 +117,17 @@ h1 {
 }
 
 pre#Maze_view2D_pre {
+    justify-self:center;
+    align-self: auto;
+    text-align: center;
+
     margin: var(--view2D_pre_margin,    1rem);
+}
+
+div#Maze_view3D {
+    justify-self:center;
+    align-self: auto;
+    text-align: center;
 }
 
 canvas#Maze_view3D_canvas {
@@ -126,6 +136,51 @@ canvas#Maze_view3D_canvas {
     height: 200px;
 }
 
+p#Maze_view3D_direction_info {
+    text-align: center;
+
+    color:       var(--view3D_text_color,darkgreen);
+    font-family: var(--vew_3D_font_family, sans-serif);
+    font-size:   var(--view3D_font_size,   1.3rem);
+    line-height: var(--view3D_line_heght,  1.6rem);
+}
+
+p#Maze_view3D_direction_info .direction_N {
+    color: #000000;
+    background-color: #00ff00;
+}
+
+p#Maze_view3D_direction_info .direction_E {
+    color: #ffffff;
+    background-color: #0000ff;
+}
+
+p#Maze_view3D_direction_info .direction_S {
+    color: #ffffff;
+    background-color: #ff0000;
+}
+
+p#Maze_view3D_direction_info .direction_W {
+    color: #000000;
+    background-color: #ffd700;
+}
+
+p#Maze_view3D_direction_info .direction_D {
+    color: #ffffff;
+    background-color: #000000;
+}
+
+p#Maze_view3D_direction_info span#direction_X {
+    color: #ff00ff;
+}
+
+p#Maze_view3D_direction_info span#direction_Y {
+    color: #ffa500;
+}
+
+.blink {
+    background-color: #98fb98;
+}
 div#move_ctl_panel {
     display: grid;
 
