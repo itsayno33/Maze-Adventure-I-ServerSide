@@ -149,7 +149,7 @@
                 if(array_key_exists('size_y', $pp) && is_numeric($pp['size_y']) && $pp['size_y'] > 3) {
                     $this->size_y     = $pp['size_y'];
                 }
-                if(array_key_exists('size_z', $pp) && is_numeric($pp['size_z']) && $pp['size_z'] > 0) {
+                if(array_key_exists('size_z', $pp) && is_numeric($pp['size_z']) && $pp['size_z'] >= 0) {
                     $this->size_z     = $pp['size_z'];
                 }
                 if(array_key_exists('limit_room', $pp) && is_numeric($pp['limit_room']) && $pp['limit_room'] > 0) {
@@ -179,7 +179,7 @@
         public function get_size_y(): int {return $this->size_y;}
         public function get_size_z(): int {return $this->size_z;}
 
-        public function get_cell(int $pos_x, int $pos_y, int $pos_z = 0): int {
+        public function get_cell(int $pos_x, int $pos_y, int $pos_z): int {
             return $this->cells[$pos_z][$pos_y][$pos_x]->get_cell();
         }
 
@@ -187,16 +187,15 @@
                 return $this->cells[$pos_z][$pos_y][$pos_x]->set_cell($kind);
         }
 
-        public function fill_cell(MzKind $kind): void {
-            for ($d = 0; $d < $this->size_z; $d++)
-                for ($h = 0; $h < $this->size_y; $h++)
-                    for ($w = 0; $w < $this->size_x; $w++)
-                        $this->set_cell($kind, $w, $h, $d);
+        public function fill_cell(MzKind $kind, int $floor = 0): void {
+            for ($h = 0; $h < $this->size_y; $h++)
+            for ($w = 0; $w < $this->size_x; $w++)
+                $this->set_cell($kind, $w, $h, $floor);
             return;
         }
 
         public function set_box(MzKind $kind, int $top_x, int $top_y, int $size_x, int $size_y, int $floor = 0): void {
-            if ($top_x + $size_x > $this->size_x) $size_x = $this->size_x  - $top_x + 1; 
+            if ($top_x + $size_x > $this->size_x) $size_x = $this->size_x - $top_x + 1; 
             if ($top_y + $size_y > $this->size_y) $size_y = $this->size_y - $top_y + 1;
             
             $top = $top_y;
@@ -222,8 +221,8 @@
             $size_y       = $this->size_y;
     
     
-            // ダンジョン全体を未踏地にする
-            $this->fill_cell(MzKind::Unexp);
+            // ダンジョンで$floorで指定された階を未踏地にする 
+            $this->fill_cell(MzKind::Unexp, $floor);
     
             // ダンジョンの輪郭を石壁にする
             $this->set_box(MzKind::Stone, 0, 0, $size_x, $size_y, $floor);

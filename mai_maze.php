@@ -37,7 +37,9 @@
     $ret_JSON = '';
     switch ($ga->mode) {
         case 'new':
-            $gv->maze->create_maze();
+            for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
+                $gv->maze->create_maze($i);
+            }
             $ret_maze = $gv->maze->encode();
             $gv->hero = new_hero();
             $ret_hero = $gv->hero->encode();
@@ -96,8 +98,9 @@
 
         public const  Maze_size_x = 21;
         public const  Maze_size_y = 21;
-        public const  Limit_of_room    = 5;
-        public const  Max_size_of_room = 3;
+        public const  Limit_of_room     = 5;
+        public const  Max_size_of_room  = 3;
+        public const  Max_of_Maze_Floor = 3;
         public Maze   $maze;
         public Hero   $hero;
 
@@ -112,12 +115,13 @@
             $this->mmd_db      = PDO_db_open($db_host, 'db_mai'); 
 
             $this->maze        = new Maze([
-                                    'fill_kind'  => MzKind::Empty,
-                                    'size_x'     => GlobalVar::Maze_size_x,
-                                    'size_y'     => GlobalVar::Maze_size_y,
-                                    'limit_room' => GlobalVar::Limit_of_room,
-                                    'room_size'  => GlobalVar::Max_size_of_room,
-                                ]);
+                'fill_kind'    => MzKind::Empty,
+                'size_x'       => GlobalVar::Maze_size_x,
+                'size_y'       => GlobalVar::Maze_size_y,
+                'size_z'       => GlobalVar::Max_of_Maze_Floor, 
+                'limit_room'   => GlobalVar::Limit_of_room,
+                'room_size'    => GlobalVar::Max_size_of_room,
+            ]);
         }
     }
     
@@ -149,7 +153,7 @@ function new_hero(): Hero {
     global $gv;
     $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
-    $z = 2 * random_int(0,  ($gv->maze->get_size_z() - 1));
+    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
     $d = random_int(0, Direct::MAX);
     return new Hero(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
 }

@@ -37,7 +37,7 @@
     $ga->mode = 'new'; // 暫定
     switch ($ga->mode) {
         case 'new':
-            $gv->maze->create_maze();
+            $gv->maze->create_maze(0);
             $gv->hero = new_hero();
             break;
         default:

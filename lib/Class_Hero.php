@@ -52,6 +52,12 @@
         public function set_pos(Point3D $p): void {
             $this->cur_pos = $p;
         }
+        public function get_z(): int {
+            return $this->cur_pos->z;
+        }
+        public function set_z(int $z): void {
+            $this->cur_pos->z = $z;
+        }
         public function get_dir(): Direct {
             return $this->cur_dir;
         }
