@@ -177,6 +177,7 @@
 
         public function get_size_x(): int {return $this->size_x;}
         public function get_size_y(): int {return $this->size_y;}
+        public function get_size_z(): int {return $this->size_z;}
 
         public function get_cell(int $pos_x, int $pos_y, int $pos_z = 0): int {
             return $this->cells[$pos_z][$pos_y][$pos_x]->get_cell();

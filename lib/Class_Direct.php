@@ -8,7 +8,7 @@
         public const Unknown = 99;
         public const MAX = 3;
         protected int $direction;
-        protected function __construct(int $direction = Direct::Unknown)
+        public function __construct(int $direction = Direct::Unknown)
         {
             $this->set($direction);
         }
@@ -26,6 +26,16 @@
                 default:
                     $this->direction = Direct::Unknown;
                     break;
+            }
+        }
+        public function encode(): array {
+            return ['d' => $this->direction];
+        }
+        public static function decode(array $a): Direct {
+            if (!is_null($a) && is_array($a)) {
+                if(array_key_exists('d', $a) && (is_numeric($a['d']))) {
+                    return new Direct($a['d']);
+                }
             }
         }
     }

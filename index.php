@@ -24,6 +24,9 @@
     // MAZE関係クラス全般
     require_once 'lib/Class_Maze.php';
 
+    // 主人公クラス全般
+    require_once 'lib/Class_Hero.php';
+
 /*******************************************************************************/
 /*                                                                             */
 /*                                 主　処　理                                   */
@@ -35,11 +38,24 @@
     switch ($ga->mode) {
         case 'new':
             $gv->maze->create_maze();
+            $gv->hero = new_hero();
             break;
         default:
             break;
     }
 
+//////////////////////////////////////////////
+///   サブルーチン
+//////////////////////////////////////////////
+
+function new_hero(): Hero {
+    global $gv;
+    $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
+    $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
+    $z = 2 * random_int(0,  ($gv->maze->get_size_z() - 1));
+    $d = random_int(0, Direct::MAX);
+    return new Hero(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
+}
 
 /*******************************************************************************/
 /*                                                                             */
@@ -101,6 +117,7 @@
         public const    Limit_of_room    = 5;
         public const    Max_size_of_room = 3;
         public Maze     $maze;
+        public Hero     $hero;
 
         public function __construct() {
             global $db_host;

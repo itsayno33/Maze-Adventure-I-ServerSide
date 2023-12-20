@@ -23,7 +23,6 @@ class PointLink extends Point {
 }
 
 
-
 class PointSet {
     public array $set;
     public function __construct()
@@ -60,6 +59,44 @@ class PointSet {
             return true;
         }
         return false;
+    }
+}
+
+class Point3D {
+    public int $x;
+    public int $y;
+    public int $z;
+    public function __construct(int $x = 0, int $y = 0, int $z = 0)
+    {
+        $this->x  = $x;
+        $this->y  = $y;
+        $this->z  = $z;
+    }
+    public function is_exist(int $x, int $y, int $z): bool {
+        return ($this->x == $x) && ($this->y == $y) && ($this->z == $z);
+    }
+    public function within(Point3D $p): bool {
+        return $this->is_exist($p->x, $p->y, $p->z);
+    }
+    public function encode(): array {
+        $a = [];
+        $a['x'] = $this->x;
+        $a['y'] = $this->y;
+        $a['z'] = $this->z;
+
+        return $a;
+    }
+    public static function decode(array $a): Point3D {
+        if (!is_null($a) && is_array($a)) {
+            if (
+                array_key_exists('x', $a) && (is_numeric($a['x']) && $a[['x']] >  0)
+            &&  array_key_exists('y', $a) && (is_numeric($a['y']) && $a[['y']] >  0)
+            &&  array_key_exists('z', $a) && (is_numeric($a['z']) && $a[['z']] >= 0)
+            ) {
+                return new Point3D($a['x'], $a['y'], $a['z']);
+            }
+        }
+        return new Point3D(-1, -1, -1);
     }
 }
 
