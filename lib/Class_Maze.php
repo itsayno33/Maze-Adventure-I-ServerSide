@@ -222,8 +222,8 @@
             $size_y       = $this->size_y;
     
     
-            // ダンジョン全体を床にする
-            $this->fill_cell(MzKind::Floor);
+            // ダンジョン全体を未踏地にする
+            $this->fill_cell(MzKind::Unexp);
     
             // ダンジョンの輪郭を石壁にする
             $this->set_box(MzKind::Stone, 0, 0, $size_x, $size_y, $floor);
@@ -304,7 +304,7 @@
 
                 [$yn, $trace_set] = $this->check_close($set->x, $set->y, $points, new PointSet());
                 if ($yn) {
-                    $this->open_exit($trace_set, MzKind::Floor, $floor);
+                    $this->open_exit($trace_set, MzKind::Unexp, $floor);
                     foreach ($trace_set->set as $t) $points->remove($t);
                 }
             }
