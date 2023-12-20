@@ -11,17 +11,23 @@
     require_once 'lib/Class_Direct.php';     // 方向(東西南北)のクラス
 
     class Hero {
+        protected int     $id = 0;
         protected string  $name;
         protected Point3D $cur_pos;
         protected Direct  $cur_dir;
+
         public    function __construct(array $a = null) {
             $this->cur_pos = new Point3D(0, 0, 0);
             $this->cur_dir = new Direct(Direct::N);
+            $this->name    = 'New Hero';
 
             $this->__init_pos($a);
         } 
         protected function __init_pos(array $a = null) {
             if (!is_null($a) && is_array($a)) {
+                if (array_key_exists('name', $a) && ($a['name'] !== '')) {
+                    $this->name = $a['name'];
+                }
                 if (array_key_exists('Point3D', $a) && ($a['Point3D'] instanceof Point3D)) {
                     $this->cur_pos = $a['Point3D'];
                 }
@@ -54,12 +60,20 @@
         }
         public function encode(): array {
             $e = [];
+            $e['id']     = strval($this->id);
+            $e['name']   = $this->name;
             $e['point']  = $this->cur_pos->encode();
             $e['direct'] = $this->cur_dir->encode();
             return $e;
         }
         public function decode(array $a) {
             if (!is_null($a) && is_array($a)) {
+                if (array_key_exists('id', $a) && (is_numeric($a['id']))) {
+                    $this->id      = intval($a['id']);
+                }
+                if (array_key_exists('name', $a) && ($a['name'] !== '')) {
+                    $this->cur_pos = $a['name'];
+                }
                 if (array_key_exists('point', $a) && (is_array($a['point']))) {
                     $this->cur_pos = Point3D::decode($a['point']);
                 }
