@@ -229,10 +229,10 @@ function new_hero(): Hero {
             <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
             <pre id='Maze_view2D_pre'></pre>
         </div>
+        <p id='Maze_view_message'></p>
         <div id='Maze_view3D'>
             <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
             <p id='Maze_view3D_direction_info'></p>
-            <p id='Maze_view3D_message'></p>
         </div>
         <?php /* display_maze(); */ ?>
     </article>
