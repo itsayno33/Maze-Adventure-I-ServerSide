@@ -40,6 +40,9 @@
             for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
                 $gv->maze->create_maze($i);
             }
+            for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor - 1; $i++) {
+                $gv->maze->create_stair($i);
+            }
             $ret_maze = $gv->maze->encode();
             $gv->hero = new_hero();
             $ret_hero = $gv->hero->encode();

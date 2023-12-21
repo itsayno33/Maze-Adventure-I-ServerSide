@@ -24,6 +24,7 @@
         case Unkwn  =   4;
         case StrUp  =   5;
         case StrDn  =   6;
+        case StrUD  =   7;
         case Empty  = 255;
 
         public function to_int(MzKind|null $kind = null): int {
@@ -44,6 +45,7 @@
                 MzKind::Unkwn => '？',
                 MzKind::StrUp => 'Ｕ',
                 MzKind::StrDn => 'Ｄ',
+                MzKind::StrUD => '通',
                 MzKind::Empty => 'Ｏ',
                 MzKind::NoDef => 'Ｘ',
                 default       => 'Ｘ',
@@ -58,6 +60,7 @@
                 '？'     => MzKind::Unkwn,
                 'Ｕ'     => MzKind::StrUp,
                 'Ｄ'     => MzKind::StrDn,
+                '通'     => MzKind::StrUD,
                 'Ｏ'     => MzKind::Empty,
                 'Ｘ'     => MzKind::NoDef,
                 default  => MzKind::NoDef,

@@ -179,7 +179,7 @@
         public function get_size_y(): int {return $this->size_y;}
         public function get_size_z(): int {return $this->size_z;}
 
-        public function get_cell(int $pos_x, int $pos_y, int $pos_z): int {
+        public function get_cell(int $pos_x, int $pos_y, int $pos_z): MzKind {
             return $this->cells[$pos_z][$pos_y][$pos_x]->get_cell();
         }
 
@@ -214,6 +214,26 @@
                 $this->set_cell($kind, $rgt, $y, $floor);
             }
             return;
+        }
+
+        // 階上と階下に階段を設置する
+        public function create_stair(int $floor): void {
+            $H_size_x       = ($this->size_x - 1) / 2;
+            $H_size_y       = ($this->size_y - 1) / 2;
+            $pos_x = 2 * random_int(0, $H_size_x - 1) + 1;
+            $pos_y = 2 * random_int(0, $H_size_y - 1) + 1;
+
+            // 乱数で得た座標に階段を置く
+            if ($this->get_cell($pos_x, $pos_y, $floor) !== MzKind::StrUp) {
+                $this->set_cell(MzKind::StrDn, $pos_x, $pos_y, $floor);
+            } else {
+                $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor);
+            }
+            if ($this->get_cell($pos_x, $pos_y, $floor + 1) !== MzKind::StrDn) {
+                $this->set_cell(MzKind::StrUp, $pos_x, $pos_y, $floor + 1);
+            } else {
+                $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor + 1);
+            }
         }
 
         public function create_maze(int $floor = 0): void {
