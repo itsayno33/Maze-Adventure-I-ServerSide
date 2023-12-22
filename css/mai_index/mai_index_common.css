@@ -116,6 +116,10 @@ h1 {
     line-height: var(--h1_line_heght, 26px);
 }
 
+p#Maze_view_message {
+    background-color: inherit;
+}
+
 pre#Maze_view2D_pre {
     justify-self:center;
     align-self: auto;
@@ -181,18 +185,51 @@ p#Maze_view3D_direction_info span#direction_Y {
 .blink {
     background-color: #98fb98;
 }
+
+
+article#Maze_info_pane {
+    display: grid;
+    gap: 2.0rem 1.0rem;
+    grid-template-columns: 
+        [h2-start ctl_view-start]
+        auto
+        [h2-end ctl_view-end]
+        ;
+    grid-template-rows: 
+        [h2-start]
+        calc(var(--info_h2_font_size, 1.75rem)  *  1.1)
+        [h2-end ctl_view-start]
+        var(--info_ctl_panel_height,  auto)
+        [ctl_view-end]
+        ;
+}
+
+article#Maze_info_pane h2  {
+    grid-area: h2;
+    justify-self:center;
+    text-align:  center;
+
+    font-size: var(--info_h2_font_size, 1.75rem);
+}
+
+article#Maze_info_pane div#move_ctl_view {
+    grid-area: ctl_view;
+    justify-self:center;
+    text-align:  center;
+}
+
 div#move_ctl_panel {
     display: grid;
 
     gap: 0.5rem 0.5rem;
     grid-template-columns: 
-        [l_arrow-start]
+        [l_arrow-start y_btn-start]
         var(--lr_arrow_width, 2.3rem)
-        [l_arrow-end u_arrow-start d_arrow-start]
+        [l_arrow-end y_btn-end u_arrow-start d_arrow-start]
         var(--ud_arrow_width, 2.3rem)
-        [u_arrow-end d_arrow-end r_arrow-start]
+        [u_arrow-end d_arrow-end r_arrow-start n_btn-start]
         var(--lr_arrow_width, 2.3rem)
-        [r_arrow-end]
+        [r_arrow-end n_btn-end]
         ;
 
     grid-template-rows: 
@@ -202,9 +239,31 @@ div#move_ctl_panel {
         var(--lr_arrow_height,  2.3rem)
         [l_arrow-end r_arrow-end d_arrow-start]
         var(--ud_arrow_height,  2.3rem)
-        [d_arrow-end]
+        [d_arrow-end y_btn-start n_btn-start]
+        var(--ud_arrow_height,  2.3rem)
+        [y_btn-end n_btn-end]
         ;
 
+}
+
+div#move_ctl_panel button#y_btn {
+    grid-area: y_btn;
+
+    color: darkgreen ;
+    background-color:#ccffcc;
+
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+div#move_ctl_panel button#n_btn {
+    grid-area: n_btn;
+
+    color: #ff00ff;
+    background-color:pink;
+
+    font-family: sans-serif;
+    font-weight: bold;
 }
 
 div#move_ctl_panel button#u_arrow {

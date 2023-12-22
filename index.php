@@ -218,7 +218,7 @@ function new_hero(): Hero {
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
-    <title>Random List of MMD VIDEO Page</title>
+    <title>Maze Adventure I</title>
     <link rel="stylesheet" href="css.php?time=<?php echo date("Y-m-d_H:i:s"); ?>&file=mai_index" />
     <script type="module" src="./js/bundle.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
 </head>
@@ -241,8 +241,10 @@ function new_hero(): Hero {
         <div id ='move_ctl_view'><div id='move_ctl_panel'>
             <button id='u_arrow' type='button' name='u_arrow' value='U'>↑</button>
             <button id='d_arrow' type='button' name='d_arrow' value='D'>↓</button>
-            <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
             <button id='l_arrow' type='button' name='l_arrow' value='L'>←</button>
+            <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
+            <button id='y_btn'   type='button' name='y_btn'   value='U'>〇</button>
+            <button id='n_btn'   type='button' name='n_btn'   value='N'>✖</button>
         </div></div>
         <?php /* display_cntl(); */ ?>
     </article>
