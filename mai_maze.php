@@ -156,7 +156,8 @@ function new_hero(): Hero {
     global $gv;
     $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
-    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
+    $z = 0;
+//    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
     $d = random_int(0, Direct::MAX);
     return new Hero(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
 }

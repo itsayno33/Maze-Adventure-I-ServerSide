@@ -115,22 +115,30 @@ h1 {
     font-size: var(--h1_font_size, 22px);
     line-height: var(--h1_line_heght, 26px);
 }
+article#Maze_view_pane{
+    justify-self:center;
+    align-self: auto;
+}
+div#Maze_view_message_div {
+    min-height: 3.5rem;
+    max-height: 3.5rem;
 
+    width:  30rem;
+}
 p#Maze_view_message {
+    color: inherit;
     background-color: inherit;
+    word-break: break-all;
+    font-size: 1.1rem;
 }
 
 pre#Maze_view2D_pre {
-    justify-self:center;
-    align-self: auto;
     text-align: center;
 
     margin: var(--view2D_pre_margin,    1rem);
 }
 
 div#Maze_view3D {
-    justify-self:center;
-    align-self: auto;
     text-align: center;
 }
 
