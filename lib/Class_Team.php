@@ -10,7 +10,7 @@
     require_once 'lib/Class_PointSet.php';   // 位置情報のクラス
     require_once 'lib/Class_Direct.php';     // 方向(東西南北)のクラス
 
-    class Hero {
+    class Team {
         protected int     $id = 0;
         protected string  $name;
         protected Point3D $cur_pos;

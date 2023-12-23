@@ -24,8 +24,8 @@
     // MAZE関係クラス全般
     require_once 'lib/Class_Maze.php';
 
-    // 主人公クラス全般
-    require_once 'lib/Class_Hero.php';
+    // パーティークラス全般
+    require_once 'lib/Class_Team.php';
 
 /*******************************************************************************/
 /*                                                                             */
@@ -38,7 +38,7 @@
     switch ($ga->mode) {
         case 'new':
             $gv->maze->create_maze(0);
-            $gv->hero = new_hero();
+            $gv->team = new_team();
             break;
         default:
             break;
@@ -48,13 +48,13 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
-function new_hero(): Hero {
+function new_team(): Team {
     global $gv;
     $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
     $z = 2 * random_int(0,  ($gv->maze->get_size_z() - 1));
     $d = random_int(0, Direct::MAX);
-    return new Hero(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
+    return new Team(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
 }
 
 /*******************************************************************************/
@@ -117,7 +117,7 @@ function new_hero(): Hero {
         public const    Limit_of_room    = 5;
         public const    Max_size_of_room = 3;
         public Maze     $maze;
-        public Hero     $hero;
+        public Team     $team;
 
         public function __construct() {
             global $db_host;

@@ -23,8 +23,8 @@
     require_once 'lib/Class_Maze.php';
 
     
-    // 主人公クラス全般
-    require_once 'lib/Class_Hero.php';
+    // パーティークラス全般
+    require_once 'lib/Class_Team.php';
 
 /*******************************************************************************/
 /*                                                                             */
@@ -44,10 +44,10 @@
                 $gv->maze->create_stair($i);
             }
             $ret_maze = $gv->maze->encode();
-            $gv->hero = new_hero();
-            $ret_hero = $gv->hero->encode();
+            $gv->team = new_team();
+            $ret_team = $gv->team->encode();
 
-            $ret_JSON = json_encode(['maze' => $ret_maze, 'hero' => $ret_hero],  
+            $ret_JSON = json_encode(['maze' => $ret_maze, 'team' => $ret_team],  
                         JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             break;
         default:
@@ -105,7 +105,7 @@
         public const  Max_size_of_room  = 3;
         public const  Max_of_Maze_Floor = 3;
         public Maze   $maze;
-        public Hero   $hero;
+        public Team   $team;
 
         public function __construct() {
             global $db_host;
@@ -152,14 +152,14 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
-function new_hero(): Hero {
+function new_team(): Team {
     global $gv;
     $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
     $z = 0;
 //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
     $d = random_int(0, Direct::MAX);
-    return new Hero(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
+    return new Team(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
 }
 
 
