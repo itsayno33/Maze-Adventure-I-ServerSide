@@ -425,11 +425,11 @@
                     for ($w = 0; $w < count($this->cells[$d][$h]); $w++) {
                         array_push($col_array, $this->cells[$d][$h][$w]->encode());
                     }
-                    array_push($raw_array, implode(':', $col_array));
+                    array_push($raw_array, implode('X', $col_array));
                 }
-                array_push($flr_array, implode('&', $raw_array));
+                array_push($flr_array, implode('Y', $raw_array));
             }
-            $maze_str = implode('@', $flr_array);
+            $maze_str = implode('Z', $flr_array);
 
             // MASKの文字列化
             $flr_array = [];
@@ -444,11 +444,11 @@
                             array_push($col_array, '0');
                         }
                     }
-                    array_push($raw_array, implode(':', $col_array));
+                    array_push($raw_array, implode('X', $col_array));
                 }
-                array_push($flr_array, implode('&', $raw_array));
+                array_push($flr_array, implode('Y', $raw_array));
             }
-            $mask_str = implode('@', $flr_array);
+            $mask_str = implode('Z', $flr_array);
 
             $ret = [    
                 'id'      => $this->maze_id,
@@ -494,13 +494,13 @@
                         for ($w = 0; $w < $this->size_x; $w++) 
                             $this->set_cell(MzKind::Empty, $w, $h, $d);
             
-                $flr_array = explode('@', $maze_str);
+                $flr_array = explode('Z', $maze_str);
                 $size_z    = min($this->size_z, count($flr_array));
                 for ($d = 0; $d < $size_z; $d++) { 
-                    $raw_array = explode('&', $flr_array[$d]);
+                    $raw_array = explode('Y', $flr_array[$d]);
                     $size_y    = min($this->size_y, count($raw_array));
                     for ($h = 0; $h < $size_y; $h++) {
-                        $col_array = explode(':', $raw_array[$h]);
+                        $col_array = explode('X', $raw_array[$h]);
                         $size_x    = min($this->size_x, count($col_array));
                         for ($w = 0; $w < $size_x; $w++) {
                             $this->cells[$d][$h][$w]->decode($col_array[$w]);
@@ -512,13 +512,13 @@
             // MASKの復元
             if(array_key_exists('mask', $d) && $d['mask'] != '') {
                 $mask_str         = $d['mask'];
-                $flr_array = explode('@', $mask_str);
+                $flr_array = explode('Z', $mask_str);
                 $size_z    = min($this->size_z, count($flr_array));
                 for ($d = 0; $d < $size_z; $d++) { 
-                    $raw_array = explode('&', $flr_array[$d]);
+                    $raw_array = explode('Y', $flr_array[$d]);
                     $size_y    = min($this->size_y, count($raw_array));
                     for ($h = 0; $h < $size_y; $h++) {
-                        $col_array = explode(':', $raw_array[$h]);
+                        $col_array = explode('X', $raw_array[$h]);
                         $size_x    = min($this->size_x, count($col_array));
                         for ($w = 0; $w < $size_x; $w++) {
                             if ($col_array[$w] == '1') {
