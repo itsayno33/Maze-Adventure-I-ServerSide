@@ -52,13 +52,13 @@
                 }
                 if (array_key_exists('Heroes', $a) && is_array($a['Heroes'])) {
                     foreach ($a['Heroes'] as $hero) {
-                        if ($hero instanceof Hero) $this->append_hero($a['Hero']);
+                        if ($hero instanceof Hero) $this->append_hero($hero);
                     }
                 }
             }
         }
         public function get_pos(): Point3D {
-            return $this->cur_pos;
+            return $this->cur_pos; 
         }
         public function set_pos(Point3D $p): void {
             $this->cur_pos = $p;

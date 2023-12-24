@@ -11,11 +11,11 @@
     class Hero {
         protected static  $max_id = 0;
         protected int     $id = 0;
-        protected string  $name;
+        protected string  $name = '';
 
         public function __construct() {
             $this->id   = --Hero::$max_id;
-            $this->name = 'New Hero #' . sprintf('03d', -$this->id);
+            $this->name = 'New Hero #' . sprintf('%03d', -1 * $this->id);
         }
         public function encode(): array {
             $a = [];

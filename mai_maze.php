@@ -44,9 +44,10 @@
                 $gv->maze->create_stair($i);
             }
             $ret_maze = $gv->maze->encode();
+
             $gv->team = new_team();
             $ret_team = $gv->team->encode();
-
+ 
             $ret_JSON = json_encode(['maze' => $ret_maze, 'team' => $ret_team],  
                         JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             break;
@@ -106,6 +107,7 @@
         public const  Max_of_Maze_Floor = 3;
         public Maze   $maze;
         public Team   $team;
+        public array  $heroes = [];
 
         public function __construct() {
             global $db_host;
@@ -158,11 +160,12 @@ function new_team(): Team {
     $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
     $z = 0;  //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
     $d = random_int(0, Direct::MAX);
+
     $heroes = [];
     for ($i = 0; $i <= 3; $i++) {
         array_push($heroes, new Hero());
     }
-    return new Team(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d, 'heroes' => $heroes]);
+    return new Team(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d, 'Heroes' => $heroes]);
 }
 
 
