@@ -78,6 +78,13 @@
         public function set_dir(Direct $d): void {
             $this->cur_dir = $d;
         }
+        public function get_number_of_heroes(): int {
+            return count($this->heroes);
+        }
+        public function get_hero(int $num): Hero|null {
+            if ($num < 0 || $num >= count($this->heroes)) return null;
+            return $this->heroes[$num];
+        }
         public function append_hero(Hero $hero): void {
             array_push($this->heroes, $hero);
         }

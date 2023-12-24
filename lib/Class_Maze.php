@@ -175,12 +175,18 @@
             }
         }
 
+        public function within_XYZ(int $pos_x, int $pos_y, int $pos_z): bool {
+            return (    $pos_x >  0 && $pos_x < $this->size_x
+                     && $pos_y >  0 && $pos_y < $this->size_y
+                     && $pos_z >= 0 && $pos_z < $this->size_z);
+        }
         public function get_id():     int {return $this->maze_id;}
         public function get_size_x(): int {return $this->size_x;}
         public function get_size_y(): int {return $this->size_y;}
         public function get_size_z(): int {return $this->size_z;}
 
         public function get_cell(int $pos_x, int $pos_y, int $pos_z): MzKind {
+            if (!$this->within_XYZ($pos_x, $pos_y, $pos_z)) return false;
             return $this->cells[$pos_z][$pos_y][$pos_x]->get_cell();
         }
 
@@ -393,7 +399,7 @@
             $ret_str = '';
             for ($h = 0; $h < count($this->cells[$floor]); $h++) {
                 for ($w = 0; $w < count($this->cells[$floor][$h]); $w++) {
-                    if ($do_mask) $ret_str .= '■';
+                    if ($do_mask && $this->masks[$floor][$h][$w]) $ret_str .= '■';
                     else $ret_str .= $this->cells[$floor][$h][$w]->to_letter();
                 }
                 $ret_str .= "\n";
@@ -466,30 +472,30 @@
 
         }
 
-        public function decode(array $d): void {
+        public function decode(array $e): void {
 
-            if(array_key_exists('maze_id', $d) && is_numeric($d['maze_id'])) {
-                $this->maze_id    = $d['maze_id'];
+            if(array_key_exists('maze_id', $e) && is_numeric($e['maze_id'])) {
+                $this->maze_id    = $e['maze_id'];
             }
-            if(array_key_exists('floor', $d) && is_numeric($d['floor'])) {
-                $this->maze_floor = $d['floor'];
+            if(array_key_exists('floor', $e) && is_numeric($e['floor'])) {
+                $this->maze_floor = $e['floor'];
             }
-            if(array_key_exists('title', $d) && $d['title'] != '') {
-                $this->title      = $d['title'];
+            if(array_key_exists('title', $e) && $e['title'] != '') {
+                $this->title      = $e['title'];
             }
-            if(array_key_exists('size_x', $d) && is_numeric($d['size_x'])) {
-                $this->size_x     = $d['size_x'];
+            if(array_key_exists('size_x', $e) && is_numeric($e['size_x'])) {
+                $this->size_x     = $e['size_x'];
             }
-            if(array_key_exists('size_y', $d) && is_numeric($d['size_y'])) {
-                $this->size_y     = $d['size_y'];
+            if(array_key_exists('size_y', $e) && is_numeric($e['size_y'])) {
+                $this->size_y     = $e['size_y'];
             }
-            if(array_key_exists('size_z', $d) && is_numeric($d['size_z'])) {
-                $this->size_z     = $d['size_z'];
+            if(array_key_exists('size_z', $e) && is_numeric($e['size_z'])) {
+                $this->size_z     = $e['size_z'];
             }
 
             // MAZEの復元
-            if(array_key_exists('maze', $d) && $d['maze'] != '') {
-                $maze_str         = $d['maze'];
+            if(is_array($e) && array_key_exists('maze', $e) && $e['maze'] != '') {
+                $maze_str         = $e['maze'];
 
                 for ($d = 0; $d < $this->size_z; $d++) 
                     for ($h = 0; $h < $this->size_y; $h++) 
@@ -512,8 +518,8 @@
             }
 
             // MASKの復元
-            if(array_key_exists('mask', $d) && $d['mask'] != '') {
-                $mask_str         = $d['mask'];
+            if(is_array($e) && array_key_exists('mask', $e) && $e['mask'] != '') {
+                $mask_str         = $e['mask'];
                 $flr_array = explode('Z', $mask_str);
                 $size_z    = min($this->size_z, count($flr_array));
                 for ($d = 0; $d < $size_z; $d++) { 

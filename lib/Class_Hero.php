@@ -17,6 +17,8 @@
             $this->id   = --Hero::$max_id;
             $this->name = 'New Hero #' . sprintf('%03d', -1 * $this->id);
         }
+        public function get_id():   int    {return $this->id;}
+        public function get_name(): string {return $this->name;}
         public function encode(): array {
             $a = [];
             $a['id']   = $this->id;

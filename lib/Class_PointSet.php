@@ -89,9 +89,9 @@ class Point3D {
     public static function decode(array $a): Point3D {
         if (!is_null($a) && is_array($a)) {
             if (
-                array_key_exists('x', $a) && (is_numeric($a['x']) && $a[['x']] >  0)
-            &&  array_key_exists('y', $a) && (is_numeric($a['y']) && $a[['y']] >  0)
-            &&  array_key_exists('z', $a) && (is_numeric($a['z']) && $a[['z']] >= 0)
+                array_key_exists('x', $a) && (is_numeric($a['x']) && $a['x'] >  0)
+            &&  array_key_exists('y', $a) && (is_numeric($a['y']) && $a['y'] >  0)
+            &&  array_key_exists('z', $a) && (is_numeric($a['z']) && $a['z'] >= 0)
             ) {
                 return new Point3D($a['x'], $a['y'], $a['z']);
             }

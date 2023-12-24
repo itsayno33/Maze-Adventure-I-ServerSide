@@ -37,7 +37,7 @@
 /*******************************************************************************/
 
     init();
-    $ga->mode = 'new'; // 暫定
+//    $ga->mode = 'new'; // 暫定
     switch ($ga->mode) {
         case 'new':
             for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
@@ -52,8 +52,8 @@
             $gv->maze_assoc = json_decode($ga->maze_JSON, true);
             $gv->team_assoc = json_decode($ga->team_JSON, true);
 
-            $gv->maze->decode($gv->maze_data);
-            $gv->team->decode($gv->team_data);
+            $gv->maze->decode($gv->maze_assoc);
+            $gv->team->decode($gv->team_assoc);
             break;
         default:
             break;
@@ -138,12 +138,27 @@ function new_team(): Team {
         if (is_null(($gv->team_assoc))) return;
 
         echo "<ul>\n";
-        foreach ($gv->team_assoc as $key => $value) {
-            echo "<li> {$key} = {$value} </li>\n";
-        }
+        echo "<li> id     = " . $gv->team_assoc['id']     . "</li>\n";
+        echo "<li> name   = " . $gv->team_assoc['name']   . "</li>\n";
+        echo "<li> cur_x  = " . $gv->team_assoc['point']['x'] . "</li>\n";
+        echo "<li> cur_y  = " . $gv->team_assoc['point']['y'] . "</li>\n";
+        echo "<li> cur_z  = " . $gv->team_assoc['point']['z'] . "</li>\n";
+        echo "<li> cur_d  = " . $gv->team_assoc['direct']['d'] . "</li>\n";
+        echo "<li> Heroes "; 
+            display_heroes_assoc($gv->team_assoc['heroes']); 
+        echo "</li>\n";
         echo "</ul>\n";
 
         return;
+    }
+    function display_heroes_assoc(array $heroes): void {
+        if (is_null($heroes) || !is_array($heroes)) return;
+        echo "<dl>\n";
+        foreach($heroes as $hero) {
+            echo "<dt>{$hero['name']}</dt>\n";
+            echo "<dd> id   = {$hero['id']}</dd>\n";
+        }
+        echo "</dl>\n";
     }
     function display_team_obj(): void {
         global $gv, $ga, $DirectionName;
@@ -156,9 +171,23 @@ function new_team(): Team {
         echo "<li> cur_y  = " . $gv->team->get_pos()->y . "</li>\n";
         echo "<li> cur_z  = " . $gv->team->get_pos()->z . "</li>\n";
         echo "<li> cur_d  = " . $gv->team->get_dir()->get_mb_name() . "</li>\n";
+        echo "<li> Heroes: ";
+            display_heroes_obj($gv->team);
+        echo "</li>\n";
         echo "</ul>\n";
 
         return;
+    }
+    function display_heroes_obj(Team $team): void {
+        if (is_null($team) || !is_object($team) || !($team instanceof("Team"))) return;
+        echo "<dl>\n";
+        $max = $team->get_number_of_heroes();
+        for ($i = 0; $i < $max; $i++) {
+            $hero = $team->get_hero($i);
+            echo "<dt>"      . $hero->get_id()   . "</dt>\n";
+            echo "<dd>id = " . $hero->get_name() . "</dd>\n";
+        }
+        echo "</dl>\n";
     }
 
 
@@ -327,13 +356,14 @@ function new_team(): Team {
     <meta charset="utf-8" />
     <title>Maze Adventure I JSON Checker</title>
     <link rel="stylesheet" href="css.php?time=<?php echo date("Y-m-d_H:i:s"); ?>&file=check_JSON" />
-    <script type="module" src="./js/bundle.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
+    <!-- script type="module" src="./js/bundle.js?time=<?php //echo date("Y-m-d_H:i:s"); ?>"></script -->
 </head>
 <body>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ JSONデータチェック</h1>
     <article class='Maze_info' id='Maze_info_pane'>
         <h2>ダンジョン・データ</h2>
         <div id ='maze_view'>
+            <p>『<?php echo $ga->mode ?>』モード</p>
             <dl>
                 <dt>受信データ(JSON)</dt>
                 <dd><?php display_maze_JSON() ?></dd>
