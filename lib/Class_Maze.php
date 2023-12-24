@@ -451,7 +451,7 @@
             $mask_str = implode('@', $flr_array);
 
             $ret = [    
-                'maze_id' => $this->maze_id,
+                'id'      => $this->maze_id,
                 'floor'   => $this->maze_floor,
                 'title'   => $this->title,
                 'size_x'  => $this->size_x,

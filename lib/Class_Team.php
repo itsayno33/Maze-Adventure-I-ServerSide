@@ -9,21 +9,24 @@
     require_once 'lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
     require_once 'lib/Class_PointSet.php';   // 位置情報のクラス
     require_once 'lib/Class_Direct.php';     // 方向(東西南北)のクラス
+    require_once 'lib/Class_Hero.php';       // Hero(チームメンバー)のクラス
 
     class Team {
         protected int     $id = 0;
         protected string  $name;
         protected Point3D $cur_pos;
         protected Direct  $cur_dir;
+        protected array   $heroes;
 
         public    function __construct(array $a = null) {
             $this->cur_pos = new Point3D(0, 0, 0);
             $this->cur_dir = new Direct(Direct::N);
-            $this->name    = 'New Hero';
+            $this->name    = 'New Team';
+            $this->heroes   = [];
 
-            $this->__init_pos($a);
+            $this->__init($a);
         } 
-        protected function __init_pos(array $a = null) {
+        protected function __init(array $a = null) {
             if (!is_null($a) && is_array($a)) {
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
                     $this->name = $a['name'];
@@ -43,6 +46,14 @@
                 }
                 if (array_key_exists('d', $a) && (is_numeric($a['d']))) {
                     $this->cur_dir = new Direct($a['d']);
+                }
+                if (array_key_exists('Hero', $a) && ($a['Hero'] instanceof Hero)) {
+                    $this->append_hero($a['Hero']);
+                }
+                if (array_key_exists('Heroes', $a) && is_array($a['Heroes'])) {
+                    foreach ($a['Heroes'] as $hero) {
+                        if ($hero instanceof Hero) $this->append_hero($a['Hero']);
+                    }
                 }
             }
         }
@@ -64,12 +75,24 @@
         public function set_dir(Direct $d): void {
             $this->cur_dir = $d;
         }
+        public function append_hero(Hero $hero): void {
+            array_push($this->heroes, $hero);
+        }
+        public function remove_hero(Hero $hero): void {
+            for ($i = 0; $i < count($this->heroes); $i++) {
+                if ($hero == $this->heroes[$i]) {
+                    array_splice($this->heroes, $i, 1);
+                    return;
+                }
+            }
+        }
         public function encode(): array {
             $e = [];
             $e['id']     = strval($this->id);
             $e['name']   = $this->name;
             $e['point']  = $this->cur_pos->encode();
             $e['direct'] = $this->cur_dir->encode();
+            $e['heroes'] = Hero::encode_heroes($this->heroes);
             return $e;
         }
         public function decode(array $a) {
@@ -78,13 +101,16 @@
                     $this->id      = intval($a['id']);
                 }
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
-                    $this->cur_pos = $a['name'];
+                    $this->name    = $a['name'];
                 }
                 if (array_key_exists('point', $a) && (is_array($a['point']))) {
                     $this->cur_pos = Point3D::decode($a['point']);
                 }
                 if (array_key_exists('direct', $a) && (is_array($a['direct']))) {
                     $this->cur_dir = Direct::decode($a['direct']);
+                }
+                if (array_key_exists('heroes', $a) && (is_array($a['heroes']))) {
+                    $this->heroes  = Hero::decode_heroes($a['heroes']);
                 }
             }
         }

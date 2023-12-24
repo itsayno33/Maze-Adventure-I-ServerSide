@@ -156,10 +156,13 @@ function new_team(): Team {
     global $gv;
     $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
-    $z = 0;
-//    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
+    $z = 0;  //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
     $d = random_int(0, Direct::MAX);
-    return new Team(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
+    $heroes = [];
+    for ($i = 0; $i <= 3; $i++) {
+        array_push($heroes, new Hero());
+    }
+    return new Team(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d, 'heroes' => $heroes]);
 }
 
 
