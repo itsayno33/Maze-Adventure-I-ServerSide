@@ -175,6 +175,7 @@
             }
         }
 
+        public function get_id():     int {return $this->maze_id;}
         public function get_size_x(): int {return $this->size_x;}
         public function get_size_y(): int {return $this->size_y;}
         public function get_size_z(): int {return $this->size_z;}
@@ -388,11 +389,12 @@
             return;
         }
 
-        public function to_string(int $floor = 0): string {
+        public function to_string(int $floor = 0, bool $do_mask = false): string {
             $ret_str = '';
             for ($h = 0; $h < count($this->cells[$floor]); $h++) {
                 for ($w = 0; $w < count($this->cells[$floor][$h]); $w++) {
-                    $ret_str .= $this->cells[$floor][$h][$w]->to_letter();
+                    if ($do_mask) $ret_str .= '■';
+                    else $ret_str .= $this->cells[$floor][$h][$w]->to_letter();
                 }
                 $ret_str .= "\n";
             }

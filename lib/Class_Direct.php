@@ -28,6 +28,19 @@
                     break;
             }
         }
+        public function get_mb_name(): string {
+            return Direct::s_get_mb_name($this->direction);
+        }
+
+        public static function s_get_mb_name(int $d): string {
+            switch ($d) {
+                case Direct::N: return '北';
+                case Direct::E: return '東';
+                case Direct::S: return '南';
+                case Direct::W: return '西';
+                default: return '謎';
+            }
+        }
         public function encode(): array {
             return ['d' => $this->direction];
         }
