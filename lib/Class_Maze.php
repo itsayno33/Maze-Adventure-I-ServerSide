@@ -184,6 +184,7 @@
         public function get_size_x(): int {return $this->size_x;}
         public function get_size_y(): int {return $this->size_y;}
         public function get_size_z(): int {return $this->size_z;}
+        public function get_title():  string {return $this->title;}
 
         public function get_cell(int $pos_x, int $pos_y, int $pos_z): MzKind {
             if (!$this->within_XYZ($pos_x, $pos_y, $pos_z)) return false;
@@ -424,6 +425,23 @@
         }
 
         public function encode(): array {
+            $maze_str = $this->__encode_maze();
+            $mask_str = $this->__encode_mask();
+
+            $ret = [    
+                'id'      => $this->maze_id,
+                'floor'   => $this->maze_floor,
+                'title'   => $this->title,
+                'size_x'  => $this->size_x,
+                'size_y'  => $this->size_y,
+                'size_z'  => $this->size_z,
+                'maze'    => $maze_str,
+                'mask'    => $mask_str,
+            ];
+            return $ret;
+
+        }
+        protected function __encode_maze():string {
             // MAZEの文字列化
             $flr_array = [];
             for ($d = 0; $d < count($this->cells); $d++) {
@@ -437,9 +455,10 @@
                 }
                 array_push($flr_array, implode('Y', $raw_array));
             }
-            $maze_str = implode('Z', $flr_array);
-
-            // MASKの文字列化
+            return implode('Z', $flr_array);
+        }
+        protected function __encode_mask():string {
+                        // MASKの文字列化
             $flr_array = [];
             for ($d = 0; $d < count($this->masks); $d++) {
                 $raw_array = [];
@@ -456,20 +475,7 @@
                 }
                 array_push($flr_array, implode('Y', $raw_array));
             }
-            $mask_str = implode('Z', $flr_array);
-
-            $ret = [    
-                'id'      => $this->maze_id,
-                'floor'   => $this->maze_floor,
-                'title'   => $this->title,
-                'size_x'  => $this->size_x,
-                'size_y'  => $this->size_y,
-                'size_z'  => $this->size_z,
-                'maze'    => $maze_str,
-                'mask'    => $mask_str,
-            ];
-            return $ret;
-
+            return  implode('Z', $flr_array);
         }
 
         public function decode(array $e): void {

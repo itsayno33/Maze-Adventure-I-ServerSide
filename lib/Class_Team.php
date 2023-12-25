@@ -57,6 +57,9 @@
                 }
             }
         }
+        public function set_prp(array $a = null): void {
+            $this->__init($a);
+        }
         public function get_id()  : int    {return $this->id;}
         public function get_name(): string {return $this->name;}
         
