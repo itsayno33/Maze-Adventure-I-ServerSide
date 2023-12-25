@@ -11,20 +11,20 @@
     // 利用クラス等の読み込み
 
     // ダンジョンマップのセルの種類を表す列挙型
-    require_once 'lib/Enum_MzKind.php';
+    require_once '../lib/Enum_MzKind.php';
 
     // 方向を表すクラス
-    require_once 'lib/Class_Direct.php';
+    require_once '../lib/Class_Direct.php';
 
     // 位置・経路を表すクラス全般
-    require_once 'lib/Class_PointSet.php';
+    require_once '../lib/Class_PointSet.php';
 
     // MAZE関係クラス全般
-    require_once 'lib/Class_Maze.php';
+    require_once '../lib/Class_Maze.php';
 
     
     // パーティークラス全般
-    require_once 'lib/Class_Team.php';
+    require_once '../lib/Class_Team.php';
 
 /*******************************************************************************/
 /*                                                                             */

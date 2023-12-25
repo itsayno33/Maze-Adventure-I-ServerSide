@@ -11,7 +11,7 @@
     mb_regex_encoding("UTF-8");
     
     // 利用クラス等の読み込み
-    require_once 'lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
     
     // ダンジョンマップのセルの種類を表す列挙型
     // MzKind::NoDef: 未定義・不明
@@ -24,13 +24,13 @@
     // function from_int(int):       MzKind     整数値に対応する列挙型を返す(クラスメソッド)
     // function to_letter(MzKind):   string     列挙型に対応する文字を返す(ダンジョンの2D表示用)
     // function from_letter(string): MzKind     文字に対応する列挙型を返す(クラスメソッド)
-    require_once 'lib/Enum_MzKind.php';
+    require_once 'Enum_MzKind.php';
 
     // 方向を表すクラス
-    require_once 'lib/Class_Direct.php';
+    require_once 'Class_Direct.php';
 
     // 位置・経路を表すクラス全般
-    require_once 'lib/Class_PointSet.php';
+    require_once 'Class_PointSet.php';
 
 
     class MazeCell {

@@ -6,10 +6,10 @@
     mb_regex_encoding("UTF-8");
 
     // 利用クラス等の読み込み
-    require_once 'lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
-    require_once 'lib/Class_PointSet.php';   // 位置情報のクラス
-    require_once 'lib/Class_Direct.php';     // 方向(東西南北)のクラス
-    require_once 'lib/Class_Hero.php';       // Hero(チームメンバー)のクラス
+    require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once 'Class_PointSet.php';   // 位置情報のクラス
+    require_once 'Class_Direct.php';     // 方向(東西南北)のクラス
+    require_once 'Class_Hero.php';       // Hero(チームメンバー)のクラス
 
     class Team {
         protected int     $id = 0;

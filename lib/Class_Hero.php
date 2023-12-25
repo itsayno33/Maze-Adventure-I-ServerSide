@@ -6,7 +6,7 @@
     mb_regex_encoding("UTF-8");
 
     // 利用クラス等の読み込み
-    require_once 'lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
 
     class Hero {
         protected static  $max_id = 0;

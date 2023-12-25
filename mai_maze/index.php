@@ -9,20 +9,23 @@
     mb_regex_encoding("UTF-8");
 
     // 利用クラス等の読み込み
-    require_once 'lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once '../lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
 
 
     // ダンジョンマップのセルの種類を表す列挙型
-    require_once 'lib/Enum_MzKind.php';
+    require_once '../lib/Enum_MzKind.php';
 
     // 方向を表すクラス
-    require_once 'lib/Class_Direct.php';
+    require_once '../lib/Class_Direct.php';
 
     // 位置・経路を表すクラス全般
-    require_once 'lib/Class_PointSet.php';
+    require_once '../lib/Class_PointSet.php';
 
     // MAZE関係クラス全般
-    require_once 'lib/Class_Maze.php';
+    require_once '../lib/Class_Maze.php';
+
+    // パーティークラス全般
+    require_once '../lib/Class_Team.php';
 
 /*******************************************************************************/
 /*                                                                             */
@@ -34,12 +37,25 @@
     $ga->mode = 'new'; // 暫定
     switch ($ga->mode) {
         case 'new':
-            $gv->maze->create_maze();
+            $gv->maze->create_maze(0);
+            $gv->team = new_team();
             break;
         default:
             break;
     }
 
+//////////////////////////////////////////////
+///   サブルーチン
+//////////////////////////////////////////////
+
+function new_team(): Team {
+    global $gv;
+    $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
+    $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
+    $z = 2 * random_int(0,  ($gv->maze->get_size_z() - 1));
+    $d = random_int(0, Direct::MAX);
+    return new Team(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d]);
+}
 
 /*******************************************************************************/
 /*                                                                             */
@@ -101,6 +117,7 @@
         public const    Limit_of_room    = 5;
         public const    Max_size_of_room = 3;
         public Maze     $maze;
+        public Team     $team;
 
         public function __construct() {
             global $db_host;
@@ -139,7 +156,7 @@
             if ( array_key_exists('mode', $_GET) && $_GET['mode'] != '') {
                 $this->mode         = $_GET ['mode'];
             } else {
-                if ( array_key_exists('mode', $_POST) &&  $_POST['mmd_id'] != '') {
+                if ( array_key_exists('mode', $_POST) &&  $_POST['mode'] != '') {
                     $this->mode     = $_POST['mode'];
                 } else {
                     $this->mode     = 'view';
@@ -201,29 +218,47 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
-    <title>Random List of MMD VIDEO Page</title>
-    <link rel="stylesheet" href="css.php?time=<?php echo date("Y-m-d_H:i:s"); ?>&file=Maze_adventure_1" />
+    <title>Maze Adventure I</title>
+    <link rel="stylesheet" href="css.php?time=<?php echo date("Y-m-d_H:i:s"); ?>&file=mai_index" />
+    <script type="module" src="./js/bundle.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
 </head>
 <body>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
-    <section class='main'>
-        <article class='Maze_view2D'>
-            <?php display_maze(); ?>
-        </article>
-        <article class='Maze_view3D'>
-            <canvas id='Maze_view3D' width='800' height='480'></canvas>
-        </article>
-        <article class='Maze_cntl'>
-            <h2>ダンジョン探索</h2>
-            <?php display_cntl(); ?>
-        </article>
-        <article class='message_pane'>
-            <?php 
-                $gv->mes->display_err_message(); 
-                $gv->mes->display_nor_message(); 
-            ?>
-        </article>
-    </section>
+    <article class='Maze_view' id='Maze_view_pane'>
+        <div id='Maze_view2D'>
+            <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
+            <pre id='Maze_view2D_pre'></pre>
+        </div>
+        <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>
+        <div id='Maze_view3D'>
+            <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
+            <p id='Maze_view3D_direction_info'></p>
+        </div>
+        <?php /* display_maze(); */ ?>
+    </article>
+    <article class='Maze_info' id='Maze_info_pane'>
+        <h2>ダンジョン探索</h2>
+        <div id ='move_ctl_view'><div id='move_ctl_panel'>
+            <button id='u_arrow' type='button' name='u_arrow' value='U'>↑</button>
+            <button id='d_arrow' type='button' name='d_arrow' value='D'>↓</button>
+            <button id='l_arrow' type='button' name='l_arrow' value='L'>←</button>
+            <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
+            <button id='y_btn'   type='button' name='y_btn'   value='U'>〇</button>
+            <button id='n_btn'   type='button' name='n_btn'   value='N'>✖</button>
+        </div></div>
+        <?php /* display_cntl(); */ ?>
+    </article>
+    <article class='message_pane' id='message_pane'>
+        <div id='client_message'></div>
+        <?php 
+            $gv->mes->display_err_message(); 
+            $gv->mes->display_nor_message(); 
+        ?>
+    </article>
+    <footer id='footer_pane'>
+        <a href='../../md/'><img src='../icon-img/kkrn_icon_home_3.png' /></a>
+        <p class='foot_print'>Maze Adventure Ⅰ.</p>
+    </footer>
 </body>
 <?php
     // 大域変数の開放
@@ -231,9 +266,5 @@
     // POST引数の解放
     $ga  = null;
 ?>
-<script src="./js/index.js"></script>
-<script type="text/javascript">
-//    onload = function () {}
-</script>
 </html>
 
