@@ -41,12 +41,8 @@
     switch ($ga->mode) {
         case 'new':
             new_maze();
-            $ret_maze = $gv->maze->encode();
             new_team();
-            $ret_team = $gv->team->encode();
- 
-            $ret_JSON = json_encode(['maze' => $ret_maze, 'team' => $ret_team],  
-                        JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            $ret_JSON = all_encode(0);
             break;
         case 'instant_save':
             $gv->maze_assoc = json_decode($ga->maze_JSON, true);
@@ -55,6 +51,10 @@
             $gv->team_assoc = json_decode($ga->team_JSON, true);
             $gv->team->decode($gv->team_assoc);
             $result = do_i_save();
+
+            if ($result) $code = 0; else $code = 100;
+            if ($gv->mes->is_err()) $code = 200;
+            $ret_JSON = all_encode($code);
             break;
         default:
             $ret = [
@@ -79,6 +79,22 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
+function all_encode(int $code): string {
+    global $gv;
+
+    $ret_assoc = [];
+
+    $ret_assoc['ecode'] = $code;
+    if ($gv->mes->is_err()) {
+        $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+    }
+    $ret_assoc['maze'] = $gv->maze->encode();
+    $ret_assoc['team'] = $gv->team->encode();
+
+    $ret_JSON = json_encode($ret_assoc,  
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    return $ret_JSON;
+}
 function new_maze(): void {
     global $gv;
     for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
@@ -107,7 +123,7 @@ function do_i_save(): bool {
     return do_save(1, '__InstantSaveData__', true);
 }
 
-function do_save(int $hope_id, string $title, bool $is_instant): bool {
+function do_save(int $save_id, string $title, bool $is_instant): bool {
     global $gv;
     $db_mai = $gv->db_mai;
 
@@ -116,38 +132,38 @@ function do_save(int $hope_id, string $title, bool $is_instant): bool {
 
     tr_begin($db_mai);
 
-    $result = del_hero($db_mai, $hope_id);
+    $result = del_hero($db_mai, $save_id);
     if ($result === false) {
         tr_rollback($db_mai);
         return false;
     }
 
-    $result = del_team($db_mai, $hope_id);
+    $result = del_team($db_mai, $save_id);
     if ($result === false) {
         tr_rollback($db_mai);
         return false;
     }
 
-    $result = del_maze($db_mai, $hope_id);
+    $result = del_maze($db_mai, $save_id);
     if ($result === false) {
         tr_rollback($db_mai);
         return false;
     }
 
-    $result = del_save($db_mai, $hope_id);
+    $result = del_save($db_mai, $save_id);
     if ($result === false) {
         tr_rollback($db_mai);
         return false;
     }
 
-    $save_id = add_save($db_mai, 1, $title, $is_instant);
-    if ($save_id === false || intval($save_id) !== $hope_id) {
+    $result = add_save($db_mai, 1, $save_id, $title, $is_instant);
+    if ($result === false) {
         tr_rollback($db_mai);
         return false;
-    }
+    } 
 
-    $maze_id = add_maze($db_mai, $save_id);
-    if ($maze_id === false) {
+    $result = add_maze($db_mai, $save_id);
+    if ($result === false) {
         tr_rollback($db_mai);
         return false;
     }
@@ -158,13 +174,13 @@ function do_save(int $hope_id, string $title, bool $is_instant): bool {
         return false;
     }
 
-    $hero_id = add_hero($db_mai, $save_id, $team_id);
-    if ($hero_id  === false) {
+    $result = add_hero($db_mai, $save_id, $team_id);
+    if ($result  === false) {
         tr_rollback($db_mai);
         return false;
     }
 
-    tr_commit($db_mai);
+    return tr_commit($db_mai);
 }
 
 /*******************************************************************************/
@@ -187,6 +203,8 @@ function do_save(int $hope_id, string $title, bool $is_instant): bool {
 
     // 大域変数の設定
     class GlobalVar {
+        public DspMessage $mes;
+
         public string $script_path;
         public string $cgi_base;
         public string $cgi_home;
@@ -209,6 +227,8 @@ function do_save(int $hope_id, string $title, bool $is_instant): bool {
 
         public function __construct() {
             global $db_host;
+
+            $this->mes = new DspMessage( /* isHTML = */ false);
 
             $this->script_path = $_SERVER['SCRIPT_NAME'];
             $this->cgi_base    = pathinfo($this->script_path, PATHINFO_DIRNAME);
@@ -253,23 +273,15 @@ function do_save(int $hope_id, string $title, bool $is_instant): bool {
             }
             if ( array_key_exists('maze', $_POST) &&  $_POST['maze'] != '') {
                 $this->maze_JSON    = $_POST['maze'];
-            } else {
-                $this->maze_JSON    = '';
             } 
             if ( array_key_exists('team', $_POST) &&  $_POST['team'] != '') {
                 $this->team_JSON    = $_POST['team'];
-            } else {
-                $this->team_JSON    = '';
             } 
             if ( array_key_exists('save_id', $_POST) &&  is_numeric($_POST['save_id'])) {
-                $this->save_id      = $_POST['save_id'];
-            } else {
-                $this->save_id    = '';
+                $this->save_id      = intval($_POST['save_id']);
             } 
             if ( array_key_exists('save_title', $_POST) &&  $_POST['save_title'] != '') {
                 $this->save_title    = $_POST['save_title'];
-            } else {
-                $this->save_title    = '';
             } 
         }
     }
@@ -318,14 +330,15 @@ function tr_rollback(PDO $db_mai): bool {
     return true;
 }
 
-function add_save(PDO $db_mai, int $player_id, string $title, bool $is_instant): int | false {
+function add_save(PDO $db_mai, int $player_id, int $save_id, string $title, bool $is_instant): int | bool {
     $insert_save_SQL =<<<INSERT_SAVE01
-        INSERT INTO tbl_save (player_id, title, auto_mode, is_active, is_delete)
-        VALUES ( :player_id , :title , :auto_mode, true, false)
+        INSERT INTO tbl_save (player_id, id, title, auto_mode, is_active, is_delete)
+        VALUES ( :player_id, :id, :title, :auto_mode, true, false)
 INSERT_SAVE01;
     try {
         $insert_save_stmt = $db_mai->prepare($insert_save_SQL);
         $insert_save_stmt->bindValue(':player_id', $player_id);
+        $insert_save_stmt->bindValue(':id',        $save_id);
         $insert_save_stmt->bindValue(':title',     $title);
         $insert_save_stmt->bindValue(':auto_mode', $is_instant);
         $insert_save_stmt->execute();
@@ -337,12 +350,13 @@ INSERT_SAVE01;
         pdo_error2($ee, "SQLの致命的エラー 1: {$insert_save_SQL}");
         return false;
     } 
-    return intval($db_mai->lastInsertId());
+//    return intval($db_mai->lastInsertId());
+    return true;
 }
 
-function add_maze(PDO $db_mai, int $save_id): int | false {
-    global $ga;
-    $a = $ga->maze->encode();
+function add_maze(PDO $db_mai, int $save_id): int | bool {
+    global $gv;
+    $a = $gv->maze->encode();
 
     $insert_maze_SQL =<<<INSERT_MAZE01
         INSERT INTO tbl_maze (save_id, title, size_x, size_y, size_z, maps, mask)
@@ -354,7 +368,7 @@ INSERT_MAZE01;
         $insert_maze_stmt->bindValue(':title',   $a['title']); 
         $insert_maze_stmt->bindValue(':size_x',  $a['size_x']); 
         $insert_maze_stmt->bindValue(':size_y',  $a['size_y']); 
-        $insert_maze_stmt->bindValue(':size_y',  $a['size_z']); 
+        $insert_maze_stmt->bindValue(':size_z',  $a['size_z']); 
         $insert_maze_stmt->bindValue(':maps',    $a['maze']); 
         $insert_maze_stmt->bindValue(':mask',    $a['mask']); 
         $insert_maze_stmt->execute();
@@ -366,12 +380,13 @@ INSERT_MAZE01;
         pdo_error2($ee, "SQLの致命的エラー 5: {$insert_maze_SQL}");
         return false;
     } 
-    return intval($db_mai->lastInsertId());
+//    return intval($db_mai->lastInsertId());
+    return true;
 }
 
-function add_team(PDO $db_mai, int $save_id): int | false {
-    global $ga;
-    $a = $ga->team->encode();
+function add_team(PDO $db_mai, int $save_id): int | bool {
+    global $gv;
+    $a = $gv->team->encode();
 
     $insert_team_SQL =<<<INSERT_TEAM01
         INSERT INTO tbl_team (save_id, name, pos_x, pos_y, pos_z, pos_d)
@@ -395,23 +410,11 @@ INSERT_TEAM01;
         return false;
     } 
     return intval($db_mai->lastInsertId());
+//    return true;
 }
 
-function add_hero(PDO $db_mai, int $save_id, int $team_id): int | false {
-    global $ga;
-
-    $heroes = ($ga->team->encode())['heroes'];
-
-    $v = [];
-    foreach ($heroes as $hero) {
-        array_push($v, [
-            ':save_id'  => $save_id, 
-            ':team_id'  => $team_id, 
-            ':name'     => $hero['name'],
-            ':is_hero'  => true,
-            ':is_alive' => true
-        ]);
-    }
+function add_hero(PDO $db_mai, int $save_id, int $team_id): int | bool {
+    global $gv;
 
     $insert_hero_SQL =<<<INSERT_HERO01
         INSERT INTO tbl_hero (save_id, team_id, name, is_hero, is_alive)
@@ -419,8 +422,16 @@ function add_hero(PDO $db_mai, int $save_id, int $team_id): int | false {
 INSERT_HERO01;
     try {
         $insert_hero_stmt = $db_mai->prepare($insert_hero_SQL);
-        $insert_hero_stmt->execute([$v]);
-        $insert_hero_stmt->fetchAll();
+        $heroes = ($gv->team->encode())['heroes'];
+        foreach ($heroes as $hero) {
+            $insert_hero_stmt->bindValue(':save_id',   $save_id); 
+            $insert_hero_stmt->bindValue(':team_id',   $team_id); 
+            $insert_hero_stmt->bindValue(':name',      $hero['name']);
+            $insert_hero_stmt->bindValue(':is_hero',   true);
+            $insert_hero_stmt->bindValue(':is_alive',  true);
+            $insert_hero_stmt->execute();
+            $insert_hero_stmt->fetchAll();
+        }
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 8: {$insert_hero_SQL}");
         return false;
@@ -428,7 +439,8 @@ INSERT_HERO01;
         pdo_error2($ee, "SQLの致命的エラー 9: {$insert_hero_SQL}");
         return false;
     } 
-    return intval($db_mai->lastInsertId());
+//    return intval($db_mai->lastInsertId());
+    return true;
 }
 
 function del_save(PDO $db_mai, int $save_id): bool {
@@ -436,7 +448,7 @@ function del_save(PDO $db_mai, int $save_id): bool {
 
     $delete_save_SQL =<<<DELETE_SAVE01
         DELETE FROM tbl_save 
-        WHERE  save_id = :save_id
+        WHERE  id = :save_id
 DELETE_SAVE01;
     try {
         $delete_save_stmt = $db_mai->prepare($delete_save_SQL);

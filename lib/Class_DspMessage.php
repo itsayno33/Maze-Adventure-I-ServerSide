@@ -49,6 +49,13 @@
             return;
         }
     
+        public function get_nor_messages(): array {
+            return $this->nor_message;
+        }
+        public function get_err_messages(): array {
+            return $this->err_message;
+        }
+
         public function is_err(): bool {
             if (count($this->err_message) < 1) return false;
             return true;
