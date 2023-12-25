@@ -123,14 +123,17 @@ function do_i_save(): bool {
     return do_save(1, '__InstantSaveData__', true);
 }
 
-function do_save(int $save_id, string $title, bool $is_instant): bool {
+function do_save(int $player_id, string $title, bool $is_instant): bool {
     global $gv;
     $db_mai = $gv->db_mai;
 
-    if ($is_instant) $title = '__InstantSaveData__';
-    else $title = $ga->save_title;
-
     tr_begin($db_mai);
+
+    $save_id = get_save_id($db_mai, $player_id, $title);
+    if ($save_id === false) {
+        tr_rollback($db_mai);
+        return false;
+    }
 
     $result = del_hero($db_mai, $save_id);
     if ($result === false) {
@@ -330,6 +333,28 @@ function tr_rollback(PDO $db_mai): bool {
     return true;
 }
 
+function get_save_id(PDO $db_mai, int $player_id, string $title): int | false {
+    $seek_save_SQL =<<<SEEK_SAVE01
+        SELECT id FROM tbl_save
+        WHERE  player_id = :player_id AND title = :title
+SEEK_SAVE01;
+try {
+    $seek_save_stmt = $db_mai->prepare($seek_save_SQL);
+    $seek_save_stmt->bindValue(':player_id', $player_id);
+    $seek_save_stmt->bindValue(':title',     $title);
+    $seek_save_stmt->execute();
+    $resultRecordSet = $seek_save_stmt->fetchAll();
+} catch (PDOException $e) {
+    pdo_error1($e, "SQLエラー 20: {$seek_save_SQL}");
+    return false;
+} catch (Throwable $ee) {
+    pdo_error2($ee, "SQLの致命的エラー 21: {$seek_save_SQL}");
+    return false;
+} 
+    if (count($resultRecordSet) < 1) return false;
+    return intval($resultRecordSet[0]['id']);
+}
+
 function add_save(PDO $db_mai, int $player_id, int $save_id, string $title, bool $is_instant): int | bool {
     $insert_save_SQL =<<<INSERT_SAVE01
         INSERT INTO tbl_save (player_id, id, title, auto_mode, is_active, is_delete)
@@ -342,12 +367,11 @@ INSERT_SAVE01;
         $insert_save_stmt->bindValue(':title',     $title);
         $insert_save_stmt->bindValue(':auto_mode', $is_instant);
         $insert_save_stmt->execute();
-        $insert_save_stmt->fetchAll();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 1: {$insert_save_SQL}");
         return false;
     } catch (Throwable $ee) {
-        pdo_error2($ee, "SQLの致命的エラー 1: {$insert_save_SQL}");
+        pdo_error2($ee, "SQLの致命的エラー 2: {$insert_save_SQL}");
         return false;
     } 
 //    return intval($db_mai->lastInsertId());
@@ -372,7 +396,6 @@ INSERT_MAZE01;
         $insert_maze_stmt->bindValue(':maps',    $a['maze']); 
         $insert_maze_stmt->bindValue(':mask',    $a['mask']); 
         $insert_maze_stmt->execute();
-        $insert_maze_stmt->fetchAll();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 3: {$insert_maze_SQL}");
         return false;
@@ -401,7 +424,6 @@ INSERT_TEAM01;
         $insert_team_stmt->bindValue(':pos_z',   $a['point']['z']); 
         $insert_team_stmt->bindValue(':pos_d',   $a['direct']['d']); 
         $insert_team_stmt->execute();
-        $insert_team_stmt->fetchAll();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 6: {$insert_team_SQL}");
         return false;
@@ -430,7 +452,6 @@ INSERT_HERO01;
             $insert_hero_stmt->bindValue(':is_hero',   true);
             $insert_hero_stmt->bindValue(':is_alive',  true);
             $insert_hero_stmt->execute();
-            $insert_hero_stmt->fetchAll();
         }
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 8: {$insert_hero_SQL}");
@@ -454,7 +475,6 @@ DELETE_SAVE01;
         $delete_save_stmt = $db_mai->prepare($delete_save_SQL);
         $delete_save_stmt->bindValue(':save_id', $save_id);
         $delete_save_stmt->execute();
-        $delete_save_stmt->fetchAll();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 10: {$delete_save_SQL}");
         return false;
@@ -476,7 +496,6 @@ DELETE_MAZE01;
         $delete_maze_stmt = $db_mai->prepare($delete_maze_SQL);
         $delete_maze_stmt->bindValue(':save_id', $save_id);
         $delete_maze_stmt->execute();
-        $delete_maze_stmt->fetchAll();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 12: {$delete_maze_SQL}");
         return false;
@@ -498,7 +517,6 @@ DELETE_TEAM01;
         $delete_team_stmt = $db_mai->prepare($delete_team_SQL);
         $delete_team_stmt->bindValue(':save_id', $save_id);
         $delete_team_stmt->execute();
-        $delete_team_stmt->fetchAll();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 15: {$delete_team_SQL}");
         return false;
@@ -520,7 +538,6 @@ DELETE_HERO01;
         $delete_hero_stmt = $db_mai->prepare($delete_hero_SQL);
         $delete_hero_stmt->bindValue(':save_id', $save_id);
         $delete_hero_stmt->execute();
-        $delete_hero_stmt->fetchAll();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 17: {$delete_hero_SQL}");
         return false;
