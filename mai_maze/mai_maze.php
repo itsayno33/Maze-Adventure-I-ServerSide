@@ -44,6 +44,16 @@
             new_team();
             $ret_JSON = all_encode(0);
             break;
+        case 'instant_load':
+            $result = do_i_load();
+
+            if (!$result || $gv->mes->is_err()) {
+                $code = 100;
+                $ret_JSON = all_encode($code);
+                break;
+            }
+            $ret_JSON = all_encode(0);
+            break;
         case 'instant_save':
             $gv->maze_assoc = json_decode($ga->maze_JSON, true);
             $gv->maze->decode($gv->maze_assoc);
@@ -51,23 +61,18 @@
             $gv->team_assoc = json_decode($ga->team_JSON, true);
             $gv->team->decode($gv->team_assoc);
             $result = do_i_save();
+            if ($result) do_i_load();
 
-            if ($result) $code = 0; else $code = 100;
-            if ($gv->mes->is_err()) $code = 200;
-            $ret_JSON = all_encode($code);
+            if (!$result || $gv->mes->is_err()) {
+                $code = 200;
+                $ret_JSON = all_encode($code);
+                break;
+            }
+            $ret_JSON = all_encode(0);
             break;
         default:
-            $ret = [
-                'maze_id' => -1,
-                'floor'   => -1,
-                'title'   => 'No Title',
-                'size_x'  =>  0,
-                'size_y'  =>  0,
-                'size_z'  =>  0,
-                'maze'    => '',
-                'mask'    => $ga->mode,
-            ];
-            $ret_JSON = json_encode(['maze' => $ret],  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            $gv->mes->set_err_message('Unknwn Mode was requested.');
+            $ret_JSON = all_encode(999);
             break;
     }
 
@@ -85,11 +90,12 @@ function all_encode(int $code): string {
     $ret_assoc = [];
 
     $ret_assoc['ecode'] = $code;
-    if ($gv->mes->is_err()) {
+    if ($code !== 0 || $gv->mes->is_err()) {
         $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+    } else {
+        $ret_assoc['maze'] = $gv->maze->encode();
+        $ret_assoc['team'] = $gv->team->encode();
     }
-    $ret_assoc['maze'] = $gv->maze->encode();
-    $ret_assoc['team'] = $gv->team->encode();
 
     $ret_JSON = json_encode($ret_assoc,  
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -118,6 +124,307 @@ function new_team(): void {
     }
     $gv->team->set_prp(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d, 'Heroes' => $heroes]);
 }
+
+function do_i_load(): bool {
+    return do_load(1, '__InstantSaveData__', true);
+}
+
+function do_load(int $player_id, string $title, bool $is_instant): bool {
+    global $gv;
+    $db_mai = $gv->db_mai;
+
+    tr_begin($db_mai);
+
+    $save_id = get_save_id($db_mai, $player_id, $title);
+    if ($save_id === false) {
+        tr_rollback($db_mai);
+        return false;
+    }
+
+    $result = get_save($db_mai, $save_id);
+    if (is_null($result) || !is_array($result)) {
+        $gv->mes->set_err_message('No Instant Save Data Exist.');
+        tr_rollback($db_mai);
+        return false;
+    }
+    if (array_key_exists('auto_mode', $result) && $result['auto_mode'] == 0) {
+        $gv->mes->set_err_message('Is Not a Instant Save Data Exist.');
+        tr_rollback($db_mai);
+        return false;
+    }
+    if (array_key_exists('is_active', $result) && $result['is_active'] == 0) {
+        $gv->mes->set_err_message('The Active Instant Save Data Is Not Exist.');
+        tr_rollback($db_mai);
+        return false;
+    }
+    if (array_key_exists('is_delete', $result) && $result['is_delete'] != 0) {
+        $gv->mes->set_err_message('The Instant Save Data Has Been Deleted.');
+        tr_rollback($db_mai);
+        return false;
+    }
+
+    $maze_assoc = get_maze($db_mai, $save_id);    
+    if (is_null($maze_assoc) || !is_array($maze_assoc)) {
+        $gv->mes->set_err_message('The Read Save Data of Maze Failed.');
+        tr_rollback($db_mai);
+        return false;
+    }
+    if (set_maze($maze_assoc)) {
+        $gv->mes->set_err_message('Can not set The Save Data of Maze.');
+        tr_rollback($db_mai);
+        return false;
+    }
+
+    $heroes_array = get_heroes($db_mai, $save_id);    
+    if (is_null($heroes_array) || !is_array($heroes_array)) {
+        $gv->mes->set_err_message('The Read Save Data of Heroes Failed.');
+        tr_rollback($db_mai);
+        return false;
+    }
+
+    $team_assoc = get_team($db_mai, $save_id);    
+    if (is_null($team_assoc) || !is_array($team_assoc)) {
+        $gv->mes->set_err_message('The Read Save Data of Team Failed.');
+        tr_rollback($db_mai);
+        return false;
+    }
+    if (set_team($team_assoc)) {
+        $gv->mes->set_err_message('Can not set The Save Data of Team.');
+        tr_rollback($db_mai);
+        return false;
+    }
+
+    if (set_heroes($heroes_array)) {
+        $gv->mes->set_err_message('Can not set The Save Data of Heroes.');
+        tr_rollback($db_mai);
+        return false;
+    }
+
+    return tr_commit($db_mai);
+}
+
+function get_save(PDO $db_mai, int $save_id): array | null {
+    $get_save_SQL =<<<GET_SAVE01
+        SELECT auto_mode, is_active, is_delete FROM tbl_save
+        WHERE  id = :save_id
+GET_SAVE01;
+    try {
+        $get_save_stmt = $db_mai->prepare($get_save_SQL);
+        $get_save_stmt->bindValue(':save_id', $save_id);
+        $get_save_stmt->execute();
+        $resultRecordSet = $get_save_stmt->fetchAll();
+    } catch (PDOException $e) {
+        pdo_error1($e, "SQLエラー 30: {$get_save_SQL}");
+        return null;
+    } catch (Throwable $ee) {
+        pdo_error2($ee, "SQLの致命的エラー 31: {$get_save_SQL}");
+        return null;
+    } 
+
+    if (count($resultRecordSet) < 1) {
+        $gv->mes->set_err_message("データが有りません 32: {$get_save_SQL}");
+        return null;
+    }
+    return $resultRecordSet[0];
+}
+
+function get_maze(PDO $db_mai, int $save_id): array | null {
+    $get_maze_SQL =<<<GET_MAZE01
+        SELECT 	id, save_id, title, size_x, size_y, size_z, maps, mask FROM tbl_maze
+        WHERE   save_id = :save_id
+GET_MAZE01;
+    try {
+        $get_maze_stmt = $db_mai->prepare($get_maze_SQL);
+        $get_maze_stmt->bindValue(':save_id',  $save_id);
+        $get_maze_stmt->execute();
+        $resultRecordSet = $get_maze_stmt->fetchAll();
+    } catch (PDOException $e) {
+        pdo_error1($e, "SQLエラー 33: {$get_maze_SQL}");
+        return null;
+    } catch (Throwable $ee) {
+        pdo_error2($ee, "SQLの致命的エラー 35: {$get_maze_SQL}");
+        return null;
+    } 
+
+    if (count($resultRecordSet) < 1) {
+        $gv->mes->set_err_message("データが有りません 36: {$get_maze_SQL}");
+        return null;
+    }
+    return $resultRecordSet[0];
+}
+
+function get_team(PDO $db_mai, int $save_id): array | null {
+    $get_team_SQL =<<<GET_TEAM01
+        SELECT 	id, save_id, name, pos_x, pos_y, pos_z, pos_d FROM tbl_maze
+        WHERE   save_id = :save_id
+GET_TEAM01;
+    try {
+        $get_team_stmt = $db_mai->prepare($get_team_SQL);
+        $get_team_stmt->bindValue(':save_id',  $save_id);
+        $get_team_stmt->execute();
+        $resultRecordSet = $get_team_stmt->fetchAll();
+    } catch (PDOException $e) {
+        pdo_error1($e, "SQLエラー 37: {$get_team_SQL}");
+        return null;
+    } catch (Throwable $ee) {
+        pdo_error2($ee, "SQLの致命的エラー 38: {$get_team_SQL}");
+        return null;
+    } 
+
+    if (count($resultRecordSet) < 1) {
+        $gv->mes->set_err_message("データが有りません 39: {$get_team_SQL}");
+        return null;
+    }
+    return $resultRecordSet[0];
+}
+
+function get_heroes(PDO $db_mai, int $save_id): array | null {
+    $get_heroes_SQL =<<<GET_HEROES01
+        SELECT 	id, save_id, team_id, name, is_hero, is_alive FROM tbl_maze
+        WHERE   save_id = :save_id
+GET_HEROES01;
+    try {
+        $get_heroes_stmt = $db_mai->prepare($get_heroes_SQL);
+        $get_heroes_stmt->bindValue(':save_id',  $save_id);
+        $get_heroes_stmt->execute();
+        $resultRecordSet = $get_heroes_stmt->fetchAll();
+    } catch (PDOException $e) {
+        pdo_error1($e, "SQLエラー 37: {$get_heroes_SQL}");
+        return null;
+    } catch (Throwable $ee) {
+        pdo_error2($ee, "SQLの致命的エラー 38: {$get_heroes_SQL}");
+        return null;
+    } 
+
+    if (count($resultRecordSet) < 1) {
+        $gv->mes->set_err_message("データが有りません 39: {$get_heroes_SQL}");
+        return null;
+    }
+    return $resultRecordSet;
+}
+
+function set_maze(array $maze_assoc): bool {
+    global $gv;
+
+    if (is_null($maze_assoc) || !is_array($maze_assoc)) return false;
+    $a = [];
+
+    if (array_key_exists('id', $maze_assoc) && is_numeric($maze_assoc['id'])) 
+        $a['maze_id'] = intval($maze_assoc['id']);
+    else return false;
+
+    if (array_key_exists('save_id', $maze_assoc) && is_numeric($maze_assoc['save_id'])) 
+    $a['save_id'] = intval($maze_assoc['save_id']);
+    else return false;
+
+    if (array_key_exists('title', $maze_assoc) && $maze_assoc['title'] != '') 
+        $a['title']   = $maze_assoc['title'];
+    else return false;
+
+    if (array_key_exists('size_x', $maze_assoc) && is_numeric($maze_assoc['size_x'])) 
+        $a['size_x']  = intval($maze_assoc['size_x']);
+    else return false;
+
+    if (array_key_exists('size_y', $maze_assoc) && is_numeric($maze_assoc['size_y'])) 
+        $a['size_y']  = intval($maze_assoc['size_y']);
+    else return false;
+
+    if (array_key_exists('size_z', $maze_assoc) && is_numeric($maze_assoc['size_z'])) 
+        $a['size_z']  = intval($maze_assoc['size_z']);
+    else return false;
+
+    if (array_key_exists('maps', $maze_assoc) && $maze_assoc['maps'] != '') 
+        $a['maze']    = $maze_assoc['maps'];
+    else return false;
+
+    if (array_key_exists('mask', $maze_assoc) && $maze_assoc['mask'] != '') 
+        $a['mask']    = $maze_assoc['mask'];
+    else return false;
+
+    $gv->maze->decode($a);
+    return true;
+}
+
+function set_team(array $team_assoc): bool {
+    global $gv;
+
+    if (is_null($team_assoc) || !is_array($team_assoc)) return false;
+    $a = [];
+
+    if (array_key_exists('id', $team_assoc) && is_numeric($team_assoc['id'])) 
+        $a['id']        = intval($team_assoc['id']);
+    else return false;
+
+    if (array_key_exists('save_id', $team_assoc) && is_numeric($team_assoc['save_id'])) 
+        $a['save_id']        = intval($team_assoc['save_id']);
+    else return false;
+
+    if (array_key_exists('name', $team_assoc) && $team_assoc['name'] != '') 
+        $a['name']      = $team_assoc['name'];
+    else return false;
+
+    if (array_key_exists('pos_x', $team_assoc) && is_numeric($team_assoc['pos_x']) 
+     && array_key_exists('pos_y', $team_assoc) && is_numeric($team_assoc['pos_y']) 
+     && array_key_exists('pos_z', $team_assoc) && is_numeric($team_assoc['pos_z'])) 
+    {
+        $p = [];
+        $p['x'] = $team_assoc['pos_x'];
+        $p['y'] = $team_assoc['pos_y'];
+        $p['z'] = $team_assoc['pos_z'];
+        $a['point'] = $p;
+    }
+    else return false;
+
+
+    if (array_key_exists('pos_d', $team_assoc) && is_numeric($team_assoc['pos_d'])) {
+        $d = [];
+        $d['d'] = $team_assoc['pos_d'];
+        $a['direct'] = $d;
+    } 
+    else return false;
+
+    $gv->team->decode($a);
+    return true;
+}
+
+function set_heroes(array $heroes_array): bool {
+    global $gv;
+
+    $aa = [];
+    if (is_null($heroes_array) || !is_array($heroes_array)) return false;
+    foreach($heroes_array as $hero_assoc) {
+        $a = [];
+
+        if (array_key_exists('id', $hero_assoc) && is_numeric($hero_assoc['id'])) 
+            $a['id']        = intval($hero_assoc['id']);
+        else return false;
+
+        if (array_key_exists('save_id', $hero_assoc) && is_numeric($hero_assoc['save_id'])) 
+            $a['save_id']        = intval($hero_assoc['save_id']);
+        else return false;
+
+        if (array_key_exists('team_id', $hero_assoc) && is_numeric($hero_assoc['team_id'])) 
+            $a['team_id']        = intval($hero_assoc['team_id']);
+        else return false;
+
+        if (array_key_exists('name', $hero_assoc) && $hero_assoc['name'] != '') 
+            $a['name']        = intval($hero_assoc['name']);
+        else return false;
+
+        if (array_key_exists('is_hero', $hero_assoc) && is_numeric($hero_assoc['is_hero'])) 
+            if (intval($hero_assoc['is_hero']) != 0) $a['is_hero'] = true; else $a['is_hero'] = false;
+        else return false;
+
+        if (array_key_exists('is_alive', $hero_assoc) && is_numeric($hero_assoc['is_alive'])) 
+            if (intval($hero_assoc['is_alive']) != 0) $a['is_alive'] = true; else $a['is_alive'] = false;
+        else return false;
+
+        array_push($aa, $a);
+    }
+    $gv->team->decode(['heroes' => $aa]);
+    return false;
+}
+
 
 function do_i_save(): bool {
     return do_save(1, '__InstantSaveData__', true);

@@ -88,6 +88,7 @@
 
     class Maze {
         protected int    $maze_id;
+        protected int    $save_id;
         protected int    $maze_floor;
         protected string $title;
 
@@ -109,6 +110,7 @@
             global $gv;
 
             $this->maze_id    = 0;
+            $this->save_id    = 0;
             $this->maze_floor = 0;
             $this->title      = 'NewMaze_'. sprintf("%03x",$this->maze_id);
 
@@ -430,6 +432,7 @@
 
             $ret = [    
                 'id'      => $this->maze_id,
+                'save_id' => $this->save_id,
                 'floor'   => $this->maze_floor,
                 'title'   => $this->title,
                 'size_x'  => $this->size_x,
@@ -482,6 +485,9 @@
 
             if(array_key_exists('maze_id', $e) && is_numeric($e['maze_id'])) {
                 $this->maze_id    = $e['maze_id'];
+            }
+            if(array_key_exists('save_id', $e) && is_numeric($e['save_id'])) {
+                $this->maze_id    = $e['save_id'];
             }
             if(array_key_exists('floor', $e) && is_numeric($e['floor'])) {
                 $this->maze_floor = $e['floor'];

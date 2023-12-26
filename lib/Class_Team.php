@@ -13,6 +13,7 @@
 
     class Team {
         protected int     $id = 0;
+        protected int     $save_id = 0;
         protected string  $name;
         protected Point3D $cur_pos;
         protected Direct  $cur_dir;
@@ -101,17 +102,21 @@
         }
         public function encode(): array {
             $e = [];
-            $e['id']     = strval($this->id);
-            $e['name']   = $this->name;
-            $e['point']  = $this->cur_pos->encode();
-            $e['direct'] = $this->cur_dir->encode();
-            $e['heroes'] = Hero::encode_heroes($this->heroes);
+            $e['id']      = strval($this->id);
+            $e['save_id'] = strval($this->save_id);
+            $e['name']    = $this->name;
+            $e['point']   = $this->cur_pos->encode();
+            $e['direct']  = $this->cur_dir->encode();
+            $e['heroes']  = Hero::encode_heroes($this->heroes);
             return $e;
         }
-        public function decode(array $a) {
+        public function decode(array $a): void {
             if (!is_null($a) && is_array($a)) {
                 if (array_key_exists('id', $a) && (is_numeric($a['id']))) {
                     $this->id      = intval($a['id']);
+                }
+                if (array_key_exists('save_id', $a) && (is_numeric($a['save_id']))) {
+                    $this->save_id = intval($a['save_id']);
                 }
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
                     $this->name    = $a['name'];
