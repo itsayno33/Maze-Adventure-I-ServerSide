@@ -169,7 +169,7 @@ function do_load(int $player_id, string $title, bool $is_instant): bool {
         tr_rollback($db_mai);
         return false;
     }
-    if (set_maze($maze_assoc)) {
+    if (!set_maze($maze_assoc)) {
         $gv->mes->set_err_message('Can not set The Save Data of Maze.');
         tr_rollback($db_mai);
         return false;
@@ -188,13 +188,13 @@ function do_load(int $player_id, string $title, bool $is_instant): bool {
         tr_rollback($db_mai);
         return false;
     }
-    if (set_team($team_assoc)) {
+    if (!set_team($team_assoc)) {
         $gv->mes->set_err_message('Can not set The Save Data of Team.');
         tr_rollback($db_mai);
         return false;
     }
 
-    if (set_heroes($heroes_array)) {
+    if (!set_heroes($heroes_array)) {
         $gv->mes->set_err_message('Can not set The Save Data of Heroes.');
         tr_rollback($db_mai);
         return false;
@@ -255,7 +255,7 @@ GET_MAZE01;
 
 function get_team(PDO $db_mai, int $save_id): array | null {
     $get_team_SQL =<<<GET_TEAM01
-        SELECT 	id, save_id, name, pos_x, pos_y, pos_z, pos_d FROM tbl_maze
+        SELECT 	id, save_id, name, pos_x, pos_y, pos_z, pos_d FROM tbl_team
         WHERE   save_id = :save_id
 GET_TEAM01;
     try {
@@ -280,7 +280,7 @@ GET_TEAM01;
 
 function get_heroes(PDO $db_mai, int $save_id): array | null {
     $get_heroes_SQL =<<<GET_HEROES01
-        SELECT 	id, save_id, team_id, name, is_hero, is_alive FROM tbl_maze
+        SELECT 	id, save_id, team_id, name, is_hero, is_alive FROM tbl_hero
         WHERE   save_id = :save_id
 GET_HEROES01;
     try {
@@ -408,7 +408,7 @@ function set_heroes(array $heroes_array): bool {
         else return false;
 
         if (array_key_exists('name', $hero_assoc) && $hero_assoc['name'] != '') 
-            $a['name']        = intval($hero_assoc['name']);
+            $a['name']           = $hero_assoc['name'];
         else return false;
 
         if (array_key_exists('is_hero', $hero_assoc) && is_numeric($hero_assoc['is_hero'])) 
@@ -422,7 +422,7 @@ function set_heroes(array $heroes_array): bool {
         array_push($aa, $a);
     }
     $gv->team->decode(['heroes' => $aa]);
-    return false;
+    return true;
 }
 
 
