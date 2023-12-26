@@ -110,10 +110,10 @@ h1 {
     margin: var(--h1_margin, 10px);
     text-align: center;
 
-    color: var(--h1_text_color, darkgreen);
+    color:       var(--h1_text_color,darkgreen);
     font-family: var(--h1_font_family, serif);
-    font-size: var(--h1_font_size, 22px);
-    line-height: var(--h1_line_heght, 26px);
+    font-size:   var(--h1_font_size,   22px);
+    line-height: var(--h1_line_heght,  26px);
 }
 article#Maze_view_pane{
     justify-self:center;
@@ -124,19 +124,34 @@ div#Maze_view_message_div {
     max-height: 3.5rem;
     overflow-y: scroll;
 
-    width:  30rem;
+    margin-top:    var(--view_message_margin_UD, 1.2rem);
+    margin-bottom: var(--view_message_margin_UD, 1.2rem);
+    width:         var(--view_message_width, 30rem);
 }
 p#Maze_view_message {
     color: inherit;
     background-color: inherit;
     word-break: break-all;
-    font-size: 1.1rem;
+    font-size:  var(--viiew_message_font_size, 1.1rem);
+}
+
+div#Maze_view_switch {
+    width: max(
+        var(--view3D_canvas_width,  320px), 
+        calc(var(--view2D_pre_font_size, 0.8rem) * 23),
+        var(--view3D_info_width,  23rem)
+        );
+}
+
+div#Maze_view_switch button#view_switch {
+    float: left;
 }
 
 pre#Maze_view2D_pre {
     text-align: center;
-
-    margin: var(--view2D_pre_margin,    1rem);
+    font-size:   var(--view2D_pre_font_size, 0.8rem);
+    line-height: var(--view2D_pre_font_size, 0.8rem);
+    margin:      var(--view2D_pre_margin,    0.8rem);
 }
 
 div#Maze_view3D {
@@ -144,15 +159,16 @@ div#Maze_view3D {
 }
 
 canvas#Maze_view3D_canvas {
-    margin: var(--view3D_canvas_margin, 1rem);
-    width:  320px;
-    height: 200px;
+    margin: var(--view3D_canvas_margin,  1rem);
+    width:  var(--view3D_canvas_width,  320px);
+    height: var(--view3D_canvas_height, 200px);
 }
 
 p#Maze_view3D_direction_info {
     text-align: center;
 
-    color:       var(--view3D_text_color,darkgreen);
+    width:       var(--view3D_info_width,  23rem);
+    color:       var(--view3D_text_color,  darkgreen);
     font-family: var(--vew_3D_font_family, sans-serif);
     font-size:   var(--view3D_font_size,   1.3rem);
     line-height: var(--view3D_line_heght,  1.6rem);

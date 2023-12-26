@@ -224,16 +224,19 @@ function new_team(): Team {
 </head>
 <body>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
-    <article class='Maze_view' id='Maze_view_pane'>
-        <div id='Maze_view2D'>
-            <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
-            <pre id='Maze_view2D_pre'></pre>
+    <article class='Maze_view_pane' id='Maze_view_pane'>
+        <div id='Maze_view_switch'>
+            <button id='view_switch' type='button' name='view_switch_button' value='3D'>ビュー切替</button>
+            <button id='debug_mode'  type='button' name='debug_mode_button'  value='false'>通常モード</button>
+            <div id='Maze_view2D'>
+                <pre id='Maze_view2D_pre'></pre>
+            </div>
+            <div id='Maze_view3D'>
+                <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
+                <p id='Maze_view3D_direction_info'></p>
+            </div>
         </div>
         <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>
-        <div id='Maze_view3D'>
-            <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
-            <p id='Maze_view3D_direction_info'></p>
-        </div>
         <?php /* display_maze(); */ ?>
     </article>
     <article class='Maze_info' id='Maze_info_pane'>
