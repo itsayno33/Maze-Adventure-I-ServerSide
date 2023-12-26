@@ -143,15 +143,17 @@ div#Maze_view_switch {
         );
 }
 
+/*
 div#Maze_view_switch button#view_switch {
     float: left;
 }
+*/
 
 pre#Maze_view2D_pre {
-    text-align: center;
-    font-size:   var(--view2D_pre_font_size, 0.8rem);
-    line-height: var(--view2D_pre_font_size, 0.8rem);
     margin:      var(--view2D_pre_margin,    0.8rem);
+    width:       320px;
+    height:      243px;
+    text-align: center;
 }
 
 div#Maze_view3D {
