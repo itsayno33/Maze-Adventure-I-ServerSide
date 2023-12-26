@@ -152,7 +152,7 @@ div#Maze_view_switch button#view_switch {
 pre#Maze_view2D_pre {
     margin:      var(--view2D_pre_margin,    0.8rem);
     width:       320px;
-    height:      243px;
+    height:      283px;
     text-align: center;
 }
 
