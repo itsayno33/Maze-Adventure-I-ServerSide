@@ -220,7 +220,7 @@ function new_team(): Team {
     <meta charset="utf-8" />
     <title>Maze Adventure I</title>
     <link rel="stylesheet" href="css.php?time=<?php echo date("Y-m-d_H:i:s"); ?>&file=mai_index" />
-    <script type="module" src="./js/bundle.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
+    <script src="./js/bundle.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
 </head>
 <body>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
@@ -276,6 +276,9 @@ function new_team(): Team {
         <a href='../../md/'><img src='../icon-img/kkrn_icon_home_3.png' /></a>
         <p class='foot_print'>Maze Adventure Ⅰ.</p>
     </footer>
+    <script>
+        window.tsCall.get_player_id(1);
+    </script>
 </body>
 <?php
     // 大域変数の開放

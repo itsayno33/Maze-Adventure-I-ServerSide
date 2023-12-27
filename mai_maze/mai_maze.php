@@ -60,7 +60,7 @@
 
             $gv->team_assoc = json_decode($ga->team_JSON, true);
             $gv->team->decode($gv->team_assoc);
-            $result = do_i_save();
+            $result    = do_i_save();
             if ($result) do_i_load();
 
             if (!$result || $gv->mes->is_err()) {
@@ -126,7 +126,8 @@ function new_team(): void {
 }
 
 function do_i_load(): bool {
-    return do_load(1, '__InstantSaveData__', true);
+    global $ga;
+    return do_load($ga->pid, '__InstantSaveData__', true);
 }
 
 function do_load(int $player_id, string $title, bool $is_instant): bool {
@@ -426,8 +427,9 @@ function set_heroes(array $heroes_array): bool {
 }
 
 
-function do_i_save(): bool {
-    return do_save(1, '__InstantSaveData__', true);
+function do_i_save(): bool { 
+    global $ga;
+    return do_save($ga->pid, '__InstantSaveData__', true);
 }
 
 function do_save(int $player_id, string $title, bool $is_instant): bool {
@@ -566,6 +568,7 @@ function do_save(int $player_id, string $title, bool $is_instant): bool {
         public string $maze_JSON  = '';
         public string $team_JSON  = '';
 
+        public int    $pid        =  1;
         public int    $save_id    = -1;
         public string $save_title = ''; 
 
@@ -579,6 +582,15 @@ function do_save(int $player_id, string $title, bool $is_instant): bool {
                     $this->mode     = $_POST['mode'];
                 } else {
                     $this->mode     = 'unknown';
+                } 
+            }
+            if ( array_key_exists('pid', $_GET) && is_numeric($_GET['pid'])) {
+                $this->pid          = intval($_GET ['pid']);
+            } else {
+                if ( array_key_exists('pid', $_POST) &&  is_numeric($_POST['pid'])) {
+                    $this->pid      = intval($_POST['pid']);
+                } else {
+                    $this->pid      = 1;
                 } 
             }
             if ( array_key_exists('maze', $_POST) &&  $_POST['maze'] != '') {
