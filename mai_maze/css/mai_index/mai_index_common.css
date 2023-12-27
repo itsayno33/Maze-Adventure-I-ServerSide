@@ -34,11 +34,11 @@ body {
     gap: 1rem 1.5rem;
     grid-template-columns: 
         var(--body_lyt_left_gap, 3rem)
-        [h1-start message-start footer-start view-start]
+        [h1-start footer-start view-start]
         var(--body_lyt_col_left_width,  auto)
-        [view-end info-start]
+        [view-end info-start message-start]
         var(--body_lyt_col_right_width, auto)
-        [h1-end message-end footer-end info-end]
+        [h1-end footer-end info-end message-end]
         var(--body_lyt_right_gap, 3rem)
         ;
 
@@ -47,9 +47,9 @@ body {
         var(--body_lyt_row_header_height,  100px)
         [h1-end view-start info-start]
         var(--body_lyt_row_main_height_,    auto)
-        [view-end info-end message-start]
-        var(--body_lyt_row_mewssage_height,  1fr)
-        [message-end footer-start]
+        [info-end message-start]
+        var(--body_lyt_row_message_height,   1fr)
+        [message-end view-end footer-start]
         var(--body_lyt_row_footer_height,  100px)
         [footer-end]
         ;
@@ -307,4 +307,11 @@ div#move_ctl_panel button#l_arrow {
 
 div#move_ctl_panel button#r_arrow {
     grid-area: r_arrow;
+}
+
+article#message_pane {
+    font-size:   var(--message_font_size,   0.6rem);
+    line-height: var(--message_line_height, 0.7rem);
+    max-height: calc( var(--message_line_height, 0.7rem) * 6);
+    overflow-y: scroll;
 }
