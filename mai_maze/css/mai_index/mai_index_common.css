@@ -213,6 +213,12 @@ p#Maze_view3D_direction_info span#direction_Y {
     background-color: #98fb98;
 }
 
+ul#camp_list {
+    color:            chocolate;
+    background-color: cornsilk;
+}
+
+
 
 article#Maze_info_pane {
     display: grid;
@@ -250,13 +256,13 @@ div#move_ctl_panel {
 
     gap: 0.5rem 0.5rem;
     grid-template-columns: 
-        [l_arrow-start y_btn-start]
+        [l_arrow-start y_btn-start c_btn-start]
         var(--lr_arrow_width, 2.3rem)
         [l_arrow-end y_btn-end u_arrow-start d_arrow-start]
         var(--ud_arrow_width, 2.3rem)
         [u_arrow-end d_arrow-end r_arrow-start n_btn-start]
         var(--lr_arrow_width, 2.3rem)
-        [r_arrow-end n_btn-end]
+        [r_arrow-end n_btn-end c_btn-end]
         ;
 
     grid-template-rows: 
@@ -268,7 +274,9 @@ div#move_ctl_panel {
         var(--ud_arrow_height,  2.3rem)
         [d_arrow-end y_btn-start n_btn-start]
         var(--ud_arrow_height,  2.3rem)
-        [y_btn-end n_btn-end]
+        [y_btn-end n_btn-end c_btn-start]
+        var(--camp_btn_height,  2.3rem)
+        [c_btn-end]
         ;
 
 }
@@ -288,6 +296,16 @@ div#move_ctl_panel button#n_btn {
 
     color: #ff00ff;
     background-color:pink;
+
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+div#move_ctl_panel button#c_btn {
+    grid-area: c_btn;
+
+    color: rgb(139, 141, 0) ;
+    background-color:#f6ffcc;
 
     font-family: sans-serif;
     font-weight: bold;

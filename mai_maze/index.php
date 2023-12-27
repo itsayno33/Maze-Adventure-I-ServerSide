@@ -237,10 +237,12 @@ function new_team(): Team {
                 </div>
             </div>
             <div id='Maze_view_switch_camp'>
-                <ul>
-                    <li id='camp_load'>冒険の復活</li>
-                    <li id='camp_save'>冒険の記録</li>
-                </ul>
+                <ul id='camp_list'>
+                    <li id='camp_load'>冒険の復活
+                        <p>以前保存した冒険を再開できます</p></li>
+                    <li id='camp_save'>冒険の記録
+                        <p>直前までの冒険を保存できます</p></li>
+                </dl>
             </div>
             <div id='Maze_view_switch_load'>
             </div>
@@ -259,6 +261,7 @@ function new_team(): Team {
             <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
             <button id='y_btn'   type='button' name='y_btn'   value='U'>〇</button>
             <button id='n_btn'   type='button' name='n_btn'   value='N'>✖</button>
+            <button id='c_btn'   type='button' name='c_btn'   value='C'>キャンプ（Ｃ）</button>
         </div></div>
         <?php /* display_cntl(); */ ?>
     </article>
