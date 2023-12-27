@@ -236,6 +236,16 @@ function new_team(): Team {
                     <p id='Maze_view3D_direction_info'></p>
                 </div>
             </div>
+            <div id='Maze_view_switch_camp'>
+                <ul>
+                    <li id='camp_load'>冒険の復活</li>
+                    <li id='camp_save'>冒険の記録</li>
+                </ul>
+            </div>
+            <div id='Maze_view_switch_load'>
+            </div>
+            <div id='Maze_view_switch_save'>
+            </div>
         </div>
         <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>
         <?php /* display_maze(); */ ?>
