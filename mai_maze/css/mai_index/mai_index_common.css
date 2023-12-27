@@ -163,7 +163,7 @@ div#Maze_view3D {
 canvas#Maze_view3D_canvas {
     margin: var(--view3D_canvas_margin,  1rem);
     width:  var(--view3D_canvas_width,  320px);
-    height: var(--view3D_canvas_height, 200px);
+    height: var(--view3D_canvas_height, 203px);
 }
 
 p#Maze_view3D_direction_info {
