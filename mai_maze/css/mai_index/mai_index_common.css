@@ -100,7 +100,7 @@ article#Maze_view_pane{
     align-self: auto;
 }
 div#Maze_view_message_div {
-    min-height: 3.5rem;
+    min-height: var(--view_message_height, 3.5rem);
     max-height: 3.5rem;
     overflow-y: scroll;
 
@@ -155,8 +155,8 @@ p#Maze_view3D_direction_info {
     text-align: center;
 
     width:       var(--view3D_info_width,  23rem);
-    color:       var(--view3D_text_color,  darkgreen);
-    font-family: var(--vew_3D_font_family, sans-serif);
+    color:       var(--view3D_text_color,darkgreen);
+    font-family: var(--view3D_font_family, sans-serif);
     font-size:   var(--view3D_font_size,   1.3rem);
     line-height: var(--view3D_line_heght,  1.6rem);
 }

@@ -75,4 +75,22 @@
             [ctl_view-end]
             ;
 
-}
+    --info_h2_font_size:  16px;
+
+    --view3D_info_width:  23rem;
+    --view3D_text_color:darkgreen;
+    --view3D_font_family: sans-serif;
+    --view3D_font_size:   1.3rem;
+    --view3D_line_heght:  1.6rem;
+
+    --view_message_height:    3.5rem;
+    --view_message_font_size: 1.1rem;
+
+    --lr_arrow_width:   2.3rem;
+    --lr_arrow_height:  2.3rem;
+    --ud_arrow_width:   2.3rem;
+    --ud_arrow_height:  2.3rem;
+    --camp_btn_height:  2.3rem;
+
+    --message_width:     33rem;
+        }
