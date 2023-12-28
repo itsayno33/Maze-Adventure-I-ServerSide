@@ -105,8 +105,8 @@
 
     --message_width:     16rem;
 
+    touch-action: manipulation;
 }
-
 
 div#Maze_view2D button {
     font-size: small;
