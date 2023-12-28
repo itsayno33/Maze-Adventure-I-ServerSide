@@ -44,6 +44,23 @@
             new_team();
             $ret_JSON = all_encode(0);
             break;
+        case 'UD_load':
+            $save_id = get_save_id($gv->db_mai, $ga->pid, '__UpDownSaveData__');
+            if ($save_id === false) {
+                $code = 310;
+                $ret_JSON = all_encode($code);
+                break;
+            }
+            $ret_JSON = all_load($save_id);
+            break;
+        case 'UD_save':
+            $save_id = get_save_id($gv->db_mai, $ga->pid, '__UpDownSaveData__');
+            if ($save_id === false) {
+                $save_id = new_save($ga->pid, '__UpDownSaveData__', true);
+                break;
+            }
+            $ret_JSON = all_save($ga->pid, $save_id, '__UpDownSaveData__', true);
+            break;
         case 'instant_load':
             $save_id = get_save_id($gv->db_mai, $ga->pid, '__InstantSaveData__');
             if ($save_id === false) {
@@ -56,9 +73,7 @@
         case 'instant_save':
             $save_id = get_save_id($gv->db_mai, $ga->pid, '__InstantSaveData__');
             if ($save_id === false) {
-                $code = 210;
-                $ret_JSON = all_encode($code);
-                break;
+                $save_id = new_save($ga->pid, '__InstantSaveData__', true);
             }
             $ret_JSON = all_save($ga->pid, $save_id, '__InstantSaveData__', true);
             break;
@@ -148,11 +163,6 @@ function new_team(): void {
         array_push($heroes, new Hero());
     }
     $gv->team->set_prp(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d, 'Heroes' => $heroes]);
-}
-
-function do_i_load(): bool {
-    global $ga;
-    return do_load($ga->pid, '__InstantSaveData__', true);
 }
 
 function do_load(int $save_id): bool {
@@ -447,11 +457,6 @@ function set_heroes(array $heroes_array): bool {
 }
 
 
-function do_i_save(): bool { 
-    global $ga;
-    return do_save($ga->pid, '__InstantSaveData__', true);
-}
-
 function do_save(int $player_id, int $save_id, string $title, bool $is_instant): bool {
     global $gv;
     $db_mai = $gv->db_mai;
@@ -482,7 +487,7 @@ function do_save(int $player_id, int $save_id, string $title, bool $is_instant):
         return false;
     }
 
-    $result = add_save($db_mai, 1, $save_id, $title, $is_instant);
+    $result = add_save($db_mai, $player_id, $save_id, $title, $is_instant);
     if ($result === false) {
         tr_rollback($db_mai);
         return false;
@@ -672,19 +677,19 @@ function get_save_id(PDO $db_mai, int $player_id, string $title): int | false {
         SELECT id FROM tbl_save
         WHERE  player_id = :player_id AND title = :title
 SEEK_SAVE01;
-try {
-    $seek_save_stmt = $db_mai->prepare($seek_save_SQL);
-    $seek_save_stmt->bindValue(':player_id', $player_id);
-    $seek_save_stmt->bindValue(':title',     $title);
-    $seek_save_stmt->execute();
-    $resultRecordSet = $seek_save_stmt->fetchAll();
-} catch (PDOException $e) {
-    pdo_error1($e, "SQLエラー 20: {$seek_save_SQL}");
-    return false;
-} catch (Throwable $ee) {
-    pdo_error2($ee, "SQLの致命的エラー 21: {$seek_save_SQL}");
-    return false;
-} 
+    try {
+        $seek_save_stmt = $db_mai->prepare($seek_save_SQL);
+        $seek_save_stmt->bindValue(':player_id', $player_id);
+        $seek_save_stmt->bindValue(':title',     $title);
+        $seek_save_stmt->execute();
+        $resultRecordSet = $seek_save_stmt->fetchAll();
+    } catch (PDOException $e) {
+        pdo_error1($e, "SQLエラー 20: {$seek_save_SQL}");
+        return false;
+    } catch (Throwable $ee) {
+        pdo_error2($ee, "SQLの致命的エラー 21: {$seek_save_SQL}");
+        return false;
+    } 
     if (count($resultRecordSet) < 1) {
         $gv->mes->set_err_message("プレイヤーID({$player_id})のセーブデータでタイトル『{$title}』が見つかりませんでした");
         return false;
@@ -692,15 +697,36 @@ try {
     return intval($resultRecordSet[0]['id']);
 }
 
-function add_save(PDO $db_mai, int $player_id, int $save_id, string $title, bool $is_instant): int | bool {
-    $insert_save_SQL =<<<INSERT_SAVE01
-        INSERT INTO tbl_save (player_id, id, title, auto_mode, is_active, is_delete)
-        VALUES ( :player_id, :id, :title, :auto_mode, true, false)
-INSERT_SAVE01;
+function new_save(PDO $db_mai, int $player_id, string $title, bool $is_instant): int | bool {
+    $insert_save_SQL =<<<NEW_SAVE01
+        INSERT INTO tbl_save (player_id, title, auto_mode, is_active, is_delete)
+        VALUES ( :player_id, :title, :auto_mode, true, false)
+NEW_SAVE01;
     try {
         $insert_save_stmt = $db_mai->prepare($insert_save_SQL);
         $insert_save_stmt->bindValue(':player_id', $player_id);
+        $insert_save_stmt->bindValue(':title',     $title);
+        $insert_save_stmt->bindValue(':auto_mode', $is_instant);
+        $insert_save_stmt->execute();
+    } catch (PDOException $e) {
+        pdo_error1($e, "SQLエラー 0: {$insert_save_SQL}");
+        return false;
+    } catch (Throwable $ee) {
+        pdo_error2($ee, "SQLの致命的エラー 00: {$insert_save_SQL}");
+        return false;
+    } 
+    return intval($db_mai->lastInsertId());
+}
+
+function add_save(PDO $db_mai, int $player_id, int $save_id, string $title, bool $is_instant): int | bool {
+    $insert_save_SQL =<<<INSERT_SAVE01
+        INSERT INTO tbl_save (id, player_id, title, auto_mode, is_active, is_delete)
+        VALUES ( :id, :player_id, :title, :auto_mode, true, false)
+INSERT_SAVE01;
+    try {
+        $insert_save_stmt = $db_mai->prepare($insert_save_SQL);
         $insert_save_stmt->bindValue(':id',        $save_id);
+        $insert_save_stmt->bindValue(':player_id', $player_id);
         $insert_save_stmt->bindValue(':title',     $title);
         $insert_save_stmt->bindValue(':auto_mode', $is_instant);
         $insert_save_stmt->execute();
