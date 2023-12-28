@@ -254,6 +254,24 @@ function new_team(): Team {
             <div id='Maze_view_switch_load'>
             </div>
             <div id='Maze_view_switch_save'>
+                <ul id='save_data_list'></ul>
+                <form id='save_data_form'></form>
+                <fieldset>
+                    <legend>セーブ情報を入力して下さい</legend>
+                    <ul>
+                        <li>
+                            <input id='save_data_title'  for='save_data_form' type='text' name='title'  minlength='3' maxlength='30' size='30' placeholder='(必須)' required></input>
+                            <label for='save_data_title'>タイトル(必須)</label>
+                        </li>
+                        <li>
+                            <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
+                            <label for='save_data_detail'>詳細(任意)</label>
+                        </li>
+                        <li>
+                            <p id='save_data_point'></p>
+                        </li>
+                    </ul>
+                </fieldset>
             </div>
         </div>
         <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>

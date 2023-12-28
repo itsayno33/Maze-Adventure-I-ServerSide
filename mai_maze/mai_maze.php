@@ -44,6 +44,15 @@
             new_team();
             $ret_JSON = all_encode(0);
             break;
+        case 'save_info':
+            $save_info = get_save_info($gv->db_mai, $ga->pid);
+            if ($save_info === false) {
+                $code = 500;
+                $ret_JSON = all_encode($code);
+                break;
+            }
+            $ret_JSON = all_save_info($save_info);
+            break;
         case 'UD_load':
             $save_id = get_save_id($gv->db_mai, $ga->pid, '__UpDownSaveData__');
             if ($save_id === false) {
@@ -134,7 +143,7 @@ function all_save(int $pid, int $save_id, string $title, bool $is_instant): stri
     return $ret_JSON;
 }
 function all_encode(int $code): string {
-    global $gv;
+    global $gv, $ga;
 
     $ret_assoc = [];
 
@@ -142,14 +151,50 @@ function all_encode(int $code): string {
     if ($code !== 0 || $gv->mes->is_err()) {
         $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
     } else {
-        $ret_assoc['maze'] = $gv->maze->encode();
-        $ret_assoc['team'] = $gv->team->encode();
+        $save = [];
+        $save['save_id']      = $ga->save_id;
+        $save['title']        = $ga->save_title;
+        $save['detail']       = $ga->save_detail;
+        $save['point']        = $ga->save_point;
+        $save['time']         = $ga->save_time;
+
+        $ret_assoc['save']    = [$save];
+        $ret_assoc['maze']    = $gv->maze->encode();
+        $ret_assoc['team']    = $gv->team->encode();
     }
 
     $ret_JSON = json_encode($ret_assoc,  
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     return $ret_JSON;
 }
+
+function all_save_info(array $save_info): string {
+    global $gv, $ga;
+
+    $ret_assoc = [];
+
+    $ret_assoc['ecode'] = $code;
+    if ($gv->mes->is_err()) {
+        $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+    } else {
+        $save_array = [];
+        foreach ($save_info as $save_dat) {
+            $save = [];
+            $save['save_id']      = $save_dat['id'];
+            $save['title']        = $save_dat['title'];
+            $save['detail']       = $save_dat['detail'];
+            $save['point']        = $save_dat['point'];
+            $save['save_time']    = $save_dat['save_time'];
+            array_push($save_array, $save_dat);
+        }
+        $ret_assoc['save']    = $save_array;
+    }
+
+    $ret_JSON = json_encode($ret_assoc,  
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    return $ret_JSON;
+}
+
 function new_maze(): void {
     global $gv;
     for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
@@ -175,31 +220,41 @@ function new_team(): void {
 }
 
 function do_load(int $save_id): bool {
-    global $gv;
+    global $gv, $ga;
     $db_mai = $gv->db_mai;
 
     tr_begin($db_mai);
 
     $result = get_save($db_mai, $save_id);
     if (is_null($result) || !is_array($result)) {
-        $gv->mes->set_err_message('No Instant Save Data Exist.');
-        tr_rollback($db_mai);
-        return false;
-    }
-    if (array_key_exists('auto_mode', $result) && $result['auto_mode'] == 0) {
-        $gv->mes->set_err_message('Is Not a Instant Save Data Exist.');
+        $gv->mes->set_err_message('No Save Data Exist.');
         tr_rollback($db_mai);
         return false;
     }
     if (array_key_exists('is_active', $result) && $result['is_active'] == 0) {
-        $gv->mes->set_err_message('The Active Instant Save Data Is Not Exist.');
+        $gv->mes->set_err_message('The Active Save Data Is Not Exist.');
         tr_rollback($db_mai);
         return false;
     }
     if (array_key_exists('is_delete', $result) && $result['is_delete'] != 0) {
-        $gv->mes->set_err_message('The Instant Save Data Has Been Deleted.');
+        $gv->mes->set_err_message('This Save Data Has Been Deleted.');
         tr_rollback($db_mai);
         return false;
+    }
+    if (array_key_exists('id', $result) && is_numeric($result['id'])) {
+        $ga->save_id = intval($result['id']);
+    }
+    if (array_key_exists('title', $result)) {
+        $ga->save_title  = $result['title'];
+    }
+    if (array_key_exists('detail', $result)) {
+        $ga->save_detail = $result['detail'];
+    }
+    if (array_key_exists('point',  $result)) {
+        $ga->save_point  = $result['point'];
+    }
+    if (array_key_exists('save_time',  $result)) {
+        $ga->save_time   = $result['save_time'];
     }
 
     $maze_assoc = get_maze($db_mai, $save_id);    
@@ -242,10 +297,33 @@ function do_load(int $save_id): bool {
     return tr_commit($db_mai);
 }
 
+function get_save_info(PDO $db_mai, int $player_id): array | null {
+    global $gv;
+    $get_save_SQL =<<<GET_SAVE_INFO01
+        SELECT id, title, detail, point, save_time FROM tbl_save
+        WHERE  id = :save_id 
+        ORDER BY title COLLATE utf8mb4_unicode_ci ASC
+GET_SAVE_INFO01;
+    try {
+        $get_save_stmt = $db_mai->prepare($get_save_SQL);
+        $get_save_stmt->bindValue(':save_id', $save_id);
+        $get_save_stmt->execute();
+        $resultRecordSet = $get_save_stmt->fetchAll();
+    } catch (PDOException $e) {
+        pdo_error1($e, "SQLエラー 50: {$get_save_SQL}");
+        return null;
+    } catch (Throwable $ee) {
+        pdo_error2($ee, "SQLの致命的エラー 51: {$get_save_SQL}");
+        return null;
+    } 
+
+    return $resultRecordSet;
+}
+
 function get_save(PDO $db_mai, int $save_id): array | null {
     global $gv;
     $get_save_SQL =<<<GET_SAVE01
-        SELECT auto_mode, is_active, is_delete FROM tbl_save
+        SELECT id, title, detail, point, auto_mode, is_active, is_delete, save_time FROM tbl_save
         WHERE  id = :save_id
 GET_SAVE01;
     try {
@@ -593,12 +671,15 @@ function do_save(int $player_id, int $save_id, string $title, bool $is_instant):
     // POST引数の設定
     class GlobalArguments {
         public string $mode;
-        public string $maze_JSON  = '';
-        public string $team_JSON  = '';
+        public string $maze_JSON   = '';
+        public string $team_JSON   = '';
 
-        public int    $pid        =  1;
-        public int    $save_id    = -1;
-        public string $save_title = ''; 
+        public int    $pid         =  1;
+        public int    $save_id     = -1;
+        public string $save_title  = ''; 
+        public string $save_detail = ''; 
+        public string $save_point  = ''; 
+        public string $save_time   = ''; 
 
         public function __construct() {
             global $gv;
@@ -630,8 +711,14 @@ function do_save(int $player_id, int $save_id, string $title, bool $is_instant):
             if ( array_key_exists('save_id', $_POST) &&  is_numeric($_POST['save_id'])) {
                 $this->save_id      = intval($_POST['save_id']);
             } 
-            if ( array_key_exists('save_title', $_POST) &&  $_POST['save_title'] != '') {
+            if ( array_key_exists('save_title',  $_POST) &&  $_POST['save_title']  != '') {
                 $this->save_title    = $_POST['save_title'];
+            } 
+            if ( array_key_exists('save_detail', $_POST) &&  $_POST['save_detail'] != '') {
+                $this->save_detail   = $_POST['save_detail'];
+            } 
+            if ( array_key_exists('save_point',  $_POST) &&  $_POST['save_point']  != '') {
+                $this->save_point   = $_POST['save_point'];
             } 
         }
     }
@@ -707,14 +794,18 @@ SEEK_SAVE01;
 }
 
 function new_save(PDO $db_mai, int $player_id, string $title, bool $is_instant): array {
+    global $ga;
+
     $insert_save_SQL =<<<NEW_SAVE01
-        INSERT INTO tbl_save (player_id, title, auto_mode, is_active, is_delete)
-        VALUES ( :player_id, :title, :auto_mode, true, false)
+        INSERT INTO tbl_save (player_id, title, detail, point, auto_mode, is_active, is_delete)
+        VALUES ( :player_id, :title, :detail, :point, :auto_mode, true, false)
 NEW_SAVE01;
     try {
         $insert_save_stmt = $db_mai->prepare($insert_save_SQL);
         $insert_save_stmt->bindValue(':player_id', $player_id);
         $insert_save_stmt->bindValue(':title',     $title);
+        $insert_save_stmt->bindValue(':detail',    $ga->save_detail);
+        $insert_save_stmt->bindValue(':point',     $ga->save_point);
         $insert_save_stmt->bindValue(':auto_mode', $is_instant);
         $insert_save_stmt->execute();
     } catch (PDOException $e) {
@@ -728,15 +819,19 @@ NEW_SAVE01;
 }
 
 function add_save(PDO $db_mai, int $player_id, int $save_id, string $title, bool $is_instant): int | bool {
+    global $ga;
+    
     $insert_save_SQL =<<<INSERT_SAVE01
-        INSERT INTO tbl_save (id, player_id, title, auto_mode, is_active, is_delete)
-        VALUES ( :id, :player_id, :title, :auto_mode, true, false)
+        INSERT INTO tbl_save (id, player_id, title, detail, point, auto_mode, is_active, is_delete)
+        VALUES ( :id, :player_id, :title, :detail, :point, :auto_mode, true, false)
 INSERT_SAVE01;
     try {
         $insert_save_stmt = $db_mai->prepare($insert_save_SQL);
         $insert_save_stmt->bindValue(':id',        $save_id);
         $insert_save_stmt->bindValue(':player_id', $player_id);
         $insert_save_stmt->bindValue(':title',     $title);
+        $insert_save_stmt->bindValue(':detail',    $ga->save_detail);
+        $insert_save_stmt->bindValue(':point',     $ga->save_point);
         $insert_save_stmt->bindValue(':auto_mode', $is_instant);
         $insert_save_stmt->execute();
     } catch (PDOException $e) {
