@@ -45,30 +45,22 @@
             $ret_JSON = all_encode(0);
             break;
         case 'instant_load':
-            $result = do_i_load();
-
-            if (!$result || $gv->mes->is_err()) {
-                $code = 100;
+            $save_id = get_save_id($gv->db_mai, $ga->pid, '__InstantSaveData__');
+            if ($save_id === false) {
+                $code = 310;
                 $ret_JSON = all_encode($code);
                 break;
             }
-            $ret_JSON = all_encode(0);
+            $ret_JSON = all_load($save_id);
             break;
         case 'instant_save':
-            $gv->maze_assoc = json_decode($ga->maze_JSON, true);
-            $gv->maze->decode($gv->maze_assoc);
-
-            $gv->team_assoc = json_decode($ga->team_JSON, true);
-            $gv->team->decode($gv->team_assoc);
-            $result    = do_i_save();
-            if ($result) do_i_load();
-
-            if (!$result || $gv->mes->is_err()) {
-                $code = 200;
+            $save_id = get_save_id($gv->db_mai, $ga->pid, '__InstantSaveData__');
+            if ($save_id === false) {
+                $code = 210;
                 $ret_JSON = all_encode($code);
                 break;
             }
-            $ret_JSON = all_encode(0);
+            $ret_JSON = all_save($ga->pid, $save_id, '__InstantSaveData__', true);
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
@@ -84,6 +76,39 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
+function all_load(int $save_id): string {
+    global $gv;
+    $result = do_load($save_id);
+
+    if (!$result || $gv->mes->is_err()) {
+        $code = 100;
+        $ret_JSON = all_encode($code);
+    } else {
+        $ret_JSON = all_encode(0);
+    }
+    return $ret_JSON;
+}
+
+function all_save(int $pid, int $save_id, string $title, bool $is_instant): string {
+    global $gv, $ga;
+
+    $gv->maze_assoc = json_decode($ga->maze_JSON, true);
+    $gv->maze->decode($gv->maze_assoc);
+
+    $gv->team_assoc = json_decode($ga->team_JSON, true);
+    $gv->team->decode($gv->team_assoc);
+
+    $result    = do_save($pid, $save_id, $title, $is_instant);
+    if ($result) do_load($save_id);
+
+    if (!$result || $gv->mes->is_err()) {
+        $code = 200;
+        $ret_JSON = all_encode($code);
+    } else {
+        $ret_JSON = all_encode(0);
+    }
+    return $ret_JSON;
+}
 function all_encode(int $code): string {
     global $gv;
 
@@ -130,17 +155,11 @@ function do_i_load(): bool {
     return do_load($ga->pid, '__InstantSaveData__', true);
 }
 
-function do_load(int $player_id, string $title, bool $is_instant): bool {
+function do_load(int $save_id): bool {
     global $gv;
     $db_mai = $gv->db_mai;
 
     tr_begin($db_mai);
-
-    $save_id = get_save_id($db_mai, $player_id, $title);
-    if ($save_id === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
 
     $result = get_save($db_mai, $save_id);
     if (is_null($result) || !is_array($result)) {
@@ -205,6 +224,7 @@ function do_load(int $player_id, string $title, bool $is_instant): bool {
 }
 
 function get_save(PDO $db_mai, int $save_id): array | null {
+    global $gv;
     $get_save_SQL =<<<GET_SAVE01
         SELECT auto_mode, is_active, is_delete FROM tbl_save
         WHERE  id = :save_id
@@ -432,17 +452,11 @@ function do_i_save(): bool {
     return do_save($ga->pid, '__InstantSaveData__', true);
 }
 
-function do_save(int $player_id, string $title, bool $is_instant): bool {
+function do_save(int $player_id, int $save_id, string $title, bool $is_instant): bool {
     global $gv;
     $db_mai = $gv->db_mai;
 
     tr_begin($db_mai);
-
-    $save_id = get_save_id($db_mai, $player_id, $title);
-    if ($save_id === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
 
     $result = del_hero($db_mai, $save_id);
     if ($result === false) {
@@ -653,6 +667,7 @@ function tr_rollback(PDO $db_mai): bool {
 }
 
 function get_save_id(PDO $db_mai, int $player_id, string $title): int | false {
+    global $gv;
     $seek_save_SQL =<<<SEEK_SAVE01
         SELECT id FROM tbl_save
         WHERE  player_id = :player_id AND title = :title
@@ -670,7 +685,10 @@ try {
     pdo_error2($ee, "SQLの致命的エラー 21: {$seek_save_SQL}");
     return false;
 } 
-    if (count($resultRecordSet) < 1) return false;
+    if (count($resultRecordSet) < 1) {
+        $gv->mes->set_err_message("プレイヤーID({$player_id})のセーブデータでタイトル『{$title}』が見つかりませんでした");
+        return false;
+    }
     return intval($resultRecordSet[0]['id']);
 }
 
