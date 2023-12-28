@@ -149,6 +149,7 @@ function new_team(): Team {
     // POST引数の設定
     class GlobalArguments {
         public string $mode;
+        public int    $pid = 1;
 
         public function __construct() {
             global $gv;
@@ -160,6 +161,15 @@ function new_team(): Team {
                     $this->mode     = $_POST['mode'];
                 } else {
                     $this->mode     = 'view';
+                } 
+            }
+            if ( array_key_exists('pid', $_GET) && is_numeric($_GET['pid'])) {
+                $this->pid          = intval($_GET ['pid']);
+            } else {
+                if ( array_key_exists('pid', $_POST) &&  is_numeric($_POST['pid'])) {
+                    $this->pid      = intval($_POST['pid']);
+                } else {
+                    $this->pid      = 1;
                 } 
             }
             $gv->mes->set_nor_message("MODE = [{$this->mode}]");
@@ -277,7 +287,7 @@ function new_team(): Team {
         <p class='foot_print'>Maze Adventure Ⅰ.</p>
     </footer>
     <script>
-        window.tsCall.get_player_id(1);
+        window.tsCall.get_init_data('<?php echo $gv->cgi_base; ?>', <?php echo $ga->pid; ?>);
     </script>
 </body>
 <?php
