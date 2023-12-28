@@ -239,13 +239,13 @@ div#move_ctl_panel {
 
     gap: 0.5rem 0.5rem;
     grid-template-columns: 
-        [l_arrow-start y_btn-start c_btn-start]
+        [l_arrow-start n_btn-start c_btn-start]
         var(--lr_arrow_width, 2.3rem)
-        [l_arrow-end y_btn-end u_arrow-start d_arrow-start]
+        [l_arrow-end n_btn-end u_arrow-start d_arrow-start]
         var(--ud_arrow_width, 2.3rem)
-        [u_arrow-end d_arrow-end r_arrow-start n_btn-start]
+        [u_arrow-end d_arrow-end r_arrow-start y_btn-start]
         var(--lr_arrow_width, 2.3rem)
-        [r_arrow-end n_btn-end c_btn-end]
+        [r_arrow-end y_btn-end c_btn-end]
         ;
 
     grid-template-rows: 
