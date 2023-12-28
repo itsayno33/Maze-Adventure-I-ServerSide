@@ -43,6 +43,10 @@ article#Maze_view_pane {
     grid-area: view3d;
 }
 
+article#Maze_view2D_pane {
+    grid-area: view2d;
+}
+
 article#Maze_info_pane {
     grid-area: info;
 }
@@ -203,14 +207,14 @@ ul#camp_list {
     background-color: cornsilk;
 }
 
-
-
+/*
 article#Maze_info_pane {
     display: grid;
     gap:                   var(--maze_info_grid_gap, 1.0rem 0.5rem);
     grid-template-columns: var(--maze_info_grid_cols);
     grid-template-rows:    var(--maze_info_grid_rows);
 }
+*/
 
 /*
 article#Maze_info_pane h2  {
@@ -222,14 +226,12 @@ article#Maze_info_pane h2  {
 }
 */
 
-article#Maze_info_pane div#Maze_view2D {
-    grid-area: view2d;
+article#Maze_view2D_pane div#Maze_view2D {
     justify-self:center; 
     text-align:  center;
 }
 
 article#Maze_info_pane div#move_ctl_view { 
-    grid-area: ctl_view;
     justify-self:center; 
     text-align:  center;
 }

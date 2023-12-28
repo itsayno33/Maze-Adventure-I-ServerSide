@@ -259,11 +259,13 @@ function new_team(): Team {
         <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>
         <?php /* display_maze(); */ ?>
     </article>
-    <article class='Maze_info' id='Maze_info_pane'>
+    <article id='Maze_view2D_pane'>
         <div id='Maze_view2D'>
                 <pre id='Maze_view2D_pre'></pre>
                 <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
         </div>
+    </article>
+    <article class='Maze_info' id='Maze_info_pane'>
         <div id ='move_ctl_view'><div id='move_ctl_panel'>
             <button id='u_arrow' type='button' name='u_arrow' value='U'>↑</button>
             <button id='d_arrow' type='button' name='d_arrow' value='D'>↓</button>

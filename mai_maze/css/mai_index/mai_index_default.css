@@ -42,37 +42,21 @@
             var(--body_lyt_left_gap, 3rem)
             [h1-start footer-start view3d-start message-start]
             var(--body_lyt_col_left_width,  auto)
-            [view3d-end info-start message-end]
+            [view3d-end view2d-start info-start message-end]
             var(--body_lyt_col_right_width, auto)
-            [h1-end footer-end info-end]
+            [h1-end footer-end view2d_end info-end]
             var(--body_lyt_right_gap, 3rem)
             ;
     --body_grid_rows:
             [h1-start]
             var(--body_lyt_row_header_height,  100px)
-            [h1-end view3d-start info-start]
+            [h1-end view3d-start view2d-start]
             var(--body_lyt_row_main_height,      1fr)
-            [view3d-end message-start]
+            [view3d-end view2d-end info-start message-start]
             var(--body_lyt_row_message_height,   1fr)
             [info-end message-end footer-start]
             var(--body_lyt_row_footer_height,  100px)
             [footer-end]
-            ;
-
-    --maze_info_grid_gap: 1.0rem 0.5rem;
-    --maze_info_grid_cols:
-            [view2d-start ctl_view-start]
-            1fr
-            [view2d-end ctl_view-end]
-            ;
-    --maze_info_grid_rows: 
-            [h2-start]
-            1fr /*        calc(var(--info_h2_font_size, 1.75rem)  *  1.1) */
-            [h2-end view2d-start]
-            auto /*        calc(var(--view2D_pre_height,  380px) + 100px) */
-            [view2d-end ctl_view-start]
-            var(--info_ctl_panel_height,  auto)
-            [ctl_view-end]
             ;
 
     --info_h2_font_size:  16px;
@@ -93,4 +77,4 @@
     --camp_btn_height:  2.3rem;
 
     --message_width:     33rem;
-        }
+}
