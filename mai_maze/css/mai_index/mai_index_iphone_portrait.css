@@ -17,8 +17,8 @@
 
     --header_text_color:rgb(88, 0, 100);
     --header_font_family: sans-serif;
-    --header_font_size: 12px;
-    --header_line_height: 1em;
+    --header_font_size: 32px;
+    --header_line_height: 1.1rem;
 
     --icon_image_width:  150px;
     --icon_cell_padding: 10px;
@@ -34,11 +34,72 @@
     --h1_margin: 10px;
     --h1_text_color: darkgoldenrod;
     --h1_font_family: serif;
-    --h1_font_size: 36px;
-    --h1_line_heght: 38px;
+    --h1_font_size:  52px; /* 36px */
+    --h1_line_heght: 55px; /* 38px */
+    
+    --body_grid_gap: 1rem 1.5rem;
+    --body_grid_cols: 
+            [h1-start footer-start view3d-start info-start message-start]
+            1fr
+            [h1-end footer-end view3d-end info-end message-end]
+            ;
+    --body_grid_rows:
+            [h1-start]
+            var(--body_lyt_row_header_height,  100px)
+            [h1-end view3d-start]
+            auto
+            [view3d-end info-start]
+            auto
+            [info-end message-start]
+            1fr
+            [message-end footer-start]
+            var(--body_lyt_row_footer_height,  100px)
+            [footer-end]
+            ;
 
-    --main_list_margin: 10px;
-    --main_list_font_famiry: serif;
-    --main_list_font_size: 20px;
-    --main_list_line_height: 32 px;
+    --maze_info_grid_gap: 0.0rem 1.0rem;
+    --maze_info_grid_cols:
+            [view2d-start]
+            var(--view2D_pre_width)          /* 1fr */
+            [view2d-end ctl_view-start]
+            10rem                            /* 1fr */
+            [ctl_view-end]
+            ;
+    --maze_info_grid_rows: 
+            [view2d-start ctl_view-start]
+            1fr
+/*            var(--info_ctl_panel_height,  auto)  */
+            [view2d-end ctl_view-end]
+            ;
+
+    font-size: 50px;
+
+    --view2D_pre_margin:        0px;
+    --view2D_pre_width:       600px;
+    --view2D_pre_height:      600px;
+    --view2D_pre_font_family: monospace;
+    --view2D_pre_font_size:    20pt;
+    --view2D_pre_line_height:  22pt;
+
+    --view3D_canvas_width:    900px;
+    --view3D_canvas_height:   600px;
+
+/*    --view3D_info_width:     100dvw; */
+
+    --info_h2_font_size:     36px;
+}
+
+html {
+    font-size: 52px;
+}
+
+
+div#Maze_view2D button {
+    font-size: larger;
+}
+
+div#move_ctl_panel button {
+    padding: 0;
+    text-align: center;
+    font-size:  1.0rem;
 }

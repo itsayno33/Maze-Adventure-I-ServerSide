@@ -27,32 +27,12 @@ h1::after {
 /* 全体のレイアウト関係 */
 body {
     background-color: var(--body_lyt_bgcolor,#ccffcc);
-    width: 100%;
 
     display: grid;
 
-    gap: 1rem 1.5rem;
-    grid-template-columns: 
-        var(--body_lyt_left_gap, 3rem)
-        [h1-start footer-start view-start]
-        var(--body_lyt_col_left_width,  auto)
-        [view-end info-start message-start]
-        var(--body_lyt_col_right_width, auto)
-        [h1-end footer-end info-end message-end]
-        var(--body_lyt_right_gap, 3rem)
-        ;
-
-    grid-template-rows: 
-        [h1-start]
-        var(--body_lyt_row_header_height,  100px)
-        [h1-end view-start info-start]
-        var(--body_lyt_row_main_height_,    auto)
-        [info-end message-start]
-        var(--body_lyt_row_message_height,   1fr)
-        [message-end view-end footer-start]
-        var(--body_lyt_row_footer_height,  100px)
-        [footer-end]
-        ;
+    gap:                   var(--body_grid_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_grid_cols);
+    grid-template-rows:    var(--body_grid_rows);
 }
 
 h1 {
@@ -60,7 +40,7 @@ h1 {
 }
 
 article#Maze_view_pane {
-    grid-area: view;
+    grid-area: view3d;
 }
 
 article#Maze_info_pane {
@@ -126,13 +106,13 @@ div#Maze_view_message_div {
 
     margin-top:    var(--view_message_margin_UD, 1.2rem);
     margin-bottom: var(--view_message_margin_UD, 1.2rem);
-    width:         var(--view_message_width, 30rem);
+    width:         var(--message_width, 33rem);
 }
 p#Maze_view_message {
     color: inherit;
     background-color: inherit;
     word-break: break-all;
-    font-size:  var(--viiew_message_font_size, 1.1rem);
+    font-size:  var(--view_message_font_size, 1.1rem);
 }
 
 div#Maze_view_switch {
@@ -150,9 +130,14 @@ div#Maze_view_switch button#view_switch {
 */
 
 pre#Maze_view2D_pre {
-    margin:      var(--view2D_pre_margin,    0.8rem);
-    width:       320px;
-    height:      283px;
+    margin:      var(--view2D_pre_margin,      0.8rem);
+    width:       var(--view2D_pre_width,        320px);
+    height:      var(--view2D_pre_height,       283px); 
+    font-family: var(--view2D_pre_font_family, monospace);
+/*
+    font-size:   var(--view2D_pre_font_size,   0.8rem);
+    line-height: var(--view2D_pre_line_height, 0.9rem);
+*/
     text-align: center;
 }
 
@@ -222,21 +207,12 @@ ul#camp_list {
 
 article#Maze_info_pane {
     display: grid;
-    gap: 2.0rem 1.0rem;
-    grid-template-columns: 
-        [h2-start ctl_view-start]
-        auto
-        [h2-end ctl_view-end]
-        ;
-    grid-template-rows: 
-        [h2-start]
-        calc(var(--info_h2_font_size, 1.75rem)  *  1.1)
-        [h2-end ctl_view-start]
-        var(--info_ctl_panel_height,  auto)
-        [ctl_view-end]
-        ;
+    gap:                   var(--maze_info_grid_gap, 1.0rem 0.5rem);
+    grid-template-columns: var(--maze_info_grid_cols);
+    grid-template-rows:    var(--maze_info_grid_rows);
 }
 
+/*
 article#Maze_info_pane h2  {
     grid-area: h2;
     justify-self:center;
@@ -244,10 +220,17 @@ article#Maze_info_pane h2  {
 
     font-size: var(--info_h2_font_size, 1.75rem);
 }
+*/
 
-article#Maze_info_pane div#move_ctl_view {
+article#Maze_info_pane div#Maze_view2D {
+    grid-area: view2d;
+    justify-self:center; 
+    text-align:  center;
+}
+
+article#Maze_info_pane div#move_ctl_view { 
     grid-area: ctl_view;
-    justify-self:center;
+    justify-self:center; 
     text-align:  center;
 }
 
@@ -328,8 +311,15 @@ div#move_ctl_panel button#r_arrow {
 }
 
 article#message_pane {
+    width:       var(--message_width, 33rem);
     font-size:   var(--message_font_size,   0.6rem);
     line-height: var(--message_line_height, 0.7rem);
     max-height: calc( var(--message_line_height, 0.7rem) * 6);
     overflow-y: scroll;
+    justify-self:center;
+    align-self: auto;
+}
+
+article#message_pane p {
+    word-break: break-all;
 }
