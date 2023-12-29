@@ -46,7 +46,7 @@
             break;
         case 'save_info':
             $save_info = get_save_info($gv->db_mai, $ga->pid);
-            if ($save_info === false) {
+            if ($save_info === null) {
                 $code = 500;
                 $ret_JSON = all_encode($code);
                 break;
@@ -94,6 +94,9 @@
                 }
             }
             $ret_JSON = all_save($ga->pid, $save_id, '__InstantSaveData__', true);
+            break;
+        case 'load':
+            $ret_JSON = all_load($ga->save_id);
             break;
         case 'save':
             if ($ga->save_id < 1) {
