@@ -202,6 +202,21 @@ p#Maze_view3D_direction_info span#direction_Y {
     background-color: #98fb98;
 }
 
+ul#save_data_list {
+    color:            chocolate;
+    background-color: cornsilk;
+
+    font-size:    var(--save_data_list_font_size,   1.0rem);
+    line-height:  var(--save_data_list_line_height, 1.1rem);
+
+    padding-top:    0.5em;
+    padding-bottom: 0.5em;
+}
+ul#save_data_list li{
+    margin-top:    0.0em;
+    margin-bottom: 0.5em;
+}
+
 ul#camp_list {
     color:            chocolate;
     background-color: cornsilk;

@@ -51,7 +51,7 @@
                 $ret_JSON = all_encode($code);
                 break;
             }
-            $ret_JSON = all_save_info($save_info);
+            $ret_JSON = all_save_info(0, $save_info);
             break;
         case 'UD_load':
             $save_id = get_save_id($gv->db_mai, $ga->pid, '__UpDownSaveData__');
@@ -168,13 +168,13 @@ function all_encode(int $code): string {
     return $ret_JSON;
 }
 
-function all_save_info(array $save_info): string {
+function all_save_info(int $code, array $save_info): string {
     global $gv, $ga;
 
     $ret_assoc = [];
 
     $ret_assoc['ecode'] = $code;
-    if ($gv->mes->is_err()) {
+    if ($code !== 0 || $gv->mes->is_err()) {
         $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
     } else {
         $save_array = [];
@@ -185,6 +185,7 @@ function all_save_info(array $save_info): string {
             $save['detail']       = $save_dat['detail'];
             $save['point']        = $save_dat['point'];
             $save['save_time']    = $save_dat['save_time'];
+            if ($save_dat['auto_mode'] != '0') $save['auto_mode'] = "Y"; else $save['auto_mode'] = "N";
             array_push($save_array, $save_dat);
         }
         $ret_assoc['save']    = $save_array;
@@ -300,13 +301,13 @@ function do_load(int $save_id): bool {
 function get_save_info(PDO $db_mai, int $player_id): array | null {
     global $gv;
     $get_save_SQL =<<<GET_SAVE_INFO01
-        SELECT id, title, detail, point, save_time FROM tbl_save
-        WHERE  id = :save_id 
+        SELECT id, title, detail, point, auto_mode, save_time FROM tbl_save
+        WHERE  player_id = :player_id 
         ORDER BY title COLLATE utf8mb4_unicode_ci ASC
 GET_SAVE_INFO01;
     try {
         $get_save_stmt = $db_mai->prepare($get_save_SQL);
-        $get_save_stmt->bindValue(':save_id', $save_id);
+        $get_save_stmt->bindValue(':player_id', $player_id);
         $get_save_stmt->execute();
         $resultRecordSet = $get_save_stmt->fetchAll();
     } catch (PDOException $e) {

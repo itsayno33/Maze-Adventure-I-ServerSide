@@ -260,12 +260,12 @@ function new_team(): Team {
                     <legend>セーブ情報を入力して下さい</legend>
                     <ul>
                         <li>
-                            <input id='save_data_title'  for='save_data_form' type='text' name='title'  minlength='3' maxlength='30' size='30' placeholder='(必須)' required></input>
                             <label for='save_data_title'>タイトル(必須)</label>
+                            <input id='save_data_title'  for='save_data_form' type='text' name='title'  minlength='3' maxlength='30' size='30' placeholder='(必須)' required></input>
                         </li>
                         <li>
-                            <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
                             <label for='save_data_detail'>詳細(任意)</label>
+                            <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
                         </li>
                         <li>
                             <p id='save_data_point'></p>
