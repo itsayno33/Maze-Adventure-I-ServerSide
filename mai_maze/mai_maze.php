@@ -95,6 +95,24 @@
             }
             $ret_JSON = all_save($ga->pid, $save_id, '__InstantSaveData__', true);
             break;
+        case 'save':
+            if ($ga->save_id < 1) {
+                [$rslt, $save_id] = new_save($gv->db_mai, $ga->pid, $ga->save_title, false);
+                if ($rslt === false) {
+                    $code = 610;
+                    $ret_JSON = all_encode($code);
+                    break;
+                }
+            } else {
+                $rslt = all_save($ga->pid, $ga->save_id, $ga->save_title, false);
+                if ($rslt === false) {
+                    $code = 620;
+                    $ret_JSON = all_encode($code);
+                    break;
+                }
+            }
+            $ret_JSON = all_encode(0);
+            break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
             $ret_JSON = all_encode(999);
@@ -186,7 +204,7 @@ function all_save_info(int $code, array $save_info): string {
             $save['point']        = $save_dat['point'];
             $save['save_time']    = $save_dat['save_time'];
             if ($save_dat['auto_mode'] != '0') $save['auto_mode'] = "Y"; else $save['auto_mode'] = "N";
-            array_push($save_array, $save_dat);
+            array_push($save_array, $save);
         }
         $ret_assoc['save']    = $save_array;
     }
@@ -797,6 +815,8 @@ SEEK_SAVE01;
 function new_save(PDO $db_mai, int $player_id, string $title, bool $is_instant): array {
     global $ga;
 
+    if ($is_instant) $is_instant_int = 1; else $is_instant_int = 0;
+
     $insert_save_SQL =<<<NEW_SAVE01
         INSERT INTO tbl_save (player_id, title, detail, point, auto_mode, is_active, is_delete)
         VALUES ( :player_id, :title, :detail, :point, :auto_mode, true, false)
@@ -807,7 +827,7 @@ NEW_SAVE01;
         $insert_save_stmt->bindValue(':title',     $title);
         $insert_save_stmt->bindValue(':detail',    $ga->save_detail);
         $insert_save_stmt->bindValue(':point',     $ga->save_point);
-        $insert_save_stmt->bindValue(':auto_mode', $is_instant);
+        $insert_save_stmt->bindValue(':auto_mode', $is_instant_int);
         $insert_save_stmt->execute();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 0: {$insert_save_SQL}");
@@ -821,6 +841,8 @@ NEW_SAVE01;
 
 function add_save(PDO $db_mai, int $player_id, int $save_id, string $title, bool $is_instant): int | bool {
     global $ga;
+
+    if ($is_instant) $is_instant_int = 1; else $is_instant_int = 0;
     
     $insert_save_SQL =<<<INSERT_SAVE01
         INSERT INTO tbl_save (id, player_id, title, detail, point, auto_mode, is_active, is_delete)
@@ -833,7 +855,7 @@ INSERT_SAVE01;
         $insert_save_stmt->bindValue(':title',     $title);
         $insert_save_stmt->bindValue(':detail',    $ga->save_detail);
         $insert_save_stmt->bindValue(':point',     $ga->save_point);
-        $insert_save_stmt->bindValue(':auto_mode', $is_instant);
+        $insert_save_stmt->bindValue(':auto_mode', $is_instant_int);
         $insert_save_stmt->execute();
     } catch (PDOException $e) {
         pdo_error1($e, "SQLエラー 1: {$insert_save_SQL}");
