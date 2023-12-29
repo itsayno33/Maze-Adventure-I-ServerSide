@@ -206,15 +206,27 @@ ul#save_data_list {
     color:            chocolate;
     background-color: cornsilk;
 
-    font-size:    var(--save_data_list_font_size,   1.0rem);
-    line-height:  var(--save_data_list_line_height, 1.1rem);
+    font-size:    var(--save_data_list_font_size,   0.9rem);
+    line-height:  var(--save_data_list_line_height, 1.0rem);
 
     padding-top:    0.5em;
     padding-bottom: 0.5em;
+
+    column-count: 2;
+/*    columns: auto 100px; */
 }
 ul#save_data_list li{
     margin-top:    0.0em;
     margin-bottom: 0.5em;
+}
+
+ul#save_data_list legend
+ul#save_data_list label
+ul#save_data_list input
+ul#save_data_list textarea
+{
+    font-size:    var(--save_data_list_font_size,   0.9rem);
+    line-height:  var(--save_data_list_line_height, 1.0rem);
 }
 
 ul#camp_list {
@@ -244,6 +256,10 @@ article#Maze_info_pane h2  {
 article#Maze_view2D_pane div#Maze_view2D {
     justify-self:center; 
     text-align:  center;
+}
+
+article#Maze_info_pane{
+    display: grid;
 }
 
 article#Maze_info_pane div#move_ctl_view { 

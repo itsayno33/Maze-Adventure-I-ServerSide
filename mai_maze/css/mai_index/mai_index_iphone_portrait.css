@@ -62,7 +62,7 @@
     font-size: 16px;
 
     --view2D_pre_margin:        0px;
-    --view2D_pre_width:       200px;
+    --view2D_pre_width:       50dvw;
     --view2D_pre_height:      175px;
     --view2D_pre_font_family: monospace;
     --view2D_pre_font_size:    08pt;
