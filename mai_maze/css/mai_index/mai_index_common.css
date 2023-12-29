@@ -202,6 +202,7 @@ p#Maze_view3D_direction_info span#direction_Y {
     background-color: #98fb98;
 }
 
+ul#load_data_list,
 ul#save_data_list {
     color:            chocolate;
     background-color: cornsilk;
@@ -215,14 +216,21 @@ ul#save_data_list {
     column-count: 2;
 /*    columns: auto 100px; */
 }
+
+ul#load_data_list li,
 ul#save_data_list li{
     margin-top:    0.0em;
     margin-bottom: 0.5em;
 }
 
-ul#save_data_list legend
-ul#save_data_list label
-ul#save_data_list input
+ul#load_data_list legend,
+ul#load_data_list label,
+ul#load_data_list input,
+ul#load_data_list textarea,
+
+ul#save_data_list legend,
+ul#save_data_list label,
+ul#save_data_list input,
 ul#save_data_list textarea
 {
     font-size:    var(--save_data_list_font_size,   0.9rem);

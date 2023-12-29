@@ -252,33 +252,47 @@ function new_team(): Team {
                 </dl>
             </div>
             <div id='Maze_view_switch_load'>
+                <form id='load_data_form'>
+                    <input id='load_data_id' for='load_data_form' type='hidden' name='load_data_id' value='-1' />
+                </form>
                 <ul id='load_data_list'></ul>
                 <fieldset>
                 <legend>セーブ情報</legend>
                 <ul id='load_data_detail'>
-                    <li><p id='loas_data_title'></p></li>
-                    <li><p id='loas_data_detail'></p></li>
-                    <li><p id='loas_data_point'></p></li>
-                    <li><p id='loas_data_time'></p></li>
+                    <li>
+                        <label for='load_data_time'>保存日時:</label>
+                        <p id='load_data_time'></p>
+                    </li>
+                    <li>
+                        <label for='load_data_point'>保存場所:</label>
+                        <p id='load_data_point'></p>
+                    </li>
+                    <li>
+                        <label for='load_data_detail'>詳細:</label>
+                        <textarea id='load_data_detail' for='load_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)' readonly></textarea>
+                    </li>
                 </ul>
                 </fieldset>
             </div>
             <div id='Maze_view_switch_save'>
+                <form id='save_data_form'>
+                    <input id='save_data_id' for='save_data_form' type='hidden' name='save_data_id' value='-1' />
+                </form>
                 <ul id='save_data_list'></ul>
-                <form id='save_data_form'></form>
                 <fieldset>
                     <legend>セーブ情報を入力して下さい</legend>
                     <ul id='save_data_detail'>
                         <li>
-                            <label for='save_data_title'>タイトル(必須)</label>
-                            <input id='save_data_title'  for='save_data_form' type='text' name='title'  minlength='3' maxlength='30' size='30' placeholder='(必須)' required></input>
+                            <label for='save_data_time'>保存日時:</label>
+                            <p id='save_data_time'></p>
                         </li>
                         <li>
-                            <label for='save_data_detail'>詳細(任意)</label>
-                            <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
-                        </li>
-                        <li>
+                            <label for='save_data_point'>保存場所:</label>
                             <p id='save_data_point'></p>
+                        </li>
+                        <li>
+                            <label for='save_data_detail'>詳細(任意):</label>
+                            <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
                         </li>
                     </ul>
                 </fieldset>
