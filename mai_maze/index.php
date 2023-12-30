@@ -249,6 +249,8 @@ function new_team(): Team {
                         <p>以前保存した冒険を再開できます</p></li>
                     <li id='camp_save'>冒険の記録
                         <p>直前までの冒険を保存できます</p></li>
+                    <li id='camp_hres'>冒険者の準備
+                        <p>冒険者の情報を見たり装備を替えたりできます(未実装)</p></li>
                 </dl>
             </div>
             <div id='Maze_view_switch_load'>
@@ -295,6 +297,13 @@ function new_team(): Team {
                             <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
                         </li>
                     </ul>
+                </fieldset>
+            </div>
+            <div id='Maze_view_switch_hres'>
+                <ul id='hres_list'></ul>
+                <fieldset id='hero_fields'>
+                    <legend>冒険者の情報</legend>
+                    <ul id='hero_info'></ul>
                 </fieldset>
             </div>
         </div>
