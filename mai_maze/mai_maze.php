@@ -100,19 +100,22 @@
             break;
         case 'save':
             if ($ga->save_id < 1) {
+                tr_begin($gv->db_mai);
                 [$rslt, $save_id] = new_save($gv->db_mai, $ga->pid, $ga->save_title, false);
                 if ($rslt === false) {
+                    tr_rollback($gv->db_mai);
                     $code = 610;
                     $ret_JSON = all_encode($code);
                     break;
                 }
-            } else {
-                $rslt = all_save($ga->pid, $ga->save_id, $ga->save_title, false);
-                if ($rslt === false) {
-                    $code = 620;
-                    $ret_JSON = all_encode($code);
-                    break;
-                }
+                tr_commit($gv->db_mai);
+                $ga->save_id = $save_id;
+            }
+            $rslt = all_save($ga->pid, $ga->save_id, $ga->save_title, false);
+            if ($rslt === false) {
+                $code = 620;
+                $ret_JSON = all_encode($code);
+                break;
             }
             $ret_JSON = all_encode(0);
             break;
@@ -369,6 +372,7 @@ GET_SAVE01;
 }
 
 function get_maze(PDO $db_mai, int $save_id): array | null {
+    global $gv;
     $get_maze_SQL =<<<GET_MAZE01
         SELECT 	id, save_id, title, size_x, size_y, size_z, maps, mask FROM tbl_maze
         WHERE   save_id = :save_id
