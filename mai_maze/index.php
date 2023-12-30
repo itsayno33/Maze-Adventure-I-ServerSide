@@ -256,7 +256,7 @@ function new_team(): Team {
                     <input id='load_data_id' for='load_data_form' type='hidden' name='load_data_id' value='-1' />
                 </form>
                 <ul id='load_data_list'></ul>
-                <fieldset>
+                <fieldset id='load_data_fields'>
                 <legend>セーブ情報</legend>
                 <ul id='load_data_detail'>
                     <li>
@@ -279,7 +279,7 @@ function new_team(): Team {
                     <input id='save_data_id' for='save_data_form' type='hidden' name='save_data_id' value='-1' />
                 </form>
                 <ul id='save_data_list'></ul>
-                <fieldset>
+                <fieldset id='save_data_fields'>
                     <legend>セーブ情報を入力して下さい</legend>
                     <ul id='save_data_detail'>
                         <li>
