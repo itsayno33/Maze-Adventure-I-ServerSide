@@ -299,13 +299,13 @@ function new_team(): Team {
                     </ul>
                 </fieldset>
             </div>
-            <!-- div id='Maze_view_switch_hres'>
+            <div id='Maze_view_switch_hres'>
                 <ul id='hres_list'></ul>
                 <fieldset id='hero_fields'>
                     <legend>冒険者の情報</legend>
                     <ul id='hero_info'></ul>
                 </fieldset>
-            </div -->
+            </div>
         </div>
         <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>
         <?php /* display_maze(); */ ?>
@@ -329,7 +329,7 @@ function new_team(): Team {
         <?php /* display_cntl(); */ ?>
     </article>
     <article class='message_pane' id='message_pane'>
-        <!-- div id='client_message'></div -->
+        <div id='client_message'></div>
         <?php 
             $gv->mes->display_err_message(); 
             $gv->mes->display_nor_message(); 
