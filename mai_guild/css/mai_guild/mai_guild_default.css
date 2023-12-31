@@ -7,14 +7,6 @@
     
     --body_lyt_bgcolor: azure;
 
-    --body_lyt_col_left_gap:   30px;
-    --body_lyt_col_right_gap:  30px;
-    --body_lyt_col_main_width: auto;
-
-    --body_lyt_row_header_height: 100px;
-    --body_lyt_row_main_height  :  auto;
-    --body_lyt_row_footer_height:  20px;
-
     --header_text_color:darkgreen;
     --header_font_family: sans-serif;
     --header_font_size: 12px;
@@ -37,38 +29,43 @@
     --h1_font_size: 36px;
     --h1_line_heght: 38px;
 
+/*    
+    --body_grid_col_left_gap:    30px;
+    --body_grid_col_right_gap:   30px;
+    --body_grid_col_main_width:  auto;
+    --body_grid_col_left_width:  auto;
+    --body_grid_col_right_width: auto;
+
+    --body_grid_row_header_height: 100px;
+    --body_grid_row_main_height:     1fr;
+    --body_grid_row_message_height:  1fr;
+    --body_grid_row_footer_height:  20px;
+*/
+
     --body_grid_gap: 1rem 1.5rem;
     --body_grid_cols: 
-            var(--body_lyt_left_gap, 3rem)
-            [h1-start footer-start view3d-start message-start]
-            var(--body_lyt_col_left_width,  auto)
-            [view3d-end view2d-start info-start message-end]
-            var(--body_lyt_col_right_width, auto)
-            [h1-end footer-end view2d_end info-end]
-            var(--body_lyt_right_gap, 3rem)
+            3rem
+            [h1-start footer-start view-start message-start]
+            auto
+            [view-end cntl-start]
+            auto
+            [h1-end footer-end  message-end cntl-end]
+            3rem
             ;
     --body_grid_rows:
             [h1-start]
-            var(--body_lyt_row_header_height,  100px)
-            [h1-end view3d-start view2d-start]
-            var(--body_lyt_row_main_height,      1fr)
-            [view3d-end view2d-end info-start message-start]
-            var(--body_lyt_row_message_height,   1fr)
-            [info-end message-end footer-start]
-            var(--body_lyt_row_footer_height,  100px)
+            100px
+            [h1-end view-start cntl-start]
+            1fr
+            [view-end cntl-end message-start]
+            1fr
+            [message-end footer-start]
+            100px
             [footer-end]
             ;
 
-    --info_h2_font_size:  16px;
-
-    --view3D_info_width:  23rem;
-    --view3D_text_color:darkgreen;
-    --view3D_font_family: sans-serif;
-    --view3D_font_size:   1.3rem;
-    --view3D_line_heght:  1.6rem;
-
-    --view_message_height:    3.5rem;
     --view_message_font_size: 1.1rem;
+    --view_message_height:    3.5rem;
 
     --lr_arrow_width:   2.3rem;
     --lr_arrow_height:  2.3rem;
@@ -76,5 +73,8 @@
     --ud_arrow_height:  2.3rem;
     --camp_btn_height:  2.3rem;
 
-    --message_width:     33rem;
+    --message_width:        33rem;
+    --message_font_size:   0.6rem;
+    --message_line_height: 0.7rem;
+
 }

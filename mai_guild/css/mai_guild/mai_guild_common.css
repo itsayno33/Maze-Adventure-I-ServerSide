@@ -39,16 +39,11 @@ h1 {
     grid-area: h1;
 }
 
-article#Maze_view_pane {
-    grid-area: view3d;
+article#gld_view_pane {
+    grid-area: view;
 }
-
-article#Maze_view2D_pane {
-    grid-area: view2d;
-}
-
-article#Maze_info_pane {
-    grid-area: info;
+article#gld_ctl_pane {
+    grid-area: cntl;
 }
 
 article#message_pane {
@@ -99,183 +94,33 @@ h1 {
     font-size:   var(--h1_font_size,   22px);
     line-height: var(--h1_line_heght,  26px);
 }
-article#Maze_view_pane{
-    justify-self:center;
-    align-self: auto;
-}
-div#Maze_view_message_div {
-    min-height: var(--view_message_height, 3.5rem);
-    max-height: 3.5rem;
-    overflow-y: scroll;
 
-    margin-top:    var(--view_message_margin_UD, 1.2rem);
-    margin-bottom: var(--view_message_margin_UD, 1.2rem);
-    width:         var(--message_width, 33rem);
-}
-p#Maze_view_message {
-    color: inherit;
-    background-color: inherit;
-    word-break: break-all;
-    font-size:  var(--view_message_font_size, 1.1rem);
+
+div#gld_view_switch {
+    width: auto;
 }
 
-div#Maze_view_switch {
-    width: max(
-        var(--view3D_canvas_width,  320px), 
-        calc(var(--view2D_pre_font_size, 0.8rem) * 23),
-        var(--view3D_info_width,  23rem)
-        );
-}
-
-/*
-div#Maze_view_switch button#view_switch {
-    float: left;
-}
-*/
-
-pre#Maze_view2D_pre {
-    margin:      var(--view2D_pre_margin,      0.8rem);
-    width:       var(--view2D_pre_width,        320px);
-    height:      var(--view2D_pre_height,       283px); 
-    font-family: var(--view2D_pre_font_family, monospace);
-/*
-    font-size:   var(--view2D_pre_font_size,   0.8rem);
-    line-height: var(--view2D_pre_line_height, 0.9rem);
-*/
-    text-align: center;
-}
-
-div#Maze_view3D {
-    text-align: center;
-}
-
-canvas#Maze_view3D_canvas {
-    margin: var(--view3D_canvas_margin,  1rem);
-    width:  var(--view3D_canvas_width,  320px);
-    height: var(--view3D_canvas_height, 203px);
-}
-
-p#Maze_view3D_direction_info {
-    text-align: center;
-
-    width:       var(--view3D_info_width,  23rem);
-    color:       var(--view3D_text_color,darkgreen);
-    font-family: var(--view3D_font_family, sans-serif);
-    font-size:   var(--view3D_font_size,   1.3rem);
-    line-height: var(--view3D_line_heght,  1.6rem);
-}
-
-p#Maze_view3D_direction_info .direction_N {
-    color: #000000;
-    background-color: #00ff00;
-}
-
-p#Maze_view3D_direction_info .direction_E {
-    color: #ffffff;
-    background-color: #0000ff;
-}
-
-p#Maze_view3D_direction_info .direction_S {
-    color: #ffffff;
-    background-color: #ff0000;
-}
-
-p#Maze_view3D_direction_info .direction_W {
-    color: #000000;
-    background-color: #ffd700;
-}
-
-p#Maze_view3D_direction_info .direction_D {
-    color: #ffffff;
-    background-color: #000000;
-}
-
-p#Maze_view3D_direction_info span#direction_X {
-    color: #ff00ff;
-}
-
-p#Maze_view3D_direction_info span#direction_Y {
-    color: #ffa500;
-}
-
-.blink {
-    background-color: #98fb98;
-}
-
-ul#load_data_list,
-ul#save_data_list {
-    color:            chocolate;
-    background-color: cornsilk;
-
-    font-size:    var(--save_data_list_font_size,   0.9rem);
-    line-height:  var(--save_data_list_line_height, 1.0rem);
-
-    padding-top:    0.5em;
-    padding-bottom: 0.5em;
-
-    column-count: 2;
-/*    columns: auto 100px; */
-}
-
-ul#load_data_list li,
-ul#save_data_list li{
-    margin-top:    0.0em;
-    margin-bottom: 0.5em;
-}
-
-ul#load_data_list legend,
-ul#load_data_list label,
-ul#load_data_list input,
-ul#load_data_list textarea,
-
-ul#save_data_list legend,
-ul#save_data_list label,
-ul#save_data_list input,
-ul#save_data_list textarea
-{
-    font-size:    var(--save_data_list_font_size,   0.9rem);
-    line-height:  var(--save_data_list_line_height, 1.0rem);
-}
-
-ul#camp_list {
+ul#guild_list {
     color:            chocolate;
     background-color: cornsilk;
 }
 
-/*
-article#Maze_info_pane {
+div#gld_view_message_div {
+    font-size:   var(--view_message_font_size, 1.1rem);
+    line-height: var(--view_message_height,    3.5rem);
+
+}
+
+article#gld_ctl_pane{
     display: grid;
-    gap:                   var(--maze_info_grid_gap, 1.0rem 0.5rem);
-    grid-template-columns: var(--maze_info_grid_cols);
-    grid-template-rows:    var(--maze_info_grid_rows);
 }
-*/
 
-/*
-article#Maze_info_pane h2  {
-    grid-area: h2;
-    justify-self:center;
-    text-align:  center;
-
-    font-size: var(--info_h2_font_size, 1.75rem);
-}
-*/
-
-article#Maze_view2D_pane div#Maze_view2D {
+article#gld_ctl_pane div#ctl_view { 
     justify-self:center; 
     text-align:  center;
 }
 
-article#Maze_info_pane{
-    display: grid;
-}
-
-article#Maze_info_pane div#move_ctl_view { 
-    justify-self:center; 
-    text-align:  center;
-}
-
-div#move_ctl_panel {
+div#ctl_panel {
     display: grid;
 
     gap: 0.5rem 0.5rem;
@@ -305,7 +150,18 @@ div#move_ctl_panel {
 
 }
 
-div#move_ctl_panel button#y_btn {
+button.normal#debug_mode {
+    color:            var(--debug_button_fwcolor, #008000);
+    background-color: var(--debug_button_bgcolor, #f0f8ff);
+}
+
+button.debug#debug_mode {
+    color:            var(--debug_button_fwcolor, #ffffff);
+    background-color: var(--debug_button_bgcolor, #ff0000);
+}
+
+
+div#ctl_panel button#y_btn {
     grid-area: y_btn;
 
     color: darkgreen ;
@@ -315,7 +171,7 @@ div#move_ctl_panel button#y_btn {
     font-weight: bold;
 }
 
-div#move_ctl_panel button#n_btn {
+div#ctl_panel button#n_btn {
     grid-area: n_btn;
 
     color: #ff00ff;
@@ -325,7 +181,7 @@ div#move_ctl_panel button#n_btn {
     font-weight: bold;
 }
 
-div#move_ctl_panel button#c_btn {
+div#ctl_panel button#c_btn {
     grid-area: c_btn;
 
     color: rgb(139, 141, 0) ;
@@ -335,19 +191,19 @@ div#move_ctl_panel button#c_btn {
     font-weight: bold;
 }
 
-div#move_ctl_panel button#u_arrow {
+div#ctl_panel button#u_arrow {
     grid-area: u_arrow;
 }
 
-div#move_ctl_panel button#d_arrow {
+div#ctl_panel button#d_arrow {
     grid-area: d_arrow;
 }
 
-div#move_ctl_panel button#l_arrow {
+div#ctl_panel button#l_arrow {
     grid-area: l_arrow;
 }
 
-div#move_ctl_panel button#r_arrow {
+div#ctl_panel button#r_arrow {
     grid-area: r_arrow;
 }
 

@@ -220,19 +220,20 @@ function new_team(): Team {
 <body id='body'>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ【ギルド】</h1>
     <article class='gld_view_pane' id='gld_view_pane'>
+        <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
         <div id='gld_view_switch'>
-            <div id='gld_view_switch_camp'>
-                <ul id='camp_list'>
-                    <li id='camp_hres'>冒険者情報
-                        <p>冒険者情報を見ることができます</p></li>
-                    <li id='camp_edit'>新規冒険者募集
-                        <p>新しいキャラクターを募集出来ます(未実装)</p></li>
-                    <li id='camp_load'>冒険者のロード
-                        <p>冒険情報をロードできます(未実装)</p></li>
-                    <li id='camp_save'>冒険者のセーブ
-                        <p>冒険情報をセーブできます(未実装)</p></li>
-                    <li id='camp_hres'>冒険出発
-                        <p>ダンジョンに出発します(未実装)</p></li>
+            <div id='gld_view_switch_guild'>
+                <ul id='guild_list'>
+                    <li id='guild_hres'>冒険者情報
+                        <p>　冒険者情報を見ることができます(未実装)</p></li>
+                    <li id='guild_edit'>冒険者募集
+                        <p>　新しいキャラクターを募集出来ます(未実装)</p></li>
+                    <li id='guild_load'>冒険者呼び出し
+                        <p>　冒険情報をロードできます(未実装)</p></li>
+                    <li id='guild_save'>冒険者登録
+                        <p>　冒険情報をセーブできます(未実装)</p></li>
+                    <li id='guild_to_maze'>冒険出発
+                        <p>　ダンジョンに出発します(未実装)</p></li>
                 </dl>
             </div>
             <div id='gld_view_switch_hres'>
