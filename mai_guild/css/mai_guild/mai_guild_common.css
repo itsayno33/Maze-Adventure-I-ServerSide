@@ -1,0 +1,366 @@
+@charset "utf-8";
+
+
+/* 標準レイアウト */
+
+* {
+    margin: 0;
+}
+
+img {
+    width: 200px;
+    height: auto;
+}
+
+/* レイアウトCSSの判別　*/
+h1::after {
+    content: "\A『" var(--layout_mode, "Common") "』レイアウト\A";
+    white-space: pre;
+
+    color: var(--h1_text_color, darkgoldenrod);
+    font-family: var(--header_font_family, sans-serif);
+    font-size: var(--header_font_size, 18px);
+    line-height: var(--header_line_heght, 23px);
+}
+
+
+/* 全体のレイアウト関係 */
+body {
+    background-color: var(--body_lyt_bgcolor,#ccffcc);
+
+    display: grid;
+
+    gap:                   var(--body_grid_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_grid_cols);
+    grid-template-rows:    var(--body_grid_rows);
+}
+
+h1 {
+    grid-area: h1;
+}
+
+article#Maze_view_pane {
+    grid-area: view3d;
+}
+
+article#Maze_view2D_pane {
+    grid-area: view2d;
+}
+
+article#Maze_info_pane {
+    grid-area: info;
+}
+
+article#message_pane {
+    grid-area: message;
+}
+
+footer#footer_pane {
+    grid-area: footer;
+}
+
+/* Headerの見栄え */
+header {
+    justify-self: center;
+    align-self: baseline;
+
+    display:grid;
+}
+
+/* Footerの見栄え */
+footer {
+    justify-self:center;
+    align-self: auto;
+}
+
+footer img {
+    width: 50px;
+}
+
+footer a {
+    text-decoration: none;
+}
+footer p {
+    text-align: right;
+
+    color: var(--footer_text_color, darkgreen);
+    font-family: var(--footer_font_family, serif);
+    font-size: var(--footer_font_size, 12px);
+    line-height: var(--footer_line_heght, 158px);
+}
+
+/* 大タイトルのスタイル */
+h1 {
+    margin: var(--h1_margin, 10px);
+    text-align: center;
+
+    color:       var(--h1_text_color,darkgreen);
+    font-family: var(--h1_font_family, serif);
+    font-size:   var(--h1_font_size,   22px);
+    line-height: var(--h1_line_heght,  26px);
+}
+article#Maze_view_pane{
+    justify-self:center;
+    align-self: auto;
+}
+div#Maze_view_message_div {
+    min-height: var(--view_message_height, 3.5rem);
+    max-height: 3.5rem;
+    overflow-y: scroll;
+
+    margin-top:    var(--view_message_margin_UD, 1.2rem);
+    margin-bottom: var(--view_message_margin_UD, 1.2rem);
+    width:         var(--message_width, 33rem);
+}
+p#Maze_view_message {
+    color: inherit;
+    background-color: inherit;
+    word-break: break-all;
+    font-size:  var(--view_message_font_size, 1.1rem);
+}
+
+div#Maze_view_switch {
+    width: max(
+        var(--view3D_canvas_width,  320px), 
+        calc(var(--view2D_pre_font_size, 0.8rem) * 23),
+        var(--view3D_info_width,  23rem)
+        );
+}
+
+/*
+div#Maze_view_switch button#view_switch {
+    float: left;
+}
+*/
+
+pre#Maze_view2D_pre {
+    margin:      var(--view2D_pre_margin,      0.8rem);
+    width:       var(--view2D_pre_width,        320px);
+    height:      var(--view2D_pre_height,       283px); 
+    font-family: var(--view2D_pre_font_family, monospace);
+/*
+    font-size:   var(--view2D_pre_font_size,   0.8rem);
+    line-height: var(--view2D_pre_line_height, 0.9rem);
+*/
+    text-align: center;
+}
+
+div#Maze_view3D {
+    text-align: center;
+}
+
+canvas#Maze_view3D_canvas {
+    margin: var(--view3D_canvas_margin,  1rem);
+    width:  var(--view3D_canvas_width,  320px);
+    height: var(--view3D_canvas_height, 203px);
+}
+
+p#Maze_view3D_direction_info {
+    text-align: center;
+
+    width:       var(--view3D_info_width,  23rem);
+    color:       var(--view3D_text_color,darkgreen);
+    font-family: var(--view3D_font_family, sans-serif);
+    font-size:   var(--view3D_font_size,   1.3rem);
+    line-height: var(--view3D_line_heght,  1.6rem);
+}
+
+p#Maze_view3D_direction_info .direction_N {
+    color: #000000;
+    background-color: #00ff00;
+}
+
+p#Maze_view3D_direction_info .direction_E {
+    color: #ffffff;
+    background-color: #0000ff;
+}
+
+p#Maze_view3D_direction_info .direction_S {
+    color: #ffffff;
+    background-color: #ff0000;
+}
+
+p#Maze_view3D_direction_info .direction_W {
+    color: #000000;
+    background-color: #ffd700;
+}
+
+p#Maze_view3D_direction_info .direction_D {
+    color: #ffffff;
+    background-color: #000000;
+}
+
+p#Maze_view3D_direction_info span#direction_X {
+    color: #ff00ff;
+}
+
+p#Maze_view3D_direction_info span#direction_Y {
+    color: #ffa500;
+}
+
+.blink {
+    background-color: #98fb98;
+}
+
+ul#load_data_list,
+ul#save_data_list {
+    color:            chocolate;
+    background-color: cornsilk;
+
+    font-size:    var(--save_data_list_font_size,   0.9rem);
+    line-height:  var(--save_data_list_line_height, 1.0rem);
+
+    padding-top:    0.5em;
+    padding-bottom: 0.5em;
+
+    column-count: 2;
+/*    columns: auto 100px; */
+}
+
+ul#load_data_list li,
+ul#save_data_list li{
+    margin-top:    0.0em;
+    margin-bottom: 0.5em;
+}
+
+ul#load_data_list legend,
+ul#load_data_list label,
+ul#load_data_list input,
+ul#load_data_list textarea,
+
+ul#save_data_list legend,
+ul#save_data_list label,
+ul#save_data_list input,
+ul#save_data_list textarea
+{
+    font-size:    var(--save_data_list_font_size,   0.9rem);
+    line-height:  var(--save_data_list_line_height, 1.0rem);
+}
+
+ul#camp_list {
+    color:            chocolate;
+    background-color: cornsilk;
+}
+
+/*
+article#Maze_info_pane {
+    display: grid;
+    gap:                   var(--maze_info_grid_gap, 1.0rem 0.5rem);
+    grid-template-columns: var(--maze_info_grid_cols);
+    grid-template-rows:    var(--maze_info_grid_rows);
+}
+*/
+
+/*
+article#Maze_info_pane h2  {
+    grid-area: h2;
+    justify-self:center;
+    text-align:  center;
+
+    font-size: var(--info_h2_font_size, 1.75rem);
+}
+*/
+
+article#Maze_view2D_pane div#Maze_view2D {
+    justify-self:center; 
+    text-align:  center;
+}
+
+article#Maze_info_pane{
+    display: grid;
+}
+
+article#Maze_info_pane div#move_ctl_view { 
+    justify-self:center; 
+    text-align:  center;
+}
+
+div#move_ctl_panel {
+    display: grid;
+
+    gap: 0.5rem 0.5rem;
+    grid-template-columns: 
+        [l_arrow-start n_btn-start c_btn-start]
+        var(--lr_arrow_width, 2.3rem)
+        [l_arrow-end n_btn-end u_arrow-start d_arrow-start]
+        var(--ud_arrow_width, 2.3rem)
+        [u_arrow-end d_arrow-end r_arrow-start y_btn-start]
+        var(--lr_arrow_width, 2.3rem)
+        [r_arrow-end y_btn-end c_btn-end]
+        ;
+
+    grid-template-rows: 
+        [u_arrow-start]
+        var(--ud_arrow_height,  2.3rem)
+        [u_arrow-end l_arrow-start r_arrow-start]
+        var(--lr_arrow_height,  2.3rem)
+        [l_arrow-end r_arrow-end d_arrow-start]
+        var(--ud_arrow_height,  2.3rem)
+        [d_arrow-end y_btn-start n_btn-start]
+        var(--ud_arrow_height,  2.3rem)
+        [y_btn-end n_btn-end c_btn-start]
+        var(--camp_btn_height,  2.3rem)
+        [c_btn-end]
+        ;
+
+}
+
+div#move_ctl_panel button#y_btn {
+    grid-area: y_btn;
+
+    color: darkgreen ;
+    background-color:#ccffcc;
+
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+div#move_ctl_panel button#n_btn {
+    grid-area: n_btn;
+
+    color: #ff00ff;
+    background-color:pink;
+
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+div#move_ctl_panel button#c_btn {
+    grid-area: c_btn;
+
+    color: rgb(139, 141, 0) ;
+    background-color:#f6ffcc;
+
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+div#move_ctl_panel button#u_arrow {
+    grid-area: u_arrow;
+}
+
+div#move_ctl_panel button#d_arrow {
+    grid-area: d_arrow;
+}
+
+div#move_ctl_panel button#l_arrow {
+    grid-area: l_arrow;
+}
+
+div#move_ctl_panel button#r_arrow {
+    grid-area: r_arrow;
+}
+
+article#message_pane {
+    width:       var(--message_width, 33rem);
+    font-size:   var(--message_font_size,   0.6rem);
+    line-height: var(--message_line_height, 0.7rem);
+    max-height: calc( var(--message_line_height, 0.7rem) * 6);
+    overflow-y: scroll;
+    justify-self:center;
+    align-self: auto;
+}
+
+article#message_pane p {
+    word-break: break-all;
+}
