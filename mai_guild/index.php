@@ -223,10 +223,13 @@ function new_team(): Team {
         <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
         <div id='gld_view_switch'>
             <div id='gld_view_switch_guild'>
+                <h2>ギルド窓口</h2>
                 <ul id='guild_list'>
                     <li id='guild_hres'>冒険者情報
                         <p>　冒険者情報を見ることができます(未実装)</p></li>
-                    <li id='guild_edit'>冒険者募集
+                    <li id='guild_edit'>冒険者編集
+                        <p>　既存キャラクターを編集出来ます(デバッグモードのみ)</p></li>
+                    <li id='guild_appd'>冒険者募集
                         <p>　新しいキャラクターを募集出来ます(未実装)</p></li>
                     <li id='guild_load'>冒険者呼び出し
                         <p>　冒険情報をロードできます(未実装)</p></li>
@@ -237,10 +240,53 @@ function new_team(): Team {
                 </dl>
             </div>
             <div id='gld_view_switch_hres'>
+                <h2>冒険者情報の一覧</h2>
                 <ul id='hres_list'></ul>
-                <fieldset id='hero_fields'>
+                <fieldset id='hres_hero_fields'>
+                    <legend>冒険者の詳細情報</legend>
+                    <ul id='hres_hero_info'>
+<!--
+                        <li>名　前:<p id='hres_hero_name' ></p></li>
+                        <li>レベル:<p id='hres_hero_lv'  ></p></li>
+                        <li>年　齢:<p id='hres_hero_age'  ></p></li>
+                        <li>性　別:<p id='hres_hero_sex'  ></p></li>
+                        <li>状　態:<p id='hres_hero_state'></p></li>
+                        <li>Ｈ　Ｐ:<p id='hres_hero_hp'   ></p></li>
+                        <li>Ｍ　Ｐ:<p id='hres_hero_mp'   ></p></li>
+                        <li>ＥＸＰ:<p id='hres_hero_exp'  ></p></li>
+                        <li>スキル:<p id='hres_hero_skp'  ></p></li>
+                        <li>所持金:<p id='hres_hero_gold' ></p></li>
+
+                        <li>攻撃値:<p id='hres_hero_atk'  ></p></li>
+                        <li>防御値:<p id='hres_hero_def'  ></p></li>
+                        <li>瞬発力:<p id='hres_hero_quc'  ></p></li>
+                        <li>機運値:<p id='hres_hero_cnc'  ></p></li>
+
+                        <li>ＳＴＲ:<p id='hres_hero_str'  ></p></li>
+                        <li>ＰＷＲ:<p id='hres_hero_pwr'  ></p></li>
+                        <li>ＶＩＴ:<p id='hres_hero_vit'  ></p></li>
+                        <li>ＤＥＸ:<p id='hres_hero_dex'  ></p></li>
+                        <li>ＡＧＩ:<p id='hres_hero_agi'  ></p></li>
+                        <li>ＴＥＣ:<p id='hres_hero_tec'  ></p></li>
+                        <li>ＬＵＫ:<p id='hres_hero_luk'  ></p></li>
+-->
+                    </ul>
+                </fieldset>
+            </div>
+            <div id='gld_view_switch_edit'>
+                <h2>冒険者情報の編集</h2>
+                <ul id='edit_list'></ul>
+                <fieldset id='edit_hero_fields'>
                     <legend>冒険者の情報</legend>
-                    <ul id='hero_info'></ul>
+                    <ul id='edit_hero_info'></ul>
+                </fieldset>
+            </div>
+            <div id='gld_view_switch_appd'>
+                <h2>冒険者の募集票</h2>
+                <ul id='appd_list'></ul>
+                <fieldset id='appd_hero_fields'>
+                    <legend>冒険者の情報</legend>
+                    <ul id='appd_hero_info'></ul>
                 </fieldset>
             </div>
             <div id='gld_view_switch_load'>
