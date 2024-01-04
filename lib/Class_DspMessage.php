@@ -48,6 +48,15 @@
             }
             return;
         }
+
+        
+        public function pdo_error(PDOException $e, string $errmsg): void {
+            $this->set_err_message($errmsg);
+            $this->set_err_message("code: {$e->getCode()}");
+            $this->set_err_message("message: {$e->getMessage()}");
+            return;
+        }
+
     
         public function get_nor_messages(): array {
             return $this->nor_message;

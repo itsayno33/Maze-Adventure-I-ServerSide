@@ -398,6 +398,7 @@ GET_MAZE01;
 }
 
 function get_team(PDO $db_mai, int $save_id): array | null {
+    global $gv;
     $get_team_SQL =<<<GET_TEAM01
         SELECT 	id, save_id, name, pos_x, pos_y, pos_z, pos_d FROM tbl_team
         WHERE   save_id = :save_id
@@ -423,6 +424,8 @@ GET_TEAM01;
 }
 
 function get_heroes(PDO $db_mai, int $save_id): array | null {
+    global $gv;
+
     $get_heroes_SQL =<<<GET_HEROES01
         SELECT 	id, save_id, team_id, name, is_hero, is_alive FROM tbl_hero
         WHERE   save_id = :save_id

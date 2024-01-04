@@ -15,6 +15,7 @@
         protected int     $id = 0;
         protected int     $save_id = 0;
         protected string  $name;
+        protected bool    $is_hero;
         protected Point3D $cur_pos;
         protected Direct  $cur_dir;
         protected array   $heroes;
@@ -23,6 +24,7 @@
             $this->cur_pos = new Point3D(0, 0, 0);
             $this->cur_dir = new Direct(Direct::N);
             $this->name    = 'New Team';
+            $this->is_hero = true;
             $this->heroes   = [];
 
             $this->__init($a);
@@ -31,6 +33,9 @@
             if (!is_null($a) && is_array($a)) {
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
                     $this->name = $a['name'];
+                }
+                if (array_key_exists('is_hero', $a) && ($a['is_hero'] !== '')) {
+                    if ($a['is_hero'] != 'N') $this->is_hero = true; else $this->is_hero = false;
                 }
                 if (array_key_exists('Point3D', $a) && ($a['Point3D'] instanceof Point3D)) {
                     $this->cur_pos = $a['Point3D'];
@@ -108,6 +113,9 @@
             $e['point']   = $this->cur_pos->encode();
             $e['direct']  = $this->cur_dir->encode();
             $e['heroes']  = Hero::encode_heroes($this->heroes);
+
+            if ($this->is_hero) $e['is_hero'] = 'Y'; else $e['is_hero'] = 'N';
+
             return $e;
         }
         public function decode(array $a): Team {
@@ -120,6 +128,9 @@
                 }
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
                     $this->name    = $a['name'];
+                }
+                if (array_key_exists('is_hero', $a) && ($a['is_hero'] !== '')) {
+                    if ($a['is_hero'] != 'N') $this->is_hero = true; else $this->is_hero = false;
                 }
                 if (array_key_exists('point', $a) && (is_array($a['point']))) {
                     $this->cur_pos->decode($a['point']);
