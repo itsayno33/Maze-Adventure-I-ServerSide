@@ -50,7 +50,9 @@ typings/
 .next
 
 # 共通
+/**/_old_src/*
 /**/_ord_src/*
 /**/js/*
 icon-img/*
 mai_maze/js/bundle.js
+mai_guild/js/bundle.js
