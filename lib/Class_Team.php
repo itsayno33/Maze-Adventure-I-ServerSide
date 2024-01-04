@@ -122,15 +122,35 @@
                     $this->name    = $a['name'];
                 }
                 if (array_key_exists('point', $a) && (is_array($a['point']))) {
-                    $this->cur_pos = Point3D::decode($a['point']);
+                    $this->cur_pos->decode($a['point']);
                 }
                 if (array_key_exists('direct', $a) && (is_array($a['direct']))) {
-                    $this->cur_dir = Direct::decode($a['direct']);
+                    $this->cur_dir->decode($a['direct']);
                 }
                 if (array_key_exists('heroes', $a) && (is_array($a['heroes']))) {
                     $this->heroes  = Hero::decode_heroes($a['heroes']);
                 }
             }
+        }
+        public static function encode_all_team(array $a): array {
+            $all_team_data = [];
+            if (!is_null($a) && is_array($a)) {
+                foreach ($a as $team) {
+                    array_push($all_team_data, $team->encode());
+                }
+            }
+            return $all_team_data;
+        }
+        public static function decode_all_team(array $a): array {
+            $all_team = [];
+            if (!is_null($a) && is_array($a)) {
+                foreach ($a as $all_team_data) {
+                    $team = new Team();
+                    $team->decode($all_team_data);
+                    array_push($all_team, $team);
+                }
+            }
+            return $all_team;
         }
     }
 

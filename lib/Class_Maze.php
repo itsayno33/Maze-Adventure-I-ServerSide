@@ -509,11 +509,22 @@
             if(is_array($e) && array_key_exists('maze', $e) && $e['maze'] != '') {
                 $maze_str         = $e['maze'];
 
+                $this->cells = [];
+                for ($z = 0; $z < $this->size_z; $z++) {
+                    $this->cells[$z] = [];
+                    for ($y = 0; $y < $this->size_y; $y++) {
+                        $this->cells[$z][$y] = [];
+                        for ($x = 0; $x < $this->size_x; $x++) {
+                            array_push($this->cells[$z][$y], new MazeCell(MzKind::Empty));
+                        }
+                    }
+                }
+/*    
                 for ($d = 0; $d < $this->size_z; $d++) 
                     for ($h = 0; $h < $this->size_y; $h++) 
                         for ($w = 0; $w < $this->size_x; $w++) 
                             $this->set_cell(MzKind::Empty, $w, $h, $d);
-            
+*/            
                 $flr_array = explode('Z', $maze_str);
                 $size_z    = min($this->size_z, count($flr_array));
                 for ($d = 0; $d < $size_z; $d++) { 
@@ -531,6 +542,17 @@
 
             // MASKの復元
             if(is_array($e) && array_key_exists('mask', $e) && $e['mask'] != '') {
+                $this->masks = [];
+                for ($z = 0; $z < $this->size_z; $z++) {
+                    $this->masks[$z] = [];
+                    for ($y = 0; $y < $this->size_y; $y++) {
+                        $this->masks[$z][$y] = [];
+                        for ($x = 0; $x < $this->size_x; $x++) {
+                            array_push($this->masks[$z][$y], true);
+                        }
+                    }
+                }
+
                 $mask_str         = $e['mask'];
                 $flr_array = explode('Z', $mask_str);
                 $size_z    = min($this->size_z, count($flr_array));
@@ -552,6 +574,26 @@
             }
 
             return;
+        }
+        public static function encode_all_maze(array $a): array {
+            $all_maze_data = [];
+            if (!is_null($a) && is_array($a)) {
+                foreach ($a as $maze) {
+                    array_push($all_maze_data, $maze->encode());
+                }
+            }
+            return $all_maze_data;
+        }
+        public static function decode_all_maze(array $a): array {
+            $all_maze = [];
+            if (!is_null($a) && is_array($a)) {
+                foreach ($a as $all_maze_data) {
+                    $maze = new Maze();
+                    $maze->decode($all_maze_data);
+                    array_push($all_maze, $maze);
+                }
+            }
+            return $all_maze;
         }
     }
 

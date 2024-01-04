@@ -44,7 +44,15 @@
         public function encode(): array {
             return ['d' => $this->direction];
         }
-        public static function decode(array $a): Direct {
+        public function decode(array $a): Direct {
+            if (!is_null($a) && is_array($a)) {
+                if(array_key_exists('d', $a) && (is_numeric($a['d']))) {
+                    $this->direction = intval($a['d']);
+                }
+            }
+            return $this;
+        }
+        public static function decode_and_new(array $a): Direct {
             if (!is_null($a) && is_array($a)) {
                 if(array_key_exists('d', $a) && (is_numeric($a['d']))) {
                     return new Direct($a['d']);

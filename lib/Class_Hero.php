@@ -55,7 +55,7 @@
                 }
             }
         }
-        public static function encode_heroes($a): array {
+        public static function encode_heroes(array $a): array {
             $heroes_data = [];
             if (!is_null($a) && is_array($a)) {
                 foreach ($a as $hero) {
@@ -64,7 +64,7 @@
             }
             return $heroes_data;
         }
-        public static function decode_heroes($a): array {
+        public static function decode_heroes(array $a): array {
             $heroes = [];
             if (!is_null($a) && is_array($a)) {
                 foreach ($a as $heroes_data) {
