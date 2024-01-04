@@ -77,4 +77,21 @@
     --message_font_size:   0.6rem;
     --message_line_height: 0.7rem;
 
+
+    --hero_info_grid_gap: 0.5rem 1.0rem;
+    --hero_info_grid_template:
+        "_hr_name  _hr_lv    _hr_exp   _hr_skp"
+        "_hr_state _hr_sex   _hr_age   _hr_gold"
+        "_hr_hp    _hr_hp    _hr_mp    _hr_mp"
+        "_hr_atk_p _hr_def_p _hr_atk_m _hr_def_m"
+        "_hr_quc_p _hr_cnc_p _hr_quc_m _hr_cnc_m"
+        "_hr_str_p _hr_pwr_p _hr_str_m _hr_pwr_m"
+        "_hr_vit_p _hr_dex_p _hr_vit_m _hr_dex_m"
+        "_hr_agi_p _hr_tec_p _hr_agi_m _hr_tec_m"
+        "_hr_luk_p _hr_luk_p _hr_luk_m _hr_luk_m"
+        ;
+
+    --hres_list_count: 4;
+
 }
+

@@ -244,33 +244,7 @@ function new_team(): Team {
                 <ul id='hres_list'></ul>
                 <fieldset id='hres_hero_fields'>
                     <legend>冒険者の詳細情報</legend>
-                    <ul id='hres_hero_info'>
-<!--
-                        <li>名　前:<p id='hres_hero_name' ></p></li>
-                        <li>レベル:<p id='hres_hero_lv'  ></p></li>
-                        <li>年　齢:<p id='hres_hero_age'  ></p></li>
-                        <li>性　別:<p id='hres_hero_sex'  ></p></li>
-                        <li>状　態:<p id='hres_hero_state'></p></li>
-                        <li>Ｈ　Ｐ:<p id='hres_hero_hp'   ></p></li>
-                        <li>Ｍ　Ｐ:<p id='hres_hero_mp'   ></p></li>
-                        <li>ＥＸＰ:<p id='hres_hero_exp'  ></p></li>
-                        <li>スキル:<p id='hres_hero_skp'  ></p></li>
-                        <li>所持金:<p id='hres_hero_gold' ></p></li>
-
-                        <li>攻撃値:<p id='hres_hero_atk'  ></p></li>
-                        <li>防御値:<p id='hres_hero_def'  ></p></li>
-                        <li>瞬発力:<p id='hres_hero_quc'  ></p></li>
-                        <li>機運値:<p id='hres_hero_cnc'  ></p></li>
-
-                        <li>ＳＴＲ:<p id='hres_hero_str'  ></p></li>
-                        <li>ＰＷＲ:<p id='hres_hero_pwr'  ></p></li>
-                        <li>ＶＩＴ:<p id='hres_hero_vit'  ></p></li>
-                        <li>ＤＥＸ:<p id='hres_hero_dex'  ></p></li>
-                        <li>ＡＧＩ:<p id='hres_hero_agi'  ></p></li>
-                        <li>ＴＥＣ:<p id='hres_hero_tec'  ></p></li>
-                        <li>ＬＵＫ:<p id='hres_hero_luk'  ></p></li>
--->
-                    </ul>
+                    <ul id='hres_hero_info'></ul>
                 </fieldset>
             </div>
             <div id='gld_view_switch_edit'>

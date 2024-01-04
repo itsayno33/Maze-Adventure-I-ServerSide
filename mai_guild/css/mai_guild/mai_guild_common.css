@@ -100,7 +100,10 @@ div#gld_view_switch {
     width: auto;
 }
 
-ul#guild_list {
+ul#guild_list,
+ul#hres_list,
+ul#edit_list,
+ul#appd_list {
     color:            chocolate;
     background-color: cornsilk;
 }
@@ -208,7 +211,7 @@ div#ctl_panel button#r_arrow {
 }
 
 article#message_pane {
-    width:       var(--message_width, 33rem);
+    width:       var(--message_width,        33rem);
     font-size:   var(--message_font_size,   0.6rem);
     line-height: var(--message_line_height, 0.7rem);
     max-height: calc( var(--message_line_height, 0.7rem) * 6);
@@ -220,3 +223,57 @@ article#message_pane {
 article#message_pane p {
     word-break: break-all;
 }
+
+ul#hres_list,
+ul#edit_list,
+ul#appd_list {
+    column-count: var(--hres_list_count, 4); 
+/*    column-count: 4; */
+}
+
+ul#hres_hero_info,
+ul#edit_hero_info,
+ul#appd_hero_info {
+    display: grid;
+    gap:  var(--hero_info_grid_gap, 0.5rem 1.0rem);
+    grid: var(--hero_info_grid_template, none);
+}
+
+#_hr_name  { grid-area: _hr_name;  }
+#_hr_lv    { grid-area: _hr_lv;    }
+#_hr_exp   { grid-area: _hr_exp;   }
+#_hr_skp   { grid-area: _hr_skp;   }
+#_hr_state { grid-area: _hr_state; }
+#_hr_sex   { grid-area: _hr_sex;   }
+#_hr_age   { grid-area: _hr_age;   }
+#_hr_gold  { grid-area: _hr_gold;  }
+
+#_hr_hp    { grid-area: _hr_hp;    }
+#_hr_mp    { grid-area: _hr_mp;    }
+
+#_hr_atk_p { grid-area: _hr_atk_p; }
+#_hr_def_p { grid-area: _hr_def_p; }
+#_hr_quc_p { grid-area: _hr_quc_p; }
+#_hr_cnc_p { grid-area: _hr_cnc_p; }
+
+#_hr_str_p { grid-area: _hr_str_p; }
+#_hr_pwr_p { grid-area: _hr_pwr_p; }
+#_hr_vit_p { grid-area: _hr_vit_p; }
+#_hr_dex_p { grid-area: _hr_dex_p; }
+#_hr_agi_p { grid-area: _hr_agi_p; }
+#_hr_tec_p { grid-area: _hr_tec_p; }
+#_hr_luk_p { grid-area: _hr_luk_p; }
+
+#_hr_atk_m { grid-area: _hr_atk_m; }
+#_hr_def_m { grid-area: _hr_def_m; }
+#_hr_quc_m { grid-area: _hr_quc_m; }
+#_hr_cnc_m { grid-area: _hr_cnc_m; }
+
+#_hr_str_m { grid-area: _hr_str_m; }
+#_hr_pwr_m { grid-area: _hr_pwr_m; }
+#_hr_vit_m { grid-area: _hr_vit_m; }
+#_hr_dex_m { grid-area: _hr_dex_m; }
+#_hr_agi_m { grid-area: _hr_agi_m; }
+#_hr_tec_m { grid-area: _hr_tec_m; }
+#_hr_luk_m { grid-area: _hr_luk_m; }
+
