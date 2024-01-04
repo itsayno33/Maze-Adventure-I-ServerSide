@@ -26,7 +26,7 @@
 
         public array    $all_maze; // その時点で挑戦した迷宮一式 Maze[]
         public array    $all_team; // 同、迷宮探検中のチーム一式 Team[]
-        public array    $all_hres; // 同、ギルド等で待機しているキャラ一式 Hero[] <- ここはギルドクラス(Guild。略称guld)を作ってそのインスタンスを持つべきか
+        public array    $all_guld; // 同、ギルド等で待機しているキャラ一式 Hero[] <- ここはギルドクラス(Guild。略称guld)を作ってそのインスタンスを持つべきか
 
         public function __construct(array $a) {
             $this->id = -1;
@@ -41,7 +41,7 @@
 
             $this->all_maze  = [];
             $this->all_team  = [];
-            $this->all_hres  = []; 
+            $this->all_guld  = []; 
             
             if (!is_null($a) && is_array($a)) $this->decode($a);
         }
@@ -55,24 +55,17 @@
             if ($this->auto_mode) $a['auto_mode'] = 'Y'; else $a['auto_mode'] = 'N';
             if ($this->is_active) $a['is_active'] = 'Y'; else $a['is_active'] = 'N';
             if ($this->is_delete) $a['is_delete'] = 'Y'; else $a['is_delete'] = 'N';
+
             $a['save_time']  = $this->save_time->format('Y-m-d H:i:s:u O');
 
-            $m = [];
-            foreach ($this->all_maze as $maze)  array_push($m, $maze->encode());
-            $a['all_maze']  = $m;
-
-            $t = [];
-            foreach ($this->all_team as $team)  array_push($t, $team->encode());
-            $a['all_team']  = $t;
-
-            $h = [];
-            foreach ($this->all_hres as $hero)  array_push($h, $hero->encode());
-            $a['all_hres']  = $h;
+            $a['all_maze']  = Maze ::encode_all_maze($this->all_maze);
+            $a['all_team']  = Team ::encode_all_team($this->all_team);
+            $a['all_guld']  = Guild::encode_all_guld($this->all_guld);
 
             return $a;
         }
-        public function decode(array $a): void {
-            if (is_null($a) || !is_array($a)) return;
+        public function decode(array $a): SaveData {
+            if (is_null($a) || !is_array($a)) return $this;
 
             if (array_key_exists('save_id', $a) && is_numeric($a['save_id'])) {
                 $this->id         = intval($a['save_id']);
@@ -112,9 +105,10 @@
             if (array_key_exists('all_team', $a) && is_array($a['all_team'])) {
                 $this->all_team  = Team::decode_all_team($a['all_team']);
             }
-            if (array_key_exists('all_hres', $a) && is_array($a['all_hres'])) {
-                $this->all_hres  = Hero::decode_heroes($a['all_hres']);
+            if (array_key_exists('all_guld', $a) && is_array($a['all_guld'])) {
+                $this->all_guld  = Guild::decode_all_guld($a['all_guld']);
             }
+            return $this;
         }
     }
 

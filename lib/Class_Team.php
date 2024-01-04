@@ -110,7 +110,7 @@
             $e['heroes']  = Hero::encode_heroes($this->heroes);
             return $e;
         }
-        public function decode(array $a): void {
+        public function decode(array $a): Team {
             if (!is_null($a) && is_array($a)) {
                 if (array_key_exists('id', $a) && (is_numeric($a['id']))) {
                     $this->id      = intval($a['id']);
@@ -131,6 +131,7 @@
                     $this->heroes  = Hero::decode_heroes($a['heroes']);
                 }
             }
+            return $this;
         }
         public static function encode_all_team(array $a): array {
             $all_team_data = [];

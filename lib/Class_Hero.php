@@ -33,7 +33,7 @@
             if ($this->is_alive) $a['is_alive'] = 'Y'; else $a['is_alive'] = 'N';
             return $a;
         }
-        public function decode($a): void {
+        public function decode($a): Hero {
             if (!is_null($a) && is_array($a)) {
                 if (array_key_exists('id', $a) && (is_numeric($a['id']))) {
                     $this->id      = intval($a['id']);
@@ -54,6 +54,7 @@
                     if ($a['is_alive'] !== 'N') $this->is_alive = true; else $this->is_alive = false;
                 }
             }
+            return $this;
         }
         public static function encode_heroes(array $a): array {
             $heroes_data = [];

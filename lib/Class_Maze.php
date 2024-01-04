@@ -481,8 +481,7 @@
             return  implode('Z', $flr_array);
         }
 
-        public function decode(array $e): void {
-
+        public function decode(array $e): Maze {
             if(array_key_exists('maze_id', $e) && is_numeric($e['maze_id'])) {
                 $this->maze_id    = $e['maze_id'];
             }
@@ -573,7 +572,7 @@
                 }
             }
 
-            return;
+            return $this;
         }
         public static function encode_all_maze(array $a): array {
             $all_maze_data = [];
