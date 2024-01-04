@@ -228,7 +228,6 @@ ul#hres_list,
 ul#edit_list,
 ul#appd_list {
     column-count: var(--hres_list_count, 4); 
-/*    column-count: 4; */
 }
 
 ul#hres_hero_info,
