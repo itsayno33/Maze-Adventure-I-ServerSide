@@ -57,25 +57,25 @@
 
 
 
-        public function get_from_odb(PDO $db_mai, DspMessage $mes, int $save_id): array {
-            [$rslt0, $save] = $this->get_from_tbl($db_mai, $mes, $save_id);
+        public function get_from_odb(PDO $db_mai, DspMessage $mes): array {
+            [$rslt0, $save] = $this->get_from_tbl($db_mai, $mes);
             if (!$rslt0 || $mes->is_err()) {
                 return [false, []];
             }
 
-            [$rslt1, $maze_array] = Maze::get_from_odb_all($db_mai, $mes, $save_id);
+            [$rslt1, $maze_array] = Maze::get_from_odb_all($db_mai, $mes, $this->save_id);
             if (!$rslt1 || $mes->is_err()) {
                 return [false, []];
             }
             $this->all_maze = $maze_array;
             
-            [$rslt2, $team_array] = Team::get_from_odb_all($db_mai, $mes, $save_id);
+            [$rslt2, $team_array] = Team::get_from_odb_all($db_mai, $mes, $this->save_id);
             if (!$rslt2 || $mes->is_err()) {
                 return [false, []];
             }
             $this->all_team = $team_array;
             
-            [$rslt3, $guld_array] = Guild::get_from_odb_all($db_mai, $mes, $save_id);
+            [$rslt3, $guld_array] = Guild::get_from_odb_all($db_mai, $mes, $this->save_id);
             if (!$rslt3 || $mes->is_err()) {
                 return [false, []];
             }
@@ -167,10 +167,10 @@ GET_SAVE_INFO01;
                 $resultRecordSet = $get_save_stmt->fetchAll();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 50: {$get_save_SQL}");
-                return [];
+                return [false, []];
             } catch (Throwable $ee) {
                 $mes->pdo_error($ee, "SQLの致命的エラー 51: {$get_save_SQL}");
-                return [];
+                return [false, []];
             } 
 
             if (count($resultRecordSet) < 1) return [];
@@ -185,7 +185,7 @@ GET_SAVE_INFO01;
                     (new SaveData([]))->decode($resultRecord)
                 );
             }
-            return $save_data_set;
+            return [true, $save_data_set];
         }
 
         // DB処理。タイトルからsave_idを得る。該当するレコードが無ければ第一戻り値でfalseを返す
@@ -193,9 +193,12 @@ GET_SAVE_INFO01;
         public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): array {
             $this->save_id = -1;
             $seek_save_SQL =<<<SEEK_SAVE01
-                SELECT save_id FROM tbl_save
-                WHERE  player_id = :player_id AND title = :title
-        SEEK_SAVE01;
+            SELECT save_id, player_id, title, detail, point, 
+                   auto_mode, is_active, is_delete, 
+                   DATE_FORMAT(save_time,'%Y-%c-%e %H:%i:%s:%f') AS save_time
+            FROM   tbl_save
+            WHERE  player_id = :player_id AND title = :title
+SEEK_SAVE01;
             try {
                 $seek_save_stmt = $db_mai->prepare($seek_save_SQL);
                 $seek_save_stmt->bindValue(':player_id', $this->player_id);
@@ -213,14 +216,15 @@ GET_SAVE_INFO01;
                 return [false, -1];
             }
 
-            $this->save_id = intval($resultRecordSet[0]['save_id']);
+            $this->decode($resultRecordSet[0]);
             return [true, $this->save_id];
         }
 
         // DB処理。save_idで指定されたsaveレコード(単数)を読み込み
-        // 自身のプロパティにセットする
+        // save_idを返す
+        // その際に該当するレコードが有れば自身のプロパティにセットする
         // 
-        protected function get_from_tbl(PDO $db_mai, DspMessage $mes, int $save_id): array {
+        protected function get_from_tbl(PDO $db_mai, DspMessage $mes): array {
             $get_save_SQL =<<<GET_SAVE01
                 SELECT save_id, player_id, title, detail, point, 
                        auto_mode, is_active, is_delete, 
@@ -230,7 +234,7 @@ GET_SAVE_INFO01;
 GET_SAVE01;
             try {
                 $get_save_stmt = $db_mai->prepare($get_save_SQL);
-                $get_save_stmt->bindValue(':save_id', $save_id);
+                $get_save_stmt->bindValue(':save_id', $this->save_id);
                 $get_save_stmt->execute();
                 $resultRecordSet = $get_save_stmt->fetchAll();
             } catch (PDOException $e) {
@@ -242,7 +246,6 @@ GET_SAVE01;
             } 
         
             if (count($resultRecordSet) < 1) {
-                $mes->set_err_message("データが有りません 32: {$get_save_SQL}");
                 return [false, null];
             }
             $this->decode($resultRecordSet[0]);
