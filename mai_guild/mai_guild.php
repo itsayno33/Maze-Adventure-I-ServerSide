@@ -54,53 +54,67 @@
             $ret_JSON = all_save_info(0, $save_info);
             break;
         case 'UD_load':
+            tr_begin($gv->db_mai);
             $save_id = get_save_id($gv->db_mai, $ga->pid, '__UpDownSaveData__');
             if ($save_id === false) {
+                tr_rollback($gv->db_mai);
                 $code = 320;
                 $ret_JSON = all_encode($code);
                 break;
             }
-            $ret_JSON = all_load($save_id);
+            [$result, $ret_JSON] = all_load($save_id);
+            if ($result) tr_commit($gv->db_mai); else tr_rollback($gv->db_mai);
             break;
         case 'UD_save':
+            tr_begin($gv->db_mai);
             $save_id = get_save_id($gv->db_mai, $ga->pid, '__UpDownSaveData__');
             if ($save_id === false) {
                 [$rslt, $save_id] = new_save($gv->db_mai, $ga->pid, '__UpDownSaveData__', true);
                 if ($rslt === false) {
+                    tr_rollback($gv->db_mai);
                     $code = 220;
                     $ret_JSON = all_encode($code);
                     break;
                 }
             }
-            $ret_JSON = all_save($ga->pid, $save_id, '__UpDownSaveData__', true);
+            [$result, $ret_JSON] = all_save($ga->pid, $save_id, '__UpDownSaveData__', true);
+            if ($result) tr_commit($gv->db_mai); else tr_rollback($gv->db_mai);
             break;
         case 'instant_load':
+            tr_begin($gv->db_mai);
             $save_id = get_save_id($gv->db_mai, $ga->pid, '__InstantSaveData__');
             if ($save_id === false) {
+                tr_rollback($gv->db_mai);
                 $code = 310;
                 $ret_JSON = all_encode($code);
                 break;
             }
-            $ret_JSON = all_load($save_id);
+            [$result, $ret_JSON] = all_load($save_id);
+            if ($result) tr_commit($gv->db_mai); else tr_rollback($gv->db_mai);
             break;
         case 'instant_save':
+            tr_begin($gv->db_mai);
             $save_id = get_save_id($gv->db_mai, $ga->pid, '__InstantSaveData__');
             if ($save_id === false) {
                 [$rslt, $save_id] = new_save($gv->db_mai, $ga->pid, '__InstantSaveData__', true);
                 if ($rslt === false) {
+                    tr_rollback($gv->db_mai);
                     $code = 210;
                     $ret_JSON = all_encode($code);
                     break;
                 }
             }
-            $ret_JSON = all_save($ga->pid, $save_id, '__InstantSaveData__', true);
+            [$result, $ret_JSON] = all_save($ga->pid, $save_id, '__InstantSaveData__', true);
+            if ($result) tr_commit($gv->db_mai); else tr_rollback($gv->db_mai);
             break;
         case 'load':
-            $ret_JSON = all_load($ga->save_id);
+            tr_begin($gv->db_mai);
+            [$result, $ret_JSON] = all_load($save_id);
+            if ($result) tr_commit($gv->db_mai); else tr_rollback($gv->db_mai);
             break;
         case 'save':
+            tr_begin($gv->db_mai);
             if ($ga->save_id < 1) {
-                tr_begin($gv->db_mai);
                 [$rslt, $save_id] = new_save($gv->db_mai, $ga->pid, $ga->save_title, false);
                 if ($rslt === false) {
                     tr_rollback($gv->db_mai);
@@ -108,16 +122,17 @@
                     $ret_JSON = all_encode($code);
                     break;
                 }
-                tr_commit($gv->db_mai);
                 $ga->save_id = $save_id;
             }
             $rslt = all_save($ga->pid, $ga->save_id, $ga->save_title, false);
             if ($rslt === false) {
+                tr_rollback($gv->db_mai);
                 $code = 620;
                 $ret_JSON = all_encode($code);
                 break;
             }
-            $ret_JSON = all_encode(0);
+            [$result, $ret_JSON] = all_encode(0);
+            if ($result) tr_commit($gv->db_mai); else tr_rollback($gv->db_mai);
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
@@ -133,7 +148,7 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
-function all_load(int $save_id): string {
+function all_load(int $save_id): array {
     global $gv;
     $result = do_load($save_id);
 
@@ -143,10 +158,10 @@ function all_load(int $save_id): string {
     } else {
         $ret_JSON = all_encode(0);
     }
-    return $ret_JSON;
+    return [$result, $ret_JSON];
 }
 
-function all_save(int $pid, int $save_id, string $title, bool $is_instant): string {
+function all_save(int $pid, int $save_id, string $title, bool $is_instant): array {
     global $gv, $ga;
 
     $gv->maze_assoc = json_decode($ga->maze_JSON, true);
@@ -164,7 +179,7 @@ function all_save(int $pid, int $save_id, string $title, bool $is_instant): stri
     } else {
         $ret_JSON = all_encode(0);
     }
-    return $ret_JSON;
+    return [$result, $ret_JSON];
 }
 function all_encode(int $code): string {
     global $gv, $ga;
@@ -248,22 +263,17 @@ function do_load(int $save_id): bool {
     global $gv, $ga;
     $db_mai = $gv->db_mai;
 
-    tr_begin($db_mai);
-
     $result = get_save($db_mai, $save_id);
     if (is_null($result) || !is_array($result)) {
         $gv->mes->set_err_message('No Save Data Exist.');
-        tr_rollback($db_mai);
         return false;
     }
     if (array_key_exists('is_active', $result) && $result['is_active'] == 0) {
         $gv->mes->set_err_message('The Active Save Data Is Not Exist.');
-        tr_rollback($db_mai);
         return false;
     }
     if (array_key_exists('is_delete', $result) && $result['is_delete'] != 0) {
         $gv->mes->set_err_message('This Save Data Has Been Deleted.');
-        tr_rollback($db_mai);
         return false;
     }
     if (array_key_exists('id', $result) && is_numeric($result['id'])) {
@@ -285,41 +295,35 @@ function do_load(int $save_id): bool {
     $maze_assoc = get_maze($db_mai, $save_id);    
     if (is_null($maze_assoc) || !is_array($maze_assoc)) {
         $gv->mes->set_err_message('The Read Save Data of Maze Failed.');
-        tr_rollback($db_mai);
         return false;
     }
     if (!set_maze($maze_assoc)) {
         $gv->mes->set_err_message('Can not set The Save Data of Maze.');
-        tr_rollback($db_mai);
         return false;
     }
 
     $heroes_array = get_heroes($db_mai, $save_id);    
     if (is_null($heroes_array) || !is_array($heroes_array)) {
         $gv->mes->set_err_message('The Read Save Data of Heroes Failed.');
-        tr_rollback($db_mai);
         return false;
     }
 
     $team_assoc = get_team($db_mai, $save_id);    
     if (is_null($team_assoc) || !is_array($team_assoc)) {
         $gv->mes->set_err_message('The Read Save Data of Team Failed.');
-        tr_rollback($db_mai);
         return false;
     }
     if (!set_team($team_assoc)) {
         $gv->mes->set_err_message('Can not set The Save Data of Team.');
-        tr_rollback($db_mai);
         return false;
     }
 
     if (!set_heroes($heroes_array)) {
         $gv->mes->set_err_message('Can not set The Save Data of Heroes.');
-        tr_rollback($db_mai);
         return false;
     }
 
-    return tr_commit($db_mai);
+    return true;
 }
 
 function get_save_info(PDO $db_mai, int $player_id): array | null {
@@ -577,57 +581,18 @@ function do_save(int $player_id, int $save_id, string $title, bool $is_instant):
     global $gv;
     $db_mai = $gv->db_mai;
 
-    tr_begin($db_mai);
-
-    $result = del_hero($db_mai, $save_id);
-    if ($result === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
-
-    $result = del_team($db_mai, $save_id);
-    if ($result === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
-
-    $result = del_maze($db_mai, $save_id);
-    if ($result === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
-
-    $result = del_save($db_mai, $save_id);
-    if ($result === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
-
-    $result = add_save($db_mai, $player_id, $save_id, $title, $is_instant);
-    if ($result === false) {
-        tr_rollback($db_mai);
-        return false;
-    } 
-
-    $result = add_maze($db_mai, $save_id);
-    if ($result === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
+    if (del_hero($db_mai, $save_id) === false) return false;
+    if (del_team($db_mai, $save_id) === false) return false;
+    if (del_maze($db_mai, $save_id) === false) return false;
+    if (del_save($db_mai, $save_id) === false) return false;
+    if (add_save($db_mai, $player_id, $save_id, $title, $is_instant) === false) return false;
+    if (add_maze($db_mai, $save_id) === false) return false;
 
     $team_id = add_team($db_mai, $save_id);
-    if ($team_id  === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
+    if ($team_id === false)                              return false;
+    if (add_hero($db_mai, $save_id, $team_id) === false) return false;
 
-    $result = add_hero($db_mai, $save_id, $team_id);
-    if ($result  === false) {
-        tr_rollback($db_mai);
-        return false;
-    }
-
-    return tr_commit($db_mai);
+    return true;
 }
 
 /*******************************************************************************/
