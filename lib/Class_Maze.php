@@ -347,8 +347,8 @@
             if ($trace_set->is_exist($x, $y) == true)  return [true,  $trace_set];
 
             $p = $point_set->get_point($x, $y);
-            $trace_set->push(new PointLink($x, $y, $p->di));
-            switch ($p->di) {
+            $trace_set->push(new PointLink($x, $y, PointLink::cast($p)->di));
+            switch (PointLink::cast($p)->di) {
                 case Direct::N:  // 北
                     $next_x = $x;
                     $next_y = $y - 2;
@@ -426,6 +426,168 @@
             return $this;
         }
 
+
+        public static function get_from_odb_all(PDO $db_mai, DspMessage $mes, int $save_id): array {
+            [$rslt0, $maze_array] = self::get_from_tbl_all($db_mai, $mes, $save_id);
+            if (!$rslt0 || $mes->is_err()) {
+                return [false, []];
+            }
+            /*
+            foreach ($maze_array as $maze) {
+                [$rslt1, $hres_array] = Hero::get_from_odb_all($db_mai, $mes, $save_id, $maze->id);
+                if (!$rslt1 || $mes->is_err()) {
+                    return [false, []];
+                }
+                $maze->hres = $hres_array;
+            }
+            */
+            return [true, $maze_array];
+        }
+
+
+        public function set_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            [$rslt0, $mase_id] = $this->add_tbl($db_mai, $mes, $save_id);
+            if (!$rslt0 || $mes->is_err()) {
+                return false;
+            }
+            /*
+            foreach ($this->heroes as $hero) {
+                $rslt1 = $hero->set_to_odb($db_mai, $mes, $save_id, $mase_id);
+                if (!$rslt1 || $mes->is_err()) {
+                    return false;
+                }
+            }
+            */
+            return true;
+        }
+
+        
+        public static function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $rslt = self::del_tbl($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+            return true;
+        }
+
+
+
+        // DB処理。save_idで指定されたmazeレコードセットを読み込み
+        // Mazeクラスの配列にセットする
+        // 
+        protected static function get_from_tbl_all(
+                PDO $db_mai, 
+                DspMessage $mes, 
+                int $save_id
+            ): array {
+                $get_maze_SQL =<<<GET_MAZE01
+                SELECT 	id, save_id, title, size_x, size_y, size_z, maps AS maze, mask 
+                FROM tbl_maze
+                WHERE   save_id = :save_id
+GET_MAZE01;
+            try {
+                $get_maze_stmt = $db_mai->prepare($get_maze_SQL);
+                $get_maze_stmt->bindValue(':save_id',  $save_id);
+                $get_maze_stmt->execute();
+                $resultRecordSet = $get_maze_stmt->fetchAll();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 33: {$get_maze_SQL}");
+                return [false, []];
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 35: {$get_maze_SQL}");
+                return [false, []];
+            } 
+        
+            if (count($resultRecordSet) < 1) {
+                $mes->set_err_message("データが有りません 36: {$get_maze_SQL}");
+                return [false, []];
+            }
+            $maze_array = [];
+            foreach ($resultRecordSet as $resultRecord) {
+                array_push($maze_array,  (new Maze())->decode($resultRecord));
+            }
+            return [true, $maze_array];
+        }
+        
+
+        // DB処理。mazeテーブルに自身のデータを追加(insert)して
+        // そのID(maze_id)を返す
+        // 
+        protected function add_tbl(
+                PDO $db_mai, 
+                DspMessage $mes, 
+                int $save_id
+            ): array {
+
+            $insert_maze_SQL =<<<INSERT_MAZE01
+                INSERT INTO tbl_maze (save_id, title, size_x, size_y, size_z, maps, mask)
+                VALUES ( :save_id , :title , :size_x , :size_y , :size_z , :maps , :mask )
+INSERT_MAZE01;
+            try {
+                $insert_maze_stmt = $db_mai->prepare($insert_maze_SQL);
+                $insert_maze_stmt->bindValue(':save_id', $save_id); 
+                $insert_maze_stmt->bindValue(':title',   $this->title); 
+                $insert_maze_stmt->bindValue(':size_x',  $this->size_x); 
+                $insert_maze_stmt->bindValue(':size_y',  $this->size_y); 
+                $insert_maze_stmt->bindValue(':size_z',  $this->size_z); 
+                $insert_maze_stmt->bindValue(':maps',    $this->__encode_maze()); 
+                $insert_maze_stmt->bindValue(':mask',    $this->__encode_mask()); 
+                $insert_maze_stmt->execute();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 3: {$insert_maze_SQL}");
+                return [false, -1];
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 5: {$insert_maze_SQL}");
+                return [false, -1];
+            } 
+            $this->maze_id =  intval($db_mai->lastInsertId());
+            return [true, $this->maze_id];
+        }
+
+        // DB処理(クラス・メソッド)。Mazeクラスの配列を受け取って、
+        // 指定されたsave_idで　mazeテーブルに追加(insert)して
+        // そのID(maze_id)の配列を返す
+        // 
+        protected static function add_tbl_all(
+                PDO $db_mai, 
+                DspMessage $mes, 
+                array $maze_array, 
+                int $save_id
+            ): array 
+            {
+                if(!is_null($maze_array) && is_array($maze_array)) {
+                    $maze_id_set = [];
+                    foreach ($maze_array as $maze) {
+                        [$rslt, $maze_id] = $maze->add_tbl($db_mai, $mes, $save_id);
+                        if (!$rslt) return [false, []];
+                        array_push($maze_id_set, $maze_id);
+                    }
+                    return [true, $maze_id_set];
+                }
+                return [false, -1];
+        }
+        
+        // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
+        // 
+        protected static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $delete_maze_SQL =<<<DELETE_MAZE01
+                DELETE FROM tbl_maze 
+                WHERE  save_id = :save_id
+DELETE_MAZE01;
+            try {
+                $delete_maze_stmt = $db_mai->prepare($delete_maze_SQL);
+                $delete_maze_stmt->bindValue(':save_id', $save_id);
+                $delete_maze_stmt->execute();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 12: {$delete_maze_SQL}");
+                return false;
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 13: {$delete_maze_SQL}");
+                return false;
+            } 
+            return true;
+        }
+        
         public function encode(): array {
             $maze_str = $this->__encode_maze();
             $mask_str = $this->__encode_mask();

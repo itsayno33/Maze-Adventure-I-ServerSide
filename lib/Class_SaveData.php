@@ -55,6 +55,97 @@
             $this->save_id = $save_id;
         }
 
+
+
+        public function get_from_odb(PDO $db_mai, DspMessage $mes, int $save_id): array {
+            [$rslt0, $save] = $this->get_from_tbl($db_mai, $mes, $save_id);
+            if (!$rslt0 || $mes->is_err()) {
+                return [false, []];
+            }
+
+            [$rslt1, $maze_array] = Maze::get_from_odb_all($db_mai, $mes, $save_id);
+            if (!$rslt1 || $mes->is_err()) {
+                return [false, []];
+            }
+            $this->all_maze = $maze_array;
+            
+            [$rslt2, $team_array] = Team::get_from_odb_all($db_mai, $mes, $save_id);
+            if (!$rslt2 || $mes->is_err()) {
+                return [false, []];
+            }
+            $this->all_team = $team_array;
+            
+            [$rslt3, $guld_array] = Guild::get_from_odb_all($db_mai, $mes, $save_id);
+            if (!$rslt3 || $mes->is_err()) {
+                return [false, []];
+            }
+            $this->all_guld = $guld_array;
+
+            return [true, $this];
+        }
+
+
+        public function set_to_odb(PDO $db_mai, DspMessage $mes): bool {
+            [$rslt0, $save_id] = $this->add_tbl($db_mai, $mes);
+            if (!$rslt0 || $mes->is_err()) {
+                return false;
+            }
+
+            foreach ($this->all_maze as $maze) {
+                $rslt1 = $maze->set_to_odb($db_mai, $mes, $save_id);
+                if (!$rslt1 || $mes->is_err()) {
+                    return false;
+                }
+            }
+            
+            foreach ($this->all_team as $team) {
+                $rslt2 = $team->set_to_odb($db_mai, $mes, $save_id);
+                if (!$rslt2 || $mes->is_err()) {
+                    return false;
+                }
+            }
+            
+            foreach ($this->all_guld as $guld) {
+                $rslt3 = $guld->set_to_odb($db_mai, $mes, $save_id);
+                if (!$rslt3 || $mes->is_err()) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        
+        public static function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $rslt = Maze::del_to_odb($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+
+            $rslt = Team::del_to_odb($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+
+            $rslt = Guild::del_to_odb($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+
+            $rslt = Hero::del_to_odb($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+
+            $rslt = self::del_tbl($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+
+            return true;
+        }
+
+
                 
         // DB処理。player_dに該当するセーブデータをDBから読み込み
         // SaveData[]の配列を返す
@@ -126,10 +217,10 @@ GET_SAVE_INFO01;
             return [true, $this->save_id];
         }
 
-        // DB処理。save_idで指定されたsaveレコードを読み込み
+        // DB処理。save_idで指定されたsaveレコード(単数)を読み込み
         // 自身のプロパティにセットする
         // 
-        protected function get_tbl_by_sid(PDO $db_mai, DspMessage $mes, int $save_id): array {
+        protected function get_from_tbl(PDO $db_mai, DspMessage $mes, int $save_id): array {
             $get_save_SQL =<<<GET_SAVE01
                 SELECT save_id, player_id, title, detail, point, 
                        auto_mode, is_active, is_delete, 
@@ -193,12 +284,13 @@ NEW_SAVE01;
                 $mes->pdo_error($ee, "SQLの致命的エラー 00: {$insert_save_SQL}");
                 return [false, -1];
             } 
-            return [true, intval($db_mai->lastInsertId())];
+            $this->save_id = intval($db_mai->lastInsertId());
+            return [true, $this->save_id];
         }
 
         // DB処理。save_idで指定されたレコードを削除(delete)する
         // 
-        protected function del_tbl_by_sid(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+        protected static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $delete_save_SQL =<<<DELETE_SAVE01
                 DELETE FROM tbl_save 
                 WHERE  save_id = :save_id
@@ -225,9 +317,9 @@ NEW_SAVE01;
             $a['title']      = $this->title;
             $a['detail']     = $this->detail;
             $a['point']      = $this->point;
-            if ($this->auto_mode) $a['auto_mode'] = 'Y'; else $a['auto_mode'] = 'N';
-            if ($this->is_active) $a['is_active'] = 'Y'; else $a['is_active'] = 'N';
-            if ($this->is_delete) $a['is_delete'] = 'Y'; else $a['is_delete'] = 'N';
+            if ($this->auto_mode) $a['auto_mode'] = '1'; else $a['auto_mode'] = '0';
+            if ($this->is_active) $a['is_active'] = '1'; else $a['is_active'] = '0';
+            if ($this->is_delete) $a['is_delete'] = '1'; else $a['is_delete'] = '0';
 
             $a['save_time']  = $this->save_time->format('Y-m-d H:i:s:u');
 
@@ -256,13 +348,13 @@ NEW_SAVE01;
                 $this->point      = $a['point'];
             }
             if (array_key_exists('auto_mode', $a)) {
-                if ($a['auto_mode'] != 'N') $this->auto_mode = true; else $this->auto_mode = false; 
+                if ($a['auto_mode'] != '0') $this->auto_mode = true; else $this->auto_mode = false; 
             }
             if (array_key_exists('is_active', $a)) {
-                if ($a['is_active'] != 'N') $this->is_active = true; else $this->is_active  = false; 
+                if ($a['is_active'] != '0') $this->is_active = true; else $this->is_active  = false; 
             }
             if (array_key_exists('is_delete', $a)) {
-                if ($a['is_delete'] != 'N') $this->is_delete = true; else $this->is_delete = false; 
+                if ($a['is_delete'] != '0') $this->is_delete = true; else $this->is_delete = false; 
             }
             if (array_key_exists('save_time', $a)) {
                 $this->save_time = date_create($a['save_time'], new DateTimeZone('Asia/Tokyo')); 

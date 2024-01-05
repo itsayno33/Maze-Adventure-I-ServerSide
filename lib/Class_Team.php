@@ -12,9 +12,10 @@
     require_once 'Class_Hero.php';       // Hero(チームメンバー)のクラス
 
     class Team {
-        protected int     $id = 0;
+        protected int     $id      = 0;
         protected int     $save_id = 0;
         protected string  $name;
+        protected int     $gold    = 0;
         protected bool    $is_hero;
         protected Point3D $cur_pos;
         protected Direct  $cur_dir;
@@ -24,8 +25,9 @@
             $this->cur_pos = new Point3D(0, 0, 0);
             $this->cur_dir = new Direct(Direct::N);
             $this->name    = 'New Team';
+            $this->gold    = 0;
             $this->is_hero = true;
-            $this->heroes   = [];
+            $this->heroes  = [];
 
             $this->__init($a);
         } 
@@ -34,8 +36,11 @@
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
                     $this->name = $a['name'];
                 }
-                if (array_key_exists('is_hero', $a) && ($a['is_hero'] !== '')) {
-                    if ($a['is_hero'] != 'N') $this->is_hero = true; else $this->is_hero = false;
+                if (array_key_exists('gold', $a) && (is_numeric($a['gold']))) {
+                    $this->gold = intval($a['gold']);
+                }
+                if (array_key_exists('is_hero', $a) && (is_numeric($a['is_hero']))) {
+                    if ($a['is_hero'] != '0') $this->is_hero = true; else $this->is_hero = false;
                 }
                 if (array_key_exists('Point3D', $a) && ($a['Point3D'] instanceof Point3D)) {
                     $this->cur_pos = $a['Point3D'];
@@ -105,6 +110,177 @@
                 }
             }
         }
+
+
+        public static function get_from_odb_all(PDO $db_mai, DspMessage $mes, int $save_id): array {
+            [$rslt0, $team_array] = self::get_from_tbl_all($db_mai, $mes, $save_id);
+            if (!$rslt0 || $mes->is_err()) {
+                return [false, []];
+            }
+            foreach ($team_array as $team) {
+                [$rslt1, $hres_array] = Hero::get_from_odb_all($db_mai, $mes, $save_id, $team->id);
+                if (!$rslt1 || $mes->is_err()) {
+                    return [false, []];
+                }
+                $team->hres = $hres_array;
+            }
+            return [true, $team_array];
+        }
+
+
+        public function set_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            [$rslt0, $team_id] = $this->add_tbl($db_mai, $mes, $save_id);
+            if (!$rslt0 || $mes->is_err()) {
+                return false;
+            }
+            foreach ($this->heroes as $hero) {
+                $rslt1 = $hero->set_to_odb($db_mai, $mes, $save_id, $team_id);
+                if (!$rslt1 || $mes->is_err()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        
+        public static function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $rslt = self::del_tbl($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+            return true;
+        }
+
+
+
+        // DB処理。save_idで指定されたteamレコードセットを読み込み
+        // Teamクラスの配列にセットする
+        // 
+        protected static function get_from_tbl_all(
+            PDO $db_mai, 
+            DspMessage $mes, 
+            int $save_id
+        ): array {
+            $get_team_SQL =<<<GET_TEAM01
+                SELECT 	id,    save_id, name, 
+                        pos_x, pos_y,   pos_z, pos_d,
+                        gold,  is_hero 
+                FROM tbl_team
+                WHERE   save_id = :save_id
+        GET_TEAM01;
+            try {
+                $get_team_stmt = $db_mai->prepare($get_team_SQL);
+                $get_team_stmt->bindValue(':save_id',  $save_id);
+                $get_team_stmt->execute();
+                $resultRecordSet = $get_team_stmt->fetchAll();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 37: {$get_team_SQL}");
+                return [false, []];
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 38: {$get_team_SQL}");
+                return [false, []];
+            } 
+        
+            if (count($resultRecordSet) < 1) {
+                $mes->set_err_message("データが有りません 39: {$get_team_SQL}");
+                return [false, []];
+            }
+            $team_array = [];
+            foreach ($resultRecordSet as $resultRecord) {
+                array_push($team_array,  (new Team())->decode($resultRecord));
+            }
+            return [true, $team_array];
+        }
+        
+
+        // DB処理。teamテーブルに自身のデータを追加(insert)して
+        // そのID(id)を返す
+        // 
+        protected function add_tbl(
+            PDO $db_mai, 
+            DspMessage $mes, 
+            int $save_id
+        ): array {
+
+            $insert_team_SQL =<<<INSERT_TEAM01
+                INSERT INTO tbl_team (
+                    save_id, name, 
+                    pos_x, pos_y, pos_z, pos_d, 
+                    gold,  is_hero
+                )
+                VALUES ( 
+                    :save_id , :name , 
+                    :pos_x , :pos_y , :pos_z , :pos_d,
+                    :gold, :is_hero
+                )
+INSERT_TEAM01;
+            if ($this->is_hero) $is_hero = 1; else $is_hero = 0;
+            try {
+                $insert_team_stmt = $db_mai->prepare($insert_team_SQL);
+                $insert_team_stmt->bindValue(':save_id', $save_id);  
+                $insert_team_stmt->bindValue(':name',    $this->name); 
+                $insert_team_stmt->bindValue(':pos_x',   $this->cur_pos->x); 
+                $insert_team_stmt->bindValue(':pos_y',   $this->cur_pos->y); 
+                $insert_team_stmt->bindValue(':pos_z',   $this->cur_pos->z); 
+                $insert_team_stmt->bindValue(':pos_d',   $this->cur_dir->get()); 
+                $insert_team_stmt->bindValue(':gold',    $this->gold);  
+                $insert_team_stmt->bindValue(':is_hero', $is_hero); 
+                $insert_team_stmt->execute();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 6: {$insert_team_SQL}");
+                return [false, -1];
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 7: {$insert_team_SQL}");
+                return [false, -1];
+            } 
+            $this->id = intval($db_mai->lastInsertId());
+            return [true, $this->id];
+        }
+        
+        // DB処理(クラス・メソッド)。Teamクラスの配列を受け取って、
+        // 指定されたsave_idで　teamテーブルに追加(insert)して
+        // そのID(id)の配列を返す
+        // 
+        protected static function add_tbl_all(
+            PDO $db_mai, 
+            DspMessage $mes, 
+            array $team_array, 
+            int $save_id
+        ): array 
+        {
+            if(!is_null($team_array) && is_array($team_array)) {
+                $team_id_set = [];
+                foreach ($team_array as $team) {
+                    [$rslt, $team_id] = $team->add_tbl($db_mai, $mes, $save_id);
+                    if (!$rslt) return [false, []];
+                    array_push($team_id_set, $team_id);
+                }
+                return [true, $team_id_set];
+            }
+            return [false, -1];
+        }
+
+        // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
+        // 
+        protected static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $delete_team_SQL =<<<DELETE_TEAM01
+                DELETE FROM tbl_team 
+                WHERE  save_id = :save_id
+DELETE_TEAM01;
+            try {
+                $delete_team_stmt = $db_mai->prepare($delete_team_SQL);
+                $delete_team_stmt->bindValue(':save_id', $save_id);
+                $delete_team_stmt->execute();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 15: {$delete_team_SQL}");
+                return false;
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 16: {$delete_team_SQL}");
+                return false;
+            } 
+            return true;
+        }
+    
         public function encode(): array {
             $e = [];
             $e['id']      = strval($this->id);
@@ -112,9 +288,10 @@
             $e['name']    = $this->name;
             $e['point']   = $this->cur_pos->encode();
             $e['direct']  = $this->cur_dir->encode();
+            $e['gold']    = strval($this->gold);
             $e['heroes']  = Hero::encode_heroes($this->heroes);
 
-            if ($this->is_hero) $e['is_hero'] = 'Y'; else $e['is_hero'] = 'N';
+            if ($this->is_hero) $e['is_hero'] = '1'; else $e['is_hero'] = '0';
 
             return $e;
         }
@@ -129,8 +306,11 @@
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
                     $this->name    = $a['name'];
                 }
-                if (array_key_exists('is_hero', $a) && ($a['is_hero'] !== '')) {
-                    if ($a['is_hero'] != 'N') $this->is_hero = true; else $this->is_hero = false;
+                if (array_key_exists('gold', $a) && (is_numeric($a['gold']))) {
+                    $this->gold    = intval($a['gold']);
+                }
+                if (array_key_exists('is_hero', $a) && (is_numeric($a['is_hero']))) {
+                    if ($a['is_hero'] != '0') $this->is_hero = true; else $this->is_hero = false;
                 }
                 if (array_key_exists('point', $a) && (is_array($a['point']))) {
                     $this->cur_pos->decode($a['point']);

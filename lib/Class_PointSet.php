@@ -20,6 +20,10 @@ class PointLink extends Point {
         parent::__construct($x, $y);
         $this->di = $di;
     }
+    public static function cast(Point $p): self|null {
+        if (!($p instanceof self)) return new PointLink($p->x, $p->y);
+        return $p;
+    }
 }
 
 
