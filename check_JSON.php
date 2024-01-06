@@ -9,26 +9,32 @@
     mb_regex_encoding("UTF-8");
 
     // 利用クラス等の読み込み
-    require_once '../lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once './lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
 
 
     // ダンジョンマップのセルの種類を表す列挙型
-    require_once '../lib/Enum_MzKind.php';
+    require_once './lib/Enum_MzKind.php';
 
     // 方向を表すクラス
-    require_once '../lib/Class_Direct.php';
+    require_once './lib/Class_Direct.php';
 
     // 位置・経路を表すクラス全般
-    require_once '../lib/Class_PointSet.php';
+    require_once './lib/Class_PointSet.php';
 
     // MAZE関係クラス全般
-    require_once '../lib/Class_Maze.php';
+    require_once './lib/Class_Maze.php';
 
     // パーティークラス全般
-    require_once '../lib/Class_Team.php';
+    require_once './lib/Class_Team.php';
 
     // ヒ－ロークラス全般
-    require_once '../lib/Class_Hero.php';
+    require_once './lib/Class_Hero.php';
+
+    // ギルドクラス全般
+    require_once './lib/Class_Guild.php';
+
+    // Save/Load関係クラス全般
+    require_once './lib/Class_SaveData.php';
 
 /*******************************************************************************/
 /*                                                                             */
@@ -39,21 +45,22 @@
     init();
 //    $ga->mode = 'new'; // 暫定
     switch ($ga->mode) {
-        case 'new':
-            for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
-                $gv->maze->create_maze($i);
+        case 'check':
+            if ($ga->save_JSON != '') {
+                $gv->save_assoc = json_decode($ga->save_JSON, true);
+                $gv->maze_JSON  = $gv->save_assoc['all_maze'];
+                $gv->team_JSON  = $gv->save_assoc['all_team'];
+                $gv->guld_JSON  = $gv->save_assoc['all_guld'];
+            } else {
+                $gv->maze_assoc = json_decode($ga->maze_JSON, true);
+                $gv->team_assoc = json_decode($ga->team_JSON, true);
+                $gv->guld_assoc = json_decode($ga->guld_JSON, true);
             }
-            for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor - 1; $i++) {
-                $gv->maze->create_stair($i);
-            }
-            $gv->team = new_team();
-            break;
-        case 'save':
-            $gv->maze_assoc = json_decode($ga->maze_JSON, true);
-            $gv->team_assoc = json_decode($ga->team_JSON, true);
 
-            $gv->maze->decode($gv->maze_assoc);
-            $gv->team->decode($gv->team_assoc);
+            if ($ga->save_JSON != '') $gv->save = (new SaveData([]))->decode($gv->save_assoc);
+            $gv->maze = (new Maze([])) ->decode($gv->maze_assoc);
+            $gv->team = (new Team([])) ->decode($gv->team_assoc);
+            $gv->guld = (new Guild([]))->decode($gv->guld_assoc);
             break;
         default:
             break;
@@ -64,19 +71,9 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
-function new_team(): Team {
-    global $gv;
-    $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
-    $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
-    $z = 0;  //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
-    $d = random_int(0, Direct::MAX);
 
-    $heroes = [];
-    for ($i = 0; $i <= 3; $i++) {
-        array_push($heroes, new Hero());
-    }
-    return new Team(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d, 'Heroes' => $heroes]);
-}
+
+
 
 /*******************************************************************************/
 /*                                                                             */
@@ -184,8 +181,8 @@ function new_team(): Team {
         $max = $team->get_number_of_heroes();
         for ($i = 0; $i < $max; $i++) {
             $hero = $team->get_hero($i);
-            echo "<dt>"      . $hero->get_id()   . "</dt>\n";
-            echo "<dd>id = " . $hero->get_name() . "</dd>\n";
+            echo "<dt>"      . ($hero->decode())['name'] . "</dt>\n";
+            echo "<dd>id = " . ($hero->decode())['id']   .  "</dd>\n";
         }
         echo "</dl>\n";
     }
@@ -214,18 +211,22 @@ function new_team(): Team {
     // 大域変数の設定
     class GlobalVar {
         public DspMessage $mes;
-        public string $script_path;
-        public string $cgi_base;
-        public string $cgi_home;
+        public string   $script_path;
+        public string   $cgi_base;
+        public string   $cgi_home;
 
-        public string $icon_home;
+        public string   $icon_home;
 
-        public PDO    $mmd_db;
+        public PDO      $db_mai;
 
-        public array  $maze_assoc = [];
-        public Maze   $maze;
-        public array  $team_assoc = [];
-        public Team   $team;
+        public array    $save_assoc = [];
+        public SaveData $save;
+        public array    $maze_assoc = [];
+        public Maze     $maze;
+        public array    $team_assoc = [];
+        public Team     $team;
+        public array    $guld_assoc = [];
+        public Guild    $guld;
 
         public const    Maze_size_x = 21;
         public const    Maze_size_y = 21;
@@ -242,17 +243,8 @@ function new_team(): Team {
             $this->cgi_home    = dirname ($this->cgi_base);
             $this->icon_home   = "{$this->cgi_home}/icon-img/kkrn_icon_home_3.png";
 
-            $this->mmd_db      = PDO_db_open($db_host, 'db_mai'); 
+            $this->db_mai      = PDO_db_open($db_host, 'db_mai'); 
 
-            $this->maze        =  new Maze([
-                'fill_kind'    => MzKind::Empty,
-                'size_x'       => GlobalVar::Maze_size_x,
-                'size_y'       => GlobalVar::Maze_size_y,
-                'size_z'       => GlobalVar::Max_of_Maze_Floor, 
-                'limit_room'   => GlobalVar::Limit_of_room,
-                'room_size'    => GlobalVar::Max_size_of_room,
-            ]);
-            $this->team        =  new Team(['name' => 'New Team', 'x'=>1, 'y'=>1, 'z'=>1, 'd'=>Direct::N]);
         }
 
         public function is_error (): bool {
@@ -264,8 +256,10 @@ function new_team(): Team {
     // POST引数の設定
     class GlobalArguments {
         public string $mode;
+        public string $save_JSON;
         public string $maze_JSON;
         public string $team_JSON;
+        public string $guld_JSON;
 
         public function __construct() {
             global $gv;
@@ -276,7 +270,7 @@ function new_team(): Team {
                 if ( array_key_exists('mode', $_POST) &&  $_POST['mode'] != '') {
                     $this->mode     = $_POST['mode'];
                 } else {
-                    $this->mode     = 'view';
+                    $this->mode     = 'unknown';
                 } 
             }
             if ( array_key_exists('maze', $_POST) &&  $_POST['maze'] != '') {
@@ -288,6 +282,16 @@ function new_team(): Team {
                 $this->team_JSON    = $_POST['team'];
             } else {
                 $this->team_JSON    = '';
+            } 
+            if ( array_key_exists('guld', $_POST) &&  $_POST['guld'] != '') {
+                $this->guld_JSON    = $_POST['guld'];
+            } else {
+                $this->guld_JSON    = '';
+            } 
+            if ( array_key_exists('save', $_POST) &&  $_POST['save'] != '') {
+                $this->save_JSON    = $_POST['save'];
+            } else {
+                $this->save_JSON    = '';
             } 
             $gv->mes->set_nor_message("MODE = [{$this->mode}]");
         }
