@@ -155,7 +155,7 @@
             $get_save_SQL =<<<GET_SAVE_INFO01
                 SELECT save_id, player_id, title, detail, point, 
                        auto_mode, is_active, is_delete, 
-                       DATE_FORMAT(save_time,'%Y-%c-%e %H:%i:%s:%f') AS save_time
+                       DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
                 WHERE  player_id = :player_id 
                 ORDER  BY title COLLATE utf8mb4_unicode_ci ASC
@@ -195,7 +195,7 @@ GET_SAVE_INFO01;
             $seek_save_SQL =<<<SEEK_SAVE01
             SELECT save_id, player_id, title, detail, point, 
                    auto_mode, is_active, is_delete, 
-                   DATE_FORMAT(save_time,'%Y-%c-%e %H:%i:%s:%f') AS save_time
+                   DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
             FROM   tbl_save
             WHERE  player_id = :player_id AND title = :title
 SEEK_SAVE01;
@@ -228,7 +228,7 @@ SEEK_SAVE01;
             $get_save_SQL =<<<GET_SAVE01
                 SELECT save_id, player_id, title, detail, point, 
                        auto_mode, is_active, is_delete, 
-                       DATE_FORMAT(save_time,'%Y-%c-%e %H:%i:%s:%f') AS save_time
+                       DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
                 WHERE  save_id = :save_id
 GET_SAVE01;

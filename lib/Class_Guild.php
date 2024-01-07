@@ -252,7 +252,7 @@ DELETE_GULD01;
                 if (array_key_exists('team_id', $a) && (is_numeric($a['team_id']))) {
                     $this->team_id = intval($a['team_id']);
                 }
-                if (array_key_exists('heroes', $a) && (is_numeric($a['heroes']))) {
+                if (array_key_exists('heroes', $a) && (is_array($a['heroes']))) {
                     $this->heroes  = Hero::decode_heroes($a['heroes']);
                 }
             }

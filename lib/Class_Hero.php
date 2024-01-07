@@ -7,7 +7,7 @@
 
     // 利用クラス等の読み込み
     require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
-    require_once 'Class_HeroAbilty.php'; 
+    require_once 'Class_HeroAbility.php'; 
 
     class Hero {
         protected static  $max_id   = 0;

@@ -226,15 +226,15 @@ function new_team(): Team {
                 <h2>ギルド窓口</h2>
                 <ul id='guild_list'>
                     <li id='guild_hres'>冒険者情報
-                        <p>　冒険者情報を見ることができます(未実装)</p></li>
+                        <p>　冒険者情報を見ることができます(実装中)</p></li>
                     <li id='guild_edit'>冒険者編集
                         <p>　既存キャラクターを編集出来ます(デバッグモードのみ)</p></li>
                     <li id='guild_appd'>冒険者募集
-                        <p>　新しいキャラクターを募集出来ます(未実装)</p></li>
-                    <li id='guild_load'>冒険者呼び出し
+                        <p>　新しいキャラクターを募集出来ます(実装中)</p></li>
+                    <li id='guild_load'>冒険の呼び出し
                         <p>　冒険情報をロードできます(未実装)</p></li>
-                    <li id='guild_save'>冒険者登録
-                        <p>　冒険情報をセーブできます(未実装)</p></li>
+                    <li id='guild_save'>冒険の記録
+                        <p>　冒険情報をセーブできます(実装中)</p></li>
                     <li id='guild_to_maze'>冒険出発
                         <p>　ダンジョンに出発します(未実装)</p></li>
                 </dl>
@@ -264,8 +264,20 @@ function new_team(): Team {
                 </fieldset>
             </div>
             <div id='gld_view_switch_load'>
+                <h2>冒険の呼び出し</h2>
+                <ul id='load_list'></ul>
+                <fieldset id='load_info_fields'>
+                    <legend>今までの記録</legend>
+                    <ul id='load_info_defail'></ul>
+                </fieldset>
             </div>
             <div id='gld_view_switch_save'>
+                <h2>冒険の記録</h2>
+                <ul id='save_list'></ul>
+                <fieldset id='save_info_fields'>
+                    <legend>今までの記録</legend>
+                    <ul id='save_info_detail'></ul>
+                </fieldset>
             </div>
         </div>
         <div id='gld_view_message_div'><p id='gld_view_message'></p></div>
@@ -293,7 +305,8 @@ function new_team(): Team {
         <p class='foot_print'>Guild in Maze Adventure I.</p>
     </footer>
     <script>
-        window.tsCall.get_init_data('<?php echo $gv->cgi_base; ?>', <?php echo $ga->pid; ?>);
+//        window.tsCall.get_init_data('<?php echo $gv->cgi_base; ?>', <?php echo $ga->pid; ?>);
+        window.tsCall.new_game('<?php echo $gv->cgi_base; ?>', <?php echo $ga->pid; ?>);
     </script>
 </body>
 <?php

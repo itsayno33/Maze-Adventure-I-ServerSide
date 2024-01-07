@@ -45,12 +45,17 @@
     init();
 //    $ga->mode = 'new'; // 暫定
     switch ($ga->mode) {
-        case 'check':
+        case 'save':
             if ($ga->save_JSON != '') {
                 $gv->save_assoc = json_decode($ga->save_JSON, true);
-                $gv->maze_JSON  = $gv->save_assoc['all_maze'];
-                $gv->team_JSON  = $gv->save_assoc['all_team'];
-                $gv->guld_JSON  = $gv->save_assoc['all_guld'];
+
+                $ga->maze_JSON  = '';
+                $ga->team_JSON  = '';
+                $ga->guld_JSON  = '';
+
+                $gv->maze_assoc = $gv->save_assoc['all_maze'][0];
+                $gv->team_assoc = $gv->save_assoc['all_team'][0];
+                $gv->guld_assoc = $gv->save_assoc['all_guld'][0];
             } else {
                 $gv->maze_assoc = json_decode($ga->maze_JSON, true);
                 $gv->team_assoc = json_decode($ga->team_JSON, true);
@@ -80,6 +85,57 @@
 /*                             画　面　表　示　関　連                            */
 /*                                                                             */
 /*******************************************************************************/
+
+    function display_save_JSON(): void {
+        global $gv, $ga;
+
+        echo "<pre>\n";
+        echo  $ga->save_JSON . PHP_EOL;
+        echo "</pre>\n";
+
+        return;
+    }
+
+    function display_save_assoc(): void {
+        global $gv, $ga;
+
+        if (is_null(($gv->save_assoc))) return;
+        __nested_display($gv->save_assoc);
+        return;
+    }
+    function __nested_display(array $a) {
+        echo "<ul>\n";
+        foreach ($a as $key => $value) {
+            if (is_array($value)) {
+                echo "<li>{$key}\n";
+                __nested_display($value);
+                echo "</li>\n";
+            } else {
+                echo "<li> {$key} = {$value} </li>\n";
+            }
+        }
+        echo "</ul>\n";
+    }
+    function display_save_obj(): void {
+        global $gv, $ga;
+
+        $save = $gv->save->encode();
+        echo "<ul>\n";
+        echo "<li> save_id = "   . $save['save_id']     . "</li>\n";
+        echo "<li> player_id = " . $save['player_id'] . "</li>\n";
+        echo "<li> title = "     . $save['title'] . "</li>\n";
+        echo "<li> detail = "    . $save['detail'] . "</li>\n";
+        echo "<li> point = "     . $save['point'] . "</li>\n";
+        echo "<li> auto_mode = " . $save['auto_mode'] . "</li>\n";
+        echo "<li> is_active = " . $save['is_active'] . "</li>\n";
+        echo "<li> is_delete = " . $save['is_delete'] . "</li>\n";
+        echo "<li> save_time = " . $save['save_time'] . "</li>\n";
+        echo "</ul>\n";
+
+        return;
+    }
+
+
 
     function display_maze_JSON(): void {
         global $gv, $ga;
@@ -148,6 +204,68 @@
 
         return;
     }
+    function display_team_obj(): void {
+        global $gv, $ga, $DirectionName;
+
+        $team = $gv->team->encode();
+        echo "<ul>\n";
+        echo "<li> id     = " . $team['id']           . "</li>\n";
+        echo "<li> name   = " . $team['name']         . "</li>\n";
+        echo "<li> cur_x  = " . $team['point']['x'] . "</li>\n";
+        echo "<li> cur_y  = " . $team['point']['y'] . "</li>\n";
+        echo "<li> cur_z  = " . $team['point']['z'] . "</li>\n";
+        echo "<li> cur_d  = " . $gv->team->get_dir()->get_mb_name() . "</li>\n";
+        echo "<li> Heroes: ";
+            display_heroes_obj($team['heroes']);
+        echo "</li>\n";
+        echo "</ul>\n";
+
+        return;
+    }
+
+    function display_guld_JSON(): void {
+        global $gv, $ga;
+
+        echo "<pre>\n";
+        echo  $ga->guld_JSON . PHP_EOL;
+        echo "</pre>\n";
+
+        return;
+    }
+    function display_guld_assoc(): void {
+        global $gv, $ga;
+
+        if (is_null(($gv->team_assoc))) return;
+
+        echo "<ul>\n";
+        echo "<li> id      = " . $gv->guld_assoc['id']      . "</li>\n";
+        echo "<li> save_id = " . $gv->guld_assoc['save_id'] . "</li>\n";
+        echo "<li> team_id = " . $gv->guld_assoc['team_id'] . "</li>\n";
+        echo "<li> name    = " . $gv->guld_assoc['name']    . "</li>\n";
+        echo "<li> Heroes "; 
+            display_heroes_assoc($gv->guld_assoc['heroes']); 
+        echo "</li>\n";
+        echo "</ul>\n";
+
+        return;
+    }
+    function display_guld_obj(): void {
+        global $gv, $ga, $DirectionName;
+
+
+        echo "<ul>\n";
+        echo "<li> id      = " . $gv->guld->id      . "</li>\n";
+        echo "<li> name    = " . $gv->guld->name    . "</li>\n";
+        echo "<li> save_id = " . $gv->guld->save_id . "</li>\n";
+        echo "<li> team_id = " . $gv->guld->team_id . "</li>\n";
+        echo "<li> Heroes: ";
+            display_heroes_obj($gv->guld->heroes);
+        echo "</li>\n";
+        echo "</ul>\n";
+
+        return;
+    }
+
     function display_heroes_assoc(array $heroes): void {
         if (is_null($heroes) || !is_array($heroes)) return;
         echo "<dl>\n";
@@ -157,32 +275,13 @@
         }
         echo "</dl>\n";
     }
-    function display_team_obj(): void {
-        global $gv, $ga, $DirectionName;
-
-
-        echo "<ul>\n";
-        echo "<li> id     = " . $gv->team->get_id()     . "</li>\n";
-        echo "<li> name   = " . $gv->team->get_name()   . "</li>\n";
-        echo "<li> cur_x  = " . $gv->team->get_pos()->x . "</li>\n";
-        echo "<li> cur_y  = " . $gv->team->get_pos()->y . "</li>\n";
-        echo "<li> cur_z  = " . $gv->team->get_pos()->z . "</li>\n";
-        echo "<li> cur_d  = " . $gv->team->get_dir()->get_mb_name() . "</li>\n";
-        echo "<li> Heroes: ";
-            display_heroes_obj($gv->team);
-        echo "</li>\n";
-        echo "</ul>\n";
-
-        return;
-    }
-    function display_heroes_obj(Team $team): void {
-        if (is_null($team) || !is_object($team) || !($team instanceof("Team"))) return;
+    function display_heroes_obj(array $hres): void {
+        if (is_null($hres) || !is_array($hres)) return;
         echo "<dl>\n";
-        $max = $team->get_number_of_heroes();
-        for ($i = 0; $i < $max; $i++) {
-            $hero = $team->get_hero($i);
-            echo "<dt>"      . ($hero->decode())['name'] . "</dt>\n";
-            echo "<dd>id = " . ($hero->decode())['id']   .  "</dd>\n";
+        foreach ($hres as $hero) {
+            $hero_data = $hero->encode();
+            echo "<dt>"      . $hero_data['name'] . "</dt>\n";
+            echo "<dd>id = " . $hero_data['id']   .  "</dd>\n";
         }
         echo "</dl>\n";
     }
@@ -364,10 +463,21 @@
 </head>
 <body>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ JSONデータチェック</h1>
+    <p>『<?php echo $ga->mode ?>』モード</p>
     <article class='Maze_info' id='Maze_info_pane'>
-        <h2>ダンジョン・データ</h2>
+        <h3>セーブ情報</h3>
+        <div id ='save_view'>
+            <dl>
+                <dt>受信データ(JSON)</dt>
+                <dd><?php display_save_JSON() ?></dd>
+                <dt>復元データ(連想配列)</dt>
+                <dd><?php display_save_assoc() ?></dd>
+                <dt>復元済みデータ(オブジェクト)</dt>
+                <dd><?php display_save_obj() ?></dd>
+            </dl>
+        </div>
+        <h3>ダンジョン・データ</h3>
         <div id ='maze_view'>
-            <p>『<?php echo $ga->mode ?>』モード</p>
             <dl>
                 <dt>受信データ(JSON)</dt>
                 <dd><?php display_maze_JSON() ?></dd>
@@ -377,7 +487,7 @@
                 <dd><?php display_maze_obj() ?></dd>
             </dl>
         </div>
-        <h2>チーム・データ</h2>
+        <h3>チーム・データ</h3>
         <div id ='team_view'>
             <dl>
                 <dt>受信データ(JSON)</dt>
@@ -386,6 +496,17 @@
                 <dd><?php display_team_assoc() ?></dd>
                 <dt>復元済みデータ(オブジェクト)</dt>
                 <dd><?php display_team_obj() ?></dd>
+            </dl>
+        </div>
+        <h3>ギルド・データ</h3>
+        <div id ='guld_view'>
+            <dl>
+                <dt>受信データ(JSON)</dt>
+                <dd><?php display_guld_JSON() ?></dd>
+                <dt>復元データ(連想配列)</dt>
+                <dd><?php display_guld_assoc() ?></dd>
+                <dt>復元済みデータ(オブジェクト)</dt>
+                <dd><?php display_guld_obj() ?></dd>
             </dl>
         </div>
     </article>
