@@ -80,7 +80,7 @@ function auto_load(PDO $db_mai, int $pid, string $title, int $ecode): string {
 */
     $save = $ga->save;
 
-    // タイトルでsave_idを探す。見つからなければエラー。見つかれば$saveにDB反映済み
+    // ユニーク・ナンバーでsave_idを探す。見つからなければエラー。見つかれば$saveにDB反映済み
     [$result, $save_id] = ($save)->get_save_id_at_tbl($db_mai, $gv->mes);
     if (!$result) {
         tr_rollback($db_mai);
@@ -91,14 +91,11 @@ function auto_load(PDO $db_mai, int $pid, string $title, int $ecode): string {
     return all_encode(0, $save);
 }
 
-function manual_load(PDO $db_mai, int $pid, int $save_id, int $ecode): string {
+function manual_load(PDO $db_mai, int $ecode): string {
     global $gv, $ga;
 
     tr_begin($db_mai);
-/*
-    $a = ['player_id' =>  $pid, 'save_id' => $save_id, 'title' => ''];
-    $save = new SaveData($a);
-*/
+
     $save = $ga->save; 
     // save_idで探す。見つからなければエラー。見つかれば$saveにDB反映済み
     [$result, $save_id] = ($save)->get_from_odb($db_mai, $gv->mes);
@@ -113,29 +110,27 @@ function manual_load(PDO $db_mai, int $pid, int $save_id, int $ecode): string {
 
 function auto_save(PDO $db_mai, int $ecode): string {
     global $gv, $ga;
-/*
-    $a = [
-        'player_id' => $ga->pid, 
-        'save_id'   => -1,                 // この段階では不明なので-1がセットされている
-        'title'     => $ga->save_title,
-        'detail'    => $ga->save_detail,
-        'point'     => $ga->save_point,
-        'auto_mode' => '1',
-    ];
-    $save = new SaveData($a);
-*/
+
     $save = $ga->save;
     tr_begin($db_mai);
 
-    // タイトルでsave_idを探す。見つからなければ$save_idとして-1が返る
+    // ユニーク・ナンバーでsave_idを探す。見つからなければ$save_idとして-1が返る
     [$rslt, $save_id] = $save->get_save_id_at_tbl($db_mai, $gv->mes);
     if ($gv->mes->is_err()) {
         tr_rollback($db_mai);
         return all_encode($ecode + 10, $save);
     }
-
-    $rslt = _save($db_mai, $save, $ecode);
-    if ($gv->mes->is_err()) {
+    // 既存データが有るので一旦すべて削除する
+    if ($rslt) {
+        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save_id);
+        if ($rslt === false) {
+            tr_rollback($db_mai);
+            return all_encode($ecode + 33, $save);
+        }
+    }
+    // 改めて(別のレコードに)セーブする
+    $rslt = $save->set_to_odb($db_mai, $gv->mes, $save);
+    if ($rslt === false) {
         tr_rollback($db_mai);
         return all_encode($ecode + 23, $save);
     }
@@ -146,48 +141,33 @@ function auto_save(PDO $db_mai, int $ecode): string {
 
 function manual_save(PDO $db_mai, int $ecode): string {
     global $gv,$ga;
-/*
-    $a = [
-        'player_id' => $ga->pid, 
-        'save_id'   => $ga->save_id, 
-        'title'     => $ga->save_title,
-        'detail'    => $ga->save_detail,
-        'point'     => $ga->save_point,
-        'auto_mode' => '0',
-    ];
-    $save = new SaveData($a);
-*/
+
     $save = $ga->save;
     tr_begin($db_mai);
 
-    $rslt = _save($db_mai, $save, $ecode);
+    // ユニーク・ナンバーでsave_idを探す。見つからなければ$save_idとして-1が返る
+    [$rslt, $save_id] = $save->get_save_id_at_tbl($db_mai, $gv->mes);
     if ($gv->mes->is_err()) {
+        tr_rollback($db_mai);
+        return all_encode($ecode + 10, $save);
+    }
+    // 既存データが有るので一旦すべて削除する
+    if ($rslt) {
+        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save_id);
+        if ($rslt === false) {
+            tr_rollback($db_mai);
+            return all_encode($ecode + 33, $save);
+        }
+    }
+    // 改めて(別のレコードに)セーブする
+    $rslt = $save->set_to_odb($db_mai, $gv->mes, $save);
+    if ($rslt === false) {
         tr_rollback($db_mai);
         return all_encode($ecode + 23, $save);
     }
 
     tr_commit($db_mai);
     return all_encode(0, $save);
-}
-
-function _save(PDO $db_mai, SaveData $save, int $ecode):bool {
-    global $gv;
-
-    // save_idが指定されていたら既存データが有るので一旦すべて削除する
-    if ($save->save_id > 0) {
-        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save->save_id);
-        if ($rslt === false) {
-            return false;
-        }
-    }
-
-    // 改めて(別のレコードに)セーブする
-    $rslt = $save->set_to_odb($db_mai, $gv->mes, $save);
-    if ($rslt === false) {
-        return false;
-    }
-
-    return true;
 }
 
 function all_encode(int $code, SaveData $save): string {

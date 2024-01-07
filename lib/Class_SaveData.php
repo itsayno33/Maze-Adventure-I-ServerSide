@@ -19,6 +19,7 @@
     class SaveData {
         public int      $save_id;
         public int      $player_id; 
+        public int      $uniq_no;
         public string   $title;
         public string   $detail;
         public string   $point;
@@ -34,6 +35,7 @@
         public function __construct(array $a) {
             $this->save_id   = -1;
             $this->player_id = 1; 
+            $this->uniq_no   = -1;
             $this->title     = '';
             $this->detail    = '';
             $this->point     = '';
@@ -120,12 +122,7 @@
 
         
         public static function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
-            $rslt = Maze::del_to_odb($db_mai, $mes, $save_id);
-            if (!$rslt || $mes->is_err()) {
-                return false;
-            }
-
-            $rslt = Team::del_to_odb($db_mai, $mes, $save_id);
+            $rslt = Hero::del_to_odb($db_mai, $mes, $save_id);
             if (!$rslt || $mes->is_err()) {
                 return false;
             }
@@ -135,7 +132,12 @@
                 return false;
             }
 
-            $rslt = Hero::del_to_odb($db_mai, $mes, $save_id);
+            $rslt = Team::del_to_odb($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+
+            $rslt = Maze::del_to_odb($db_mai, $mes, $save_id);
             if (!$rslt || $mes->is_err()) {
                 return false;
             }
@@ -156,7 +158,7 @@
         // 
         public static function get_list_by_pid(PDO $db_mai, DspMessage $mes, int $player_id): array {
             $get_save_SQL =<<<GET_SAVE_INFO01
-                SELECT save_id, player_id, title, detail, point, 
+                SELECT save_id, player_id, uniq_no, title, detail, point, 
                        auto_mode, is_active, is_delete, 
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
@@ -191,22 +193,22 @@ GET_SAVE_INFO01;
             return [true, $save_data_set];
         }
 
-        // DB処理。タイトルからsave_idを得る。該当するレコードが無ければ第一戻り値でfalseを返す
+        // DB処理。ユニーク・ナンバーからsave_idを得る。該当するレコードが無ければ第一戻り値でfalseを返す
         // 
         public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): array {
 //            $this->save_id = -1;
             $seek_save_SQL =<<<SEEK_SAVE01
-            SELECT save_id, player_id, title, detail, point, 
+            SELECT save_id, player_id, uniq_no, title, detail, point, 
                    auto_mode, is_active, is_delete, 
                    DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
             FROM   tbl_save
-            WHERE  player_id = :player_id AND title = :title
-            ORDER  BY title COLLATE utf8mb4_unicode_ci
+            WHERE  player_id = :player_id AND uniq_no = :uniq_no
+            ORDER  BY uniq_no
 SEEK_SAVE01;
             try {
                 $seek_save_stmt = $db_mai->prepare($seek_save_SQL);
                 $seek_save_stmt->bindValue(':player_id', $this->player_id);
-                $seek_save_stmt->bindValue(':title',     $this->title);
+                $seek_save_stmt->bindValue(':uniq_no',   $this->uniq_no);
                 $seek_save_stmt->execute();
                 $resultRecordSet = $seek_save_stmt->fetchAll();
             } catch (PDOException $e) {
@@ -230,7 +232,7 @@ SEEK_SAVE01;
         // 
         protected function get_from_tbl(PDO $db_mai, DspMessage $mes): array {
             $get_save_SQL =<<<GET_SAVE01
-                SELECT save_id, player_id, title, detail, point, 
+                SELECT save_id, player_id, uniq_no, title, detail, point, 
                        auto_mode, is_active, is_delete, 
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
@@ -265,17 +267,18 @@ GET_SAVE01;
             if ($this->is_delete) $is_delete = '1'; else $is_delete = '0';
 
             $insert_save_SQL =<<<NEW_SAVE01
-                INSERT INTO tbl_save (
-                        player_id, title, detail, point, 
+                INSERT  INTO tbl_save (
+                        player_id, uniq_no, title, detail, point, 
                         auto_mode, is_active, is_delete
                     )
                 VALUES ( 
-                        :player_id, :title, :detail, :point, 
+                        :player_id, :uniq_no, :title, :detail, :point, 
                         :auto_mode, :is_active, :is_delete)
 NEW_SAVE01;
             try {
                 $insert_save_stmt = $db_mai->prepare($insert_save_SQL);
                 $insert_save_stmt->bindValue(':player_id', $this->player_id);
+                $insert_save_stmt->bindValue(':uniq_no',   $this->uniq_no);
                 $insert_save_stmt->bindValue(':title',     $this->title);
                 $insert_save_stmt->bindValue(':detail',    $this->detail);
                 $insert_save_stmt->bindValue(':point',     $this->point);
@@ -320,6 +323,7 @@ NEW_SAVE01;
             $a = [];
             $a['save_id']    = strval($this->save_id);
             $a['player_id']  = strval($this->player_id);
+            $a['uniq_no']    = strval($this->uniq_no);
             $a['title']      = $this->title;
             $a['detail']     = $this->detail;
             $a['point']      = $this->point;
@@ -343,6 +347,9 @@ NEW_SAVE01;
             }
             if (array_key_exists('player_id', $a) && is_numeric($a['player_id'])) {
                 $this->player_id  = intval($a['player_id']);
+            }
+            if (array_key_exists('uniq_no', $a) && is_numeric($a['uniq_no'])) {
+                $this->uniq_no    = intval($a['uniq_no']);
             }
             if (array_key_exists('title', $a) && $a['title'] != '') {
                 $this->title      = $a['title'];
