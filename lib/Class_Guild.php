@@ -122,7 +122,7 @@ GET_GULD01;
         ): array {
 
             $insert_guld_SQL =<<<INSERT_GULD02
-                INSERT INTO tbl_team ( save_id, team_id, name )
+                INSERT INTO tbl_guld ( save_id, team_id, name )
                 VALUES ( :save_id, :team_id, :name )
 INSERT_GULD02;
             try {
@@ -258,7 +258,7 @@ DELETE_GULD01;
             }
             return $this;
         }
-        public static function encode_all_guld(array $a): array {
+        public static function encode_all(array $a): array {
             $all_guld_data = [];
             if (!is_null($a) && is_array($a)) {
                 foreach ($a as $guld) {
@@ -267,13 +267,11 @@ DELETE_GULD01;
             }
             return $all_guld_data;
         }
-        public static function decode_all_guld(array $a): array {
+        public static function decode_all(array $a): array {
             $all_guld = [];
             if (!is_null($a) && is_array($a)) {
-                foreach ($a as $all_guld_data) {
-                    $guld = new Guild();
-                    $guld->decode($all_guld_data);
-                    array_push($all_guld, $guld);
+                foreach ($a as $guld_data) {
+                    array_push($all_guld, (new Guild())->decode($guld_data));
                 }
             }
             return $all_guld;

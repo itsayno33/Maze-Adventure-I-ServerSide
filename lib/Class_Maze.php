@@ -736,7 +736,7 @@ DELETE_MAZE01;
 
             return $this;
         }
-        public static function encode_all_maze(array $a): array {
+        public static function encode_all(array $a): array {
             $all_maze_data = [];
             if (!is_null($a) && is_array($a)) {
                 foreach ($a as $maze) {
@@ -745,13 +745,11 @@ DELETE_MAZE01;
             }
             return $all_maze_data;
         }
-        public static function decode_all_maze(array $a): array {
+        public static function decode_all(array $a): array {
             $all_maze = [];
             if (!is_null($a) && is_array($a)) {
-                foreach ($a as $all_maze_data) {
-                    $maze = new Maze();
-                    $maze->decode($all_maze_data);
-                    array_push($all_maze, $maze);
+                foreach ($a as $maze_data) {
+                    array_push($all_maze, (new Maze())->decode($maze_data));
                 }
             }
             return $all_maze;

@@ -252,8 +252,8 @@ INSERT_HERO01;
                 $insert_hero_stmt->bindValue(':exp_ttl',   $this->val['exp']['ttl']);
                 $insert_hero_stmt->bindValue(':exp_now',   $this->val['exp']['now']);
                 $insert_hero_stmt->bindValue(':nxe',       $this->val['nxe']);
-                $insert_hero_stmt->bindValue(':abi_bsc_p', $this->abi_p['bsc']->to_JSON());
-                $insert_hero_stmt->bindValue(':abi_bsc_m', $this->abi_m['bsc']->to_JSON());
+                $insert_hero_stmt->bindValue(':abi_p',     $this->abi_p['bsc']->to_JSON());
+                $insert_hero_stmt->bindValue(':abi_m',     $this->abi_m['bsc']->to_JSON());
                 $insert_hero_stmt->bindValue(':is_alive',  $is_alive);
                 $insert_hero_stmt->execute();
             } catch (PDOException $e) {

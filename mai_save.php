@@ -71,11 +71,14 @@
 //////////////////////////////////////////////
 
 function auto_load(PDO $db_mai, int $pid, string $title, int $ecode): string {
-    global $gv;
+    global $gv, $ga;
 
     tr_begin($db_mai);
+/*
     $a = ['player_id' =>  $pid, 'save_id' => -1, 'title' => $title];
     $save = new SaveData($a);
+*/
+    $save = $ga->save;
 
     // タイトルでsave_idを探す。見つからなければエラー。見つかれば$saveにDB反映済み
     [$result, $save_id] = ($save)->get_save_id_at_tbl($db_mai, $gv->mes);
@@ -89,12 +92,14 @@ function auto_load(PDO $db_mai, int $pid, string $title, int $ecode): string {
 }
 
 function manual_load(PDO $db_mai, int $pid, int $save_id, int $ecode): string {
-    global $gv;
+    global $gv, $ga;
 
     tr_begin($db_mai);
+/*
     $a = ['player_id' =>  $pid, 'save_id' => $save_id, 'title' => ''];
     $save = new SaveData($a);
-
+*/
+    $save = $ga->save; 
     // save_idで探す。見つからなければエラー。見つかれば$saveにDB反映済み
     [$result, $save_id] = ($save)->get_from_odb($db_mai, $gv->mes);
     if (!$result) {
@@ -108,7 +113,7 @@ function manual_load(PDO $db_mai, int $pid, int $save_id, int $ecode): string {
 
 function auto_save(PDO $db_mai, int $ecode): string {
     global $gv, $ga;
-
+/*
     $a = [
         'player_id' => $ga->pid, 
         'save_id'   => -1,                 // この段階では不明なので-1がセットされている
@@ -118,7 +123,8 @@ function auto_save(PDO $db_mai, int $ecode): string {
         'auto_mode' => '1',
     ];
     $save = new SaveData($a);
-
+*/
+    $save = $ga->save;
     tr_begin($db_mai);
 
     // タイトルでsave_idを探す。見つからなければ$save_idとして-1が返る
@@ -128,19 +134,19 @@ function auto_save(PDO $db_mai, int $ecode): string {
         return all_encode($ecode + 10, $save);
     }
 
-    $ret_JSON = _save($db_mai, $save, $ecode);
+    $rslt = _save($db_mai, $save, $ecode);
     if ($gv->mes->is_err()) {
         tr_rollback($db_mai);
         return all_encode($ecode + 23, $save);
     }
 
     tr_commit($db_mai);
-    return $ret_JSON;
+    return all_encode(0, $save);
 }
 
 function manual_save(PDO $db_mai, int $ecode): string {
     global $gv,$ga;
-
+/*
     $a = [
         'player_id' => $ga->pid, 
         'save_id'   => $ga->save_id, 
@@ -150,41 +156,38 @@ function manual_save(PDO $db_mai, int $ecode): string {
         'auto_mode' => '0',
     ];
     $save = new SaveData($a);
-
+*/
+    $save = $ga->save;
     tr_begin($db_mai);
 
-    $ret_JSON = _save($db_mai, $save, $ecode);
+    $rslt = _save($db_mai, $save, $ecode);
     if ($gv->mes->is_err()) {
         tr_rollback($db_mai);
         return all_encode($ecode + 23, $save);
     }
 
     tr_commit($db_mai);
-    return $ret_JSON;
+    return all_encode(0, $save);
 }
 
-function _save(PDO $db_mai, SaveData $save, int $ecode):string {
+function _save(PDO $db_mai, SaveData $save, int $ecode):bool {
     global $gv;
 
-    tr_begin($db_mai);
     // save_idが指定されていたら既存データが有るので一旦すべて削除する
     if ($save->save_id > 0) {
         $rslt = $save->del_to_odb($db_mai, $gv->mes, $save->save_id);
         if ($rslt === false) {
-            tr_rollback($db_mai);
-            return all_encode($ecode + 10, $save);
+            return false;
         }
     }
 
     // 改めて(別のレコードに)セーブする
     $rslt = $save->set_to_odb($db_mai, $gv->mes, $save);
     if ($rslt === false) {
-        tr_rollback($db_mai);
-        return all_encode($ecode, $save);
+        return false;
     }
 
-    tr_commit($db_mai);
-    return all_encode(0, $save);
+    return true;
 }
 
 function all_encode(int $code, SaveData $save): string {
@@ -194,6 +197,7 @@ function all_encode(int $code, SaveData $save): string {
 
     $ret_assoc['ecode'] = $code;
     if ($code !== 0 || $gv->mes->is_err()) {
+        if ($code === 0) $ret_assoc['ecode'] = 999;
         $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
     } else {
         $ret_assoc['emsg'] = 'Status OK';
@@ -292,6 +296,7 @@ function all_save_info(int $code, array $save_array): string {
     // POST引数の設定
     class GlobalArguments {
         public string   $mode;
+        
         public string   $save_JSON   = '';
         public SaveData|null $save   = null;
 
@@ -322,7 +327,7 @@ function all_save_info(int $code, array $save_array): string {
                 } else {
                     $this->pid      = 1;
                 } 
-            }
+            } 
             if ( array_key_exists('save', $_POST) &&  $_POST['save'] != '') {
                 $this->save_JSON    = $_POST['save'];
                 $a = json_decode(
@@ -357,39 +362,42 @@ function all_save_info(int $code, array $save_array): string {
 
 
     function tr_begin(PDO $db_mai): bool {
+        global $gv;
         try {
             $db_mai->beginTransaction();
         } catch (PDOException $e) {
-            pdo_error1($e, "トランザクションの開始失敗");
+            $gv->mes->pdo_error($e, "トランザクションの開始失敗");
             return false;
         } catch (Throwable $ee) {
-            pdo_error2($ee, "トランザクション開始の致命的失敗");
+            $gv->mes->pdo_error($ee, "トランザクション開始の致命的失敗");
             return false;
         } 
         return true;
     }
 
     function tr_commit(PDO $db_mai): bool {
+        global $gv;
         try {
             $db_mai->commit();
         } catch (PDOException $e) {
-            pdo_error1($e, "トランザクションのコミット失敗");
+            $gv->mes->pdo_error($e, "トランザクションのコミット失敗");
             return false;
         } catch (Throwable $ee) {
-            pdo_error2($ee, "トランザクション・コミットの致命的失敗");
+            $gv->mes->pdo_error($ee, "トランザクション・コミットの致命的失敗");
             return false;
         } 
         return true;
     }
 
     function tr_rollback(PDO $db_mai): bool {
+        global $gv;
         try {
             $db_mai->rollback();
         } catch (PDOException $e) {
-            pdo_error1($e, "トランザクションのロールバック失敗");
+            $gv->mes->pdo_error($e, "トランザクションのロールバック失敗");
             return false;
         } catch (Throwable $ee) {
-            pdo_error2($ee, "トランザクション・ロールバックの致命的失敗");
+            $gv->mes->pdo_error($ee, "トランザクション・ロールバックの致命的失敗");
             return false;
         } 
         return true;

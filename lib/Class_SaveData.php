@@ -12,6 +12,9 @@
     
     // 利用クラス等の読み込み
     require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once 'Class_Maze.php'; 
+    require_once 'Class_Team.php'; 
+    require_once 'Class_Guild.php'; 
  
     class SaveData {
         public int      $save_id;
@@ -173,7 +176,7 @@ GET_SAVE_INFO01;
                 return [false, []];
             } 
 
-            if (count($resultRecordSet) < 1) return [];
+            if (count($resultRecordSet) < 1) return [true, []];
 
             $save_data_set = [];
             foreach ($resultRecordSet as $resultRecord) {
@@ -191,7 +194,7 @@ GET_SAVE_INFO01;
         // DB処理。タイトルからsave_idを得る。該当するレコードが無ければ第一戻り値でfalseを返す
         // 
         public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): array {
-            $this->save_id = -1;
+//            $this->save_id = -1;
             $seek_save_SQL =<<<SEEK_SAVE01
             SELECT save_id, player_id, title, detail, point, 
                    auto_mode, is_active, is_delete, 
@@ -263,11 +266,11 @@ GET_SAVE01;
             $insert_save_SQL =<<<NEW_SAVE01
                 INSERT INTO tbl_save (
                         player_id, title, detail, point, 
-                        auto_mode, is_active, is_delete, save_time
+                        auto_mode, is_active, is_delete
                     )
                 VALUES ( 
                         :player_id, :title, :detail, :point, 
-                        :auto_mode, :is_active, :is_delete, :save_time)
+                        :auto_mode, :is_active, :is_delete)
 NEW_SAVE01;
             try {
                 $insert_save_stmt = $db_mai->prepare($insert_save_SQL);
@@ -278,7 +281,6 @@ NEW_SAVE01;
                 $insert_save_stmt->bindValue(':auto_mode', $auto_mode);
                 $insert_save_stmt->bindValue(':is_active', $is_active);
                 $insert_save_stmt->bindValue(':is_delete', $is_delete);
-                $insert_save_stmt->bindValue(':save_time', $this->save_time->format('Y-m-d H:i:s:u'));
                 $insert_save_stmt->execute();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 0: {$insert_save_SQL}");
@@ -326,9 +328,9 @@ NEW_SAVE01;
 
             $a['save_time']  = $this->save_time->format('Y-m-d H:i:s:u');
 
-            $a['all_maze']  = Maze ::encode_all_maze($this->all_maze);
-            $a['all_team']  = Team ::encode_all_team($this->all_team);
-            $a['all_guld']  = Guild::encode_all_guld($this->all_guld);
+            $a['all_maze']  = Maze ::encode_all($this->all_maze);
+            $a['all_team']  = Team ::encode_all($this->all_team);
+            $a['all_guld']  = Guild::encode_all($this->all_guld);
 
             return $a;
         }
@@ -363,13 +365,13 @@ NEW_SAVE01;
                 $this->save_time = date_create($a['save_time'], new DateTimeZone('Asia/Tokyo')); 
             }
             if (array_key_exists('all_maze', $a) && is_array($a['all_maze'])) {
-                $this->all_maze  = Maze::decode_all_maze($a['all_maze']);
+                $this->all_maze  = Maze::decode_all($a['all_maze']);
             }
             if (array_key_exists('all_team', $a) && is_array($a['all_team'])) {
-                $this->all_team  = Team::decode_all_team($a['all_team']);
+                $this->all_team  = Team::decode_all($a['all_team']);
             }
             if (array_key_exists('all_guld', $a) && is_array($a['all_guld'])) {
-                $this->all_guld  = Guild::decode_all_guld($a['all_guld']);
+                $this->all_guld  = Guild::decode_all($a['all_guld']);
             }
             return $this;
         }

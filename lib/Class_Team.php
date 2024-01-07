@@ -324,7 +324,7 @@ DELETE_TEAM01;
             }
             return $this;
         }
-        public static function encode_all_team(array $a): array {
+        public static function encode_all(array $a): array {
             $all_team_data = [];
             if (!is_null($a) && is_array($a)) {
                 foreach ($a as $team) {
@@ -333,13 +333,11 @@ DELETE_TEAM01;
             }
             return $all_team_data;
         }
-        public static function decode_all_team(array $a): array {
+        public static function decode_all(array $a): array {
             $all_team = [];
             if (!is_null($a) && is_array($a)) {
-                foreach ($a as $all_team_data) {
-                    $team = new Team();
-                    $team->decode($all_team_data);
-                    array_push($all_team, $team);
+                foreach ($a as $team_data) {
+                    array_push($all_team, (new Team())->decode($team_data));
                 }
             }
             return $all_team;
