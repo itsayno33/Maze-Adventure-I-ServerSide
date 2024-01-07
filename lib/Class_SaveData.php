@@ -201,6 +201,7 @@ GET_SAVE_INFO01;
                    DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
             FROM   tbl_save
             WHERE  player_id = :player_id AND title = :title
+            ORDER  BY title COLLATE utf8mb4_unicode_ci
 SEEK_SAVE01;
             try {
                 $seek_save_stmt = $db_mai->prepare($seek_save_SQL);
