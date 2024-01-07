@@ -99,23 +99,10 @@
     function display_save_assoc(): void {
         global $gv, $ga;
 
-        if (is_null(($gv->save_assoc))) return;
         __nested_display($gv->save_assoc);
         return;
     }
-    function __nested_display(array $a) {
-        echo "<ul>\n";
-        foreach ($a as $key => $value) {
-            if (is_array($value)) {
-                echo "<li>{$key}\n";
-                __nested_display($value);
-                echo "</li>\n";
-            } else {
-                echo "<li> {$key} = {$value} </li>\n";
-            }
-        }
-        echo "</ul>\n";
-    }
+
     function display_save_obj(): void {
         global $gv, $ga;
 
@@ -135,6 +122,21 @@
         return;
     }
 
+    function __nested_display(array $a) {
+        if (is_null(($a)) || !is_array($a)) return;
+
+        echo "<ul>\n";
+        foreach ($a as $key => $value) {
+            if (is_array($value)) {
+                echo "<li>{$key}\n";
+                __nested_display($value);
+                echo "</li>\n";
+            } else {
+                echo "<li> {$key} = {$value} </li>\n";
+            }
+        }
+        echo "</ul>\n";
+    }
 
 
     function display_maze_JSON(): void {
@@ -149,15 +151,7 @@
 
     function display_maze_assoc(): void {
         global $gv, $ga;
-
-        if (is_null(($gv->maze_assoc))) return;
-
-        echo "<ul>\n";
-        foreach ($gv->maze_assoc as $key => $value) {
-            echo "<li> {$key} = {$value} </li>\n";
-        }
-        echo "</ul>\n";
-
+        __nested_display($gv->maze_assoc);
         return;
     }
     function display_maze_obj(): void {
@@ -187,21 +181,7 @@
     }
     function display_team_assoc(): void {
         global $gv, $ga;
-
-        if (is_null(($gv->team_assoc))) return;
-
-        echo "<ul>\n";
-        echo "<li> id     = " . $gv->team_assoc['id']     . "</li>\n";
-        echo "<li> name   = " . $gv->team_assoc['name']   . "</li>\n";
-        echo "<li> cur_x  = " . $gv->team_assoc['point']['x'] . "</li>\n";
-        echo "<li> cur_y  = " . $gv->team_assoc['point']['y'] . "</li>\n";
-        echo "<li> cur_z  = " . $gv->team_assoc['point']['z'] . "</li>\n";
-        echo "<li> cur_d  = " . $gv->team_assoc['direct']['d'] . "</li>\n";
-        echo "<li> Heroes "; 
-            display_heroes_assoc($gv->team_assoc['heroes']); 
-        echo "</li>\n";
-        echo "</ul>\n";
-
+        __nested_display($gv->team_assoc);
         return;
     }
     function display_team_obj(): void {
@@ -234,19 +214,8 @@
     }
     function display_guld_assoc(): void {
         global $gv, $ga;
-
-        if (is_null(($gv->team_assoc))) return;
-
-        echo "<ul>\n";
-        echo "<li> id      = " . $gv->guld_assoc['id']      . "</li>\n";
-        echo "<li> save_id = " . $gv->guld_assoc['save_id'] . "</li>\n";
-        echo "<li> team_id = " . $gv->guld_assoc['team_id'] . "</li>\n";
-        echo "<li> name    = " . $gv->guld_assoc['name']    . "</li>\n";
-        echo "<li> Heroes "; 
-            display_heroes_assoc($gv->guld_assoc['heroes']); 
-        echo "</li>\n";
-        echo "</ul>\n";
-
+        __nested_display($gv->team_assoc);
+        if (is_null(($gv->guld_assoc))) return;
         return;
     }
     function display_guld_obj(): void {
@@ -267,21 +236,14 @@
     }
 
     function display_heroes_assoc(array $heroes): void {
-        if (is_null($heroes) || !is_array($heroes)) return;
-        echo "<dl>\n";
-        foreach($heroes as $hero) {
-            echo "<dt>{$hero['name']}</dt>\n";
-            echo "<dd> id   = {$hero['id']}</dd>\n";
-        }
-        echo "</dl>\n";
+        __nested_display($heroes);
     }
     function display_heroes_obj(array $hres): void {
         if (is_null($hres) || !is_array($hres)) return;
         echo "<dl>\n";
         foreach ($hres as $hero) {
             $hero_data = $hero->encode();
-            echo "<dt>"      . $hero_data['name'] . "</dt>\n";
-            echo "<dd>id = " . $hero_data['id']   .  "</dd>\n";
+            __nested_display($hero_data);
         }
         echo "</dl>\n";
     }

@@ -23,7 +23,8 @@
         protected int     $state    = 0; 
         protected int     $lv       = 0; 
         protected array   $val      = [];
-        protected array   $abi      = [];
+        protected array   $abi_p    = [];
+        protected array   $abi_m    = [];
     
 
         public function __construct(array $a = null) {
@@ -39,11 +40,11 @@
                 'exp' => ['ttl' => 0, 'now' => 0],
                 'nxe' => 0
             ];
-            $this->abi   = [
-                'bsc' => [
-                    'p' => new HeroAbility(),
-                    'm' => new HeroAbility()
-                ]
+            $this->abi_p   = [
+                'bsc' =>  new HeroAbility()
+            ];
+            $this->abi_m   = [
+                'bsc' =>  new HeroAbility()
             ];
 
             if(!is_null(($a)) && is_array($a)) $this->decode($a);
@@ -99,7 +100,7 @@
             $get_heroes_SQL =<<<GET_HEROES01
                 SELECT 	id, save_id, team_id, name, sex, age, gold, state, lv,  
                         skp_ttl, skp_now, exp_ttl, exp_now, nxe, 
-                        abi_bsc_p, abi_bsc_m, is_alive 
+                        abi_p, abi_m, is_alive 
                 FROM    tbl_hero
                 WHERE   id = :id
 GET_HEROES01;
@@ -137,10 +138,12 @@ GET_HEROES01;
                 'exp' => ['ttl' => $hero_data['exp_ttl'], 'now' => $hero_data['exp_now']],
                 'nxe' => $hero_data['nxe']
             ];
-            $a['abi']       = [ 'bsc' => [
-                'p'   => HeroAbility::from_JSON_to_array($hero_data['abi_bsc_p']), 
-                'm'   => HeroAbility::from_JSON_to_array($hero_data['abi_bsc_m'])
-            ]];
+            $a['abi_p']     = [  
+                'bsc'   => HeroAbility::from_JSON_to_array($hero_data['abi_p']), 
+            ];
+            $a['abi_m']     = [  
+                'bsc'   => HeroAbility::from_JSON_to_array($hero_data['abi_m']), 
+            ];
 
             $this->decode($a);
             return [true, $this];
@@ -159,7 +162,7 @@ GET_HEROES01;
             $get_heroes_SQL =<<<GET_HEROES01
                 SELECT 	id, save_id, team_id, name, sex, age, gold, state, lv,  
                         skp_ttl, skp_now, exp_ttl, exp_now, nxe, 
-                        abi_bsc_p, abi_bsc_m, is_alive 
+                        abi_p, abi_m, is_alive 
                 FROM    tbl_hero
                 WHERE   save_id = :save_id AND team_id = :team_id
 GET_HEROES01;
@@ -199,10 +202,12 @@ GET_HEROES01;
                     'exp' => ['ttl' => $hero_data['exp_ttl'], 'now' => $hero_data['exp_now']],
                     'nxe' => $hero_data['nxe']
                 ];
-                $a['abi']       = [ 'bsc' => [
-                    'p'   => HeroAbility::from_JSON_to_array($hero_data['abi_bsc_p']), 
-                    'm'   => HeroAbility::from_JSON_to_array($hero_data['abi_bsc_m'])
-                ]];
+                $a['abi_p']       = [
+                    'bsc'   => HeroAbility::from_JSON_to_array($hero_data['abi_p']), 
+                ];
+                $a['abi_m']       = [
+                    'bsc'   => HeroAbility::from_JSON_to_array($hero_data['abi_m']), 
+                ];
                 array_push($hres_array, (new Hero())->decode($a));
             }
             return [true, $hres_array];
@@ -223,12 +228,12 @@ GET_HEROES01;
             INSERT INTO tbl_hero (
                 save_id, team_id, name, sex, age, gold, state, lv, 
                 skp_ttl, skp_now, exp_ttl, exp_now, nxe,
-                abi_bsc_p, abi_bsc_m, is_alive 
+                abi_p, abi_m, is_alive 
             )
             VALUES ( 
                 :save_id, :team_id, :name, :sex, :age, :gold, :state, :lv, 
                 :skp_ttl, :skp_now, :exp_ttl, :exp_now, :nxe,
-                :abi_bsc_p, :abi_bsc_m, :is_alive 
+                :abi_p, :abi_m, :is_alive 
             )
 INSERT_HERO01;
             try {
@@ -247,8 +252,8 @@ INSERT_HERO01;
                 $insert_hero_stmt->bindValue(':exp_ttl',   $this->val['exp']['ttl']);
                 $insert_hero_stmt->bindValue(':exp_now',   $this->val['exp']['now']);
                 $insert_hero_stmt->bindValue(':nxe',       $this->val['nxe']);
-                $insert_hero_stmt->bindValue(':abi_bsc_p', $this->abi['bsc']['p']->to_JSON());
-                $insert_hero_stmt->bindValue(':abi_bsc_m', $this->abi['bsc']['m']->to_JSON());
+                $insert_hero_stmt->bindValue(':abi_bsc_p', $this->abi_p['bsc']->to_JSON());
+                $insert_hero_stmt->bindValue(':abi_bsc_m', $this->abi_m['bsc']->to_JSON());
                 $insert_hero_stmt->bindValue(':is_alive',  $is_alive);
                 $insert_hero_stmt->execute();
             } catch (PDOException $e) {
@@ -325,10 +330,12 @@ DELETE_HERO01;
                 'exp' => ['ttl' => $this->val['exp']['ttl'], 'now' => $this->val['exp']['now']],
                 'nxe' => $this->val['nxe']
             ];
-            $a['abi']       = [ 'bsc' => [
-                'p'   => $this->abi['bsc']['p']->encode(), 
-                'm'   => $this->abi['bsc']['m']->encode()
-            ]];
+            $a['abi_p']       = [ 
+                'bsc' => $this->abi_p['bsc']->encode(), 
+            ];
+            $a['abi_m']       = [ 
+                'bsc' => $this->abi_m['bsc']->encode(), 
+            ];
             return $a;
         }
         public function decode(array $a = null): Hero {
@@ -385,12 +392,14 @@ DELETE_HERO01;
                         $this->val['nxe']  = intval($val['nxe']); 
                     }
                 }
-                if (array_key_exists('abi', $a) && (is_array($a['abi']))) {
-                    if (array_key_exists('bsc', $a['abi']) && (is_array($a['abi']['bsc']))) {
-                        if (array_key_exists('p', $a['abi']['bsc']) && (is_array($a['abi']['bsc']['p']))) {
-                            $this->abi['bsc']['p']->decode($a['abi']['bsc']['p']);
-                            $this->abi['bsc']['m']->decode($a['abi']['bsc']['m']);
-                        }
+                if (array_key_exists('abi_p', $a) && (is_array($a['abi_p']))) {
+                    if (array_key_exists('bsc', $a['abi_p']) && (is_array($a['abi_p']['bsc']))) {
+                        $this->abi_p['bsc']->decode($a['abi_p']['bsc']);
+                    }
+                }
+                if (array_key_exists('abi_m', $a) && (is_array($a['abi_m']))) {
+                    if (array_key_exists('bsc', $a['abi_m']) && (is_array($a['abi_m']['bsc']))) {
+                        $this->abi_m['bsc']->decode($a['abi_m']['bsc']);
                     }
                 }
             }
