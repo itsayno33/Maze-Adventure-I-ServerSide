@@ -90,7 +90,7 @@
         protected int    $maze_id;
         protected int    $save_id;
         protected int    $maze_floor;
-        protected string $title;
+        protected string $name;
 
         protected int    $size_x;  /* 外壁も含めたセルの数(横) */ 
         protected int    $size_y;  /* 外壁も含めたセルの数(縦) */
@@ -112,7 +112,7 @@
             $this->maze_id    = 0;
             $this->save_id    = 0;
             $this->maze_floor = 0;
-            $this->title      = 'NewMaze_'. sprintf("%03x",$this->maze_id);
+            $this->name       = 'NewMaze_'. sprintf("%03x",$this->maze_id);
 
 
             $this->size_x           = Maze::Max_x;
@@ -140,10 +140,10 @@
                 if(array_key_exists('floor', $pp) && (is_numeric($pp['floor']) && $pp['floor'] > 0)) {
                     $this->maze_floor = $pp['floor'];
                 }
-                if(array_key_exists('title', $pp) && ($pp['title'] != '')) {
-                    $this->title      = $pp['title'];
+                if(array_key_exists('name', $pp) && ($pp['name'] != '')) {
+                    $this->name       = $pp['name'];
                 } else {
-                    $this->title      = 'NewMaze_'. sprintf("%x03",$this->maze_id);
+                    $this->name       = 'NewMaze_'. sprintf("%x03",$this->maze_id);
                 }
                 if(array_key_exists('size_x', $pp) && is_numeric($pp['size_x']) && $pp['size_x'] > 3) {
                     $this->size_x     = $pp['size_x'];
@@ -481,7 +481,7 @@
                 int $save_id
             ): array {
                 $get_maze_SQL =<<<GET_MAZE01
-                SELECT 	id, save_id, title, size_x, size_y, size_z, maps AS maze, mask 
+                SELECT 	id, save_id, name, size_x, size_y, size_z, maps AS maze, mask 
                 FROM tbl_maze
                 WHERE   save_id = :save_id
 GET_MAZE01;
@@ -520,13 +520,13 @@ GET_MAZE01;
             ): array {
 
             $insert_maze_SQL =<<<INSERT_MAZE01
-                INSERT INTO tbl_maze (save_id, title, size_x, size_y, size_z, maps, mask)
-                VALUES ( :save_id , :title , :size_x , :size_y , :size_z , :maps , :mask )
+                INSERT INTO tbl_maze (save_id, name, size_x, size_y, size_z, maps, mask)
+                VALUES ( :save_id , :name , :size_x , :size_y , :size_z , :maps , :mask )
 INSERT_MAZE01;
             try {
                 $insert_maze_stmt = $db_mai->prepare($insert_maze_SQL);
                 $insert_maze_stmt->bindValue(':save_id', $save_id); 
-                $insert_maze_stmt->bindValue(':title',   $this->title); 
+                $insert_maze_stmt->bindValue(':name',    $this->name); 
                 $insert_maze_stmt->bindValue(':size_x',  $this->size_x); 
                 $insert_maze_stmt->bindValue(':size_y',  $this->size_y); 
                 $insert_maze_stmt->bindValue(':size_z',  $this->size_z); 
@@ -596,7 +596,7 @@ DELETE_MAZE01;
                 'id'      => $this->maze_id,
                 'save_id' => $this->save_id,
                 'floor'   => $this->maze_floor,
-                'title'   => $this->title,
+                'name'    => $this->name,
                 'size_x'  => $this->size_x,
                 'size_y'  => $this->size_y,
                 'size_z'  => $this->size_z,
@@ -653,8 +653,8 @@ DELETE_MAZE01;
             if(array_key_exists('floor', $e) && is_numeric($e['floor'])) {
                 $this->maze_floor = $e['floor'];
             }
-            if(array_key_exists('title', $e) && $e['title'] != '') {
-                $this->title      = $e['title'];
+            if(array_key_exists('name', $e)  && $e['name'] != '') {
+                $this->title      = $e['name'];
             }
             if(array_key_exists('size_x', $e) && is_numeric($e['size_x'])) {
                 $this->size_x     = $e['size_x'];

@@ -23,6 +23,7 @@
         public string   $title;
         public string   $detail;
         public string   $point;
+        public string   $team_name;
         public bool     $auto_mode;
         public bool     $is_active;
         public bool     $is_delete;
@@ -39,6 +40,7 @@
             $this->title     = '';
             $this->detail    = '';
             $this->point     = '';
+            $this->team_name = '';
             $this->auto_mode = false;
             $this->is_active = true;
             $this->is_delete = false;
@@ -158,7 +160,7 @@
         // 
         public static function get_list_by_pid(PDO $db_mai, DspMessage $mes, int $player_id): array {
             $get_save_SQL =<<<GET_SAVE_INFO01
-                SELECT save_id, player_id, uniq_no, title, detail, point, 
+                SELECT save_id, player_id, uniq_no, title, detail, point, team_name, 
                        auto_mode, is_active, is_delete, 
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
@@ -198,7 +200,7 @@ GET_SAVE_INFO01;
         public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): array {
 //            $this->save_id = -1;
             $seek_save_SQL =<<<SEEK_SAVE01
-            SELECT save_id, player_id, uniq_no, title, detail, point, 
+            SELECT save_id, player_id, uniq_no, title, detail, point, team_name, 
                    auto_mode, is_active, is_delete, 
                    DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
             FROM   tbl_save
@@ -232,7 +234,7 @@ SEEK_SAVE01;
         // 
         protected function get_from_tbl(PDO $db_mai, DspMessage $mes): array {
             $get_save_SQL =<<<GET_SAVE01
-                SELECT save_id, player_id, uniq_no, title, detail, point, 
+                SELECT save_id, player_id, uniq_no, title, detail, point, team_name, 
                        auto_mode, is_active, is_delete, 
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
@@ -268,11 +270,11 @@ GET_SAVE01;
 
             $insert_save_SQL =<<<NEW_SAVE01
                 INSERT  INTO tbl_save (
-                        player_id, uniq_no, title, detail, point, 
+                        player_id, uniq_no, title, detail, point, team_name
                         auto_mode, is_active, is_delete
                     )
                 VALUES ( 
-                        :player_id, :uniq_no, :title, :detail, :point, 
+                        :player_id, :uniq_no, :title, :detail, :point, :team_name
                         :auto_mode, :is_active, :is_delete)
 NEW_SAVE01;
             try {
@@ -282,6 +284,7 @@ NEW_SAVE01;
                 $insert_save_stmt->bindValue(':title',     $this->title);
                 $insert_save_stmt->bindValue(':detail',    $this->detail);
                 $insert_save_stmt->bindValue(':point',     $this->point);
+                $insert_save_stmt->bindValue(':team_name', $this->team_name);
                 $insert_save_stmt->bindValue(':auto_mode', $auto_mode);
                 $insert_save_stmt->bindValue(':is_active', $is_active);
                 $insert_save_stmt->bindValue(':is_delete', $is_delete);
@@ -327,6 +330,7 @@ NEW_SAVE01;
             $a['title']      = $this->title;
             $a['detail']     = $this->detail;
             $a['point']      = $this->point;
+            $a['team_name']  = $this->team_name;
             if ($this->auto_mode) $a['auto_mode'] = '1'; else $a['auto_mode'] = '0';
             if ($this->is_active) $a['is_active'] = '1'; else $a['is_active'] = '0';
             if ($this->is_delete) $a['is_delete'] = '1'; else $a['is_delete'] = '0';
@@ -359,6 +363,9 @@ NEW_SAVE01;
             }
             if(array_key_exists('point', $a) && $a['point'] != '') {
                 $this->point      = $a['point'];
+            }
+            if(array_key_exists('team_name', $a) && $a['team_name'] != '') {
+                $this->team_name  = $a['team_name'];
             }
             if (array_key_exists('auto_mode', $a)) {
                 if ($a['auto_mode'] != '0') $this->auto_mode = true; else $this->auto_mode = false; 
