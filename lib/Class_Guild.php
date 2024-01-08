@@ -39,7 +39,7 @@
                 if (!$rslt1 || $mes->is_err()) {
                     return [false, []];
                 }
-                $guld->hres = $hres_array;
+                $guld->heroes = $hres_array;
             }
             return [true, $guld_array];
         }
@@ -177,20 +177,22 @@ INSERT_GULD02;
 
             $insert_team_SQL =<<<INSERT_TEAM03
                 INSERT INTO tbl_team (
-                    save_id, name, 
-                    pos_x, pos_y, pos_z, pos_d, 
+                    save_id, name,  maze_name, guld_name, 
+                    pos_x,   pos_y, pos_z, pos_d, 
                     gold,  is_hero
                 )
                 VALUES ( 
-                    :save_id , :name , 
-                    :pos_x , :pos_y , :pos_z , :pos_d,
+                    :save_id, :name,  :maze_name, :guld_name, 
+                    :pos_x,   :pos_y, :pos_z, :pos_d,
                     :gold, :is_hero
                 )
 INSERT_TEAM03;
             try {
                 $insert_team_stmt = $db_mai->prepare($insert_team_SQL);
-                $insert_team_stmt->bindValue(':save_id', $save_id);  
-                $insert_team_stmt->bindValue(':name',    $this->name); 
+                $insert_team_stmt->bindValue(':save_id',   $save_id);  
+                $insert_team_stmt->bindValue(':name',      $this->name); 
+                $insert_team_stmt->bindValue(':maze_name', ' '); 
+                $insert_team_stmt->bindValue(':guld_name', $this->name); 
                 $insert_team_stmt->bindValue(':pos_x',   0); 
                 $insert_team_stmt->bindValue(':pos_y',   0); 
                 $insert_team_stmt->bindValue(':pos_z',   0); 

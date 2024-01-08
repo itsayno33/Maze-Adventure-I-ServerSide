@@ -654,7 +654,7 @@ DELETE_MAZE01;
                 $this->maze_floor = $e['floor'];
             }
             if(array_key_exists('name', $e)  && $e['name'] != '') {
-                $this->title      = $e['name'];
+                $this->name      = $e['name'];
             }
             if(array_key_exists('size_x', $e) && is_numeric($e['size_x'])) {
                 $this->size_x     = $e['size_x'];

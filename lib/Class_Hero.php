@@ -181,8 +181,7 @@ GET_HEROES01;
             } 
 
             if (count($resultRecordSet) < 1) {
-                $mes->set_err_message("データが有りません 39: {$get_heroes_SQL}");
-                return [false, []];
+                return [true, []];
             }
             $hres_array = [];
             foreach ($resultRecordSet as $hero_data) {

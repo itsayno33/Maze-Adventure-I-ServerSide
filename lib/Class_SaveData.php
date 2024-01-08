@@ -270,11 +270,11 @@ GET_SAVE01;
 
             $insert_save_SQL =<<<NEW_SAVE01
                 INSERT  INTO tbl_save (
-                        player_id, uniq_no, title, detail, point, team_name
+                        player_id, uniq_no, title, detail, point, team_name, 
                         auto_mode, is_active, is_delete
                     )
                 VALUES ( 
-                        :player_id, :uniq_no, :title, :detail, :point, :team_name
+                        :player_id, :uniq_no, :title, :detail, :point, :team_name, 
                         :auto_mode, :is_active, :is_delete)
 NEW_SAVE01;
             try {

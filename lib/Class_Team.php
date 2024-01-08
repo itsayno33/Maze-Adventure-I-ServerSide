@@ -132,7 +132,7 @@
                 if (!$rslt1 || $mes->is_err()) {
                     return [false, []];
                 }
-                $team->hres = $hres_array;
+                $team->heroes = $hres_array;
             }
             return [true, $team_array];
         }
