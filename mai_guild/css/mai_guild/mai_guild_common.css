@@ -104,6 +104,7 @@ ul#guild_list,
 ul#hres_list,
 ul#edit_list,
 ul#appd_list,
+ul#load_list, 
 ul#save_list {
     color:            chocolate;
     background-color: cornsilk;
@@ -228,6 +229,7 @@ article#message_pane p {
 ul#hres_list,
 ul#edit_list,
 ul#appd_list,
+ul#load_list, 
 ul#save_list {
     column-count: var(--hres_list_count, 4); 
 }

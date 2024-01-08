@@ -268,7 +268,7 @@ function new_team(): Team {
                 <ul id='load_list'></ul>
                 <fieldset id='load_info_fields'>
                     <legend>今までの記録</legend>
-                    <ul id='load_info_defail'></ul>
+                    <ul id='load_info_detail'></ul>
                 </fieldset>
             </div>
             <div id='gld_view_switch_save'>
