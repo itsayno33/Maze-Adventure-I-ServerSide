@@ -64,31 +64,33 @@
 
 
 
-        public function get_from_odb(PDO $db_mai, DspMessage $mes): array {
-            [$rslt0, $save] = $this->get_from_tbl($db_mai, $mes);
-            if (!$rslt0 || $mes->is_err()) {
-                return [false, []];
+        public function get_from_odb(PDO $db_mai, DspMessage $mes): bool {
+            $save_id = $this->save_id;
+
+            $rslt = $this->get_from_tbl($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                    return false;
             }
 
-            [$rslt1, $maze_array] = Maze::get_from_odb_all($db_mai, $mes, $this->save_id);
-            if (!$rslt1 || $mes->is_err()) {
-                return [false, []];
+            [$rslt, $maze_array] = Maze::get_from_odb_all($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
             }
             $this->all_maze = $maze_array;
-            
-            [$rslt2, $team_array] = Team::get_from_odb_all($db_mai, $mes, $this->save_id);
-            if (!$rslt2 || $mes->is_err()) {
-                return [false, []];
+           
+            [$rslt, $team_array] = Team::get_from_odb_all($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
             }
             $this->all_team = $team_array;
             
-            [$rslt3, $guld_array] = Guild::get_from_odb_all($db_mai, $mes, $this->save_id);
-            if (!$rslt3 || $mes->is_err()) {
-                return [false, []];
+            [$rslt, $guld_array] = Guild::get_from_odb_all($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
             }
             $this->all_guld = $guld_array;
 
-            return [true, $this];
+            return true;
         }
 
 
@@ -195,10 +197,9 @@ GET_SAVE_INFO01;
             return [true, $save_data_set];
         }
 
-        // DB処理。ユニーク・ナンバーからsave_idを得る。該当するレコードが無ければ第一戻り値でfalseを返す
+        // DB処理。ユニーク・ナンバーからsave_idを得る。該当するレコードが無ければ戻り値でfalseを返す
         // 
-        public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): array {
-//            $this->save_id = -1;
+        public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): bool {
             $seek_save_SQL =<<<SEEK_SAVE01
             SELECT save_id, player_id, uniq_no, title, detail, point, team_name, 
                    auto_mode, is_active, is_delete, 
@@ -215,24 +216,24 @@ SEEK_SAVE01;
                 $resultRecordSet = $seek_save_stmt->fetchAll();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 20: {$seek_save_SQL}");
-                return [false, -1];
+                return false;
             } catch (Throwable $ee) {
                 $mes->pdo_error($ee, "SQLの致命的エラー 21: {$seek_save_SQL}");
-                return [false, -1];
+                return false;
             } 
             if (count($resultRecordSet) < 1) {
-                return [false, -1];
+                return true;
             }
 
             $this->decode($resultRecordSet[0]);
-            return [true, $this->save_id];
+            return true;
         }
 
         // DB処理。save_idで指定されたsaveレコード(単数)を読み込み
         // save_idを返す
         // その際に該当するレコードが有れば自身のプロパティにセットする
         // 
-        protected function get_from_tbl(PDO $db_mai, DspMessage $mes): array {
+        protected function get_from_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $get_save_SQL =<<<GET_SAVE01
                 SELECT save_id, player_id, uniq_no, title, detail, point, team_name, 
                        auto_mode, is_active, is_delete, 
@@ -242,22 +243,23 @@ SEEK_SAVE01;
 GET_SAVE01;
             try {
                 $get_save_stmt = $db_mai->prepare($get_save_SQL);
-                $get_save_stmt->bindValue(':save_id', $this->save_id);
+                $get_save_stmt->bindValue(':save_id', $save_id);
                 $get_save_stmt->execute();
                 $resultRecordSet = $get_save_stmt->fetchAll();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 30: {$get_save_SQL}");
-                return [false, null];
+                return false;
             } catch (Throwable $ee) {
                 $mes->pdo_error($ee, "SQLの致命的エラー 31: {$get_save_SQL}");
-                return [false, null];
+                return false;
             } 
-        
             if (count($resultRecordSet) < 1) {
-                return [false, null];
+                $mes->set_err_message("該当するデータが有りません: {$get_save_SQL}");
+                return false;
             }
+
             $this->decode($resultRecordSet[0]);
-            return [true, $this];
+            return true;
         }
 
         // DB処理。saveテーブルに自身のデータを追加(insert)して

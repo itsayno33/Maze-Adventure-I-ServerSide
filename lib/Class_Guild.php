@@ -61,7 +61,7 @@
                 }
             }
             return true;
-        }
+        } 
 
 
         public static function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
@@ -101,8 +101,7 @@ GET_GULD01;
             } 
         
             if (count($resultRecordSet) < 1) {
-                $mes->set_err_message("データが有りません 69: {$get_guld_SQL}");
-                return [false, []];
+                return [true,  []];
             }
             $guld_array = [];
             foreach ($resultRecordSet as $resultRecord) {
@@ -253,6 +252,9 @@ DELETE_GULD01;
                 }
                 if (array_key_exists('team_id', $a) && (is_numeric($a['team_id']))) {
                     $this->team_id = intval($a['team_id']);
+                }
+                if (array_key_exists('name', $a) && ($a['name'] != '')) {
+                    $this->team_id = $a['name'];
                 }
                 if (array_key_exists('heroes', $a) && (is_array($a['heroes']))) {
                     $this->heroes  = Hero::decode_heroes($a['heroes']);

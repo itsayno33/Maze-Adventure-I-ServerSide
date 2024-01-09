@@ -51,7 +51,7 @@
             $ret_JSON = auto_save($gv->db_mai, $ga->pid, '__InstantSaveData__', 210);
             break;
         case 'load':
-            $ret_JSON = manual_load($gv->db_mai, $ga->pid, $ga->save_id, 330);
+            $ret_JSON = manual_load($gv->db_mai, 30);
             break;
         case 'save':
             $ret_JSON = manual_save($gv->db_mai, 230);
@@ -81,7 +81,14 @@ function auto_load(PDO $db_mai, int $pid, string $title, int $ecode): string {
     $save = $ga->save;
 
     // ユニーク・ナンバーでsave_idを探す。見つからなければエラー。見つかれば$saveにDB反映済み
-    [$result, $save_id] = ($save)->get_save_id_at_tbl($db_mai, $gv->mes);
+    $result = $save->get_save_id_at_tbl($db_mai, $gv->mes);
+    if (!$result) {
+        tr_rollback($db_mai);
+        return all_encode($ecode, $save);;
+    }
+
+    // mezeやteam等の関連するデータを反映する
+    $result = $save->get_from_odb($db_mai, $gv->mes);
     if (!$result) {
         tr_rollback($db_mai);
         return all_encode($ecode, $save);;
@@ -89,6 +96,7 @@ function auto_load(PDO $db_mai, int $pid, string $title, int $ecode): string {
 
     tr_commit($db_mai);
     return all_encode(0, $save);
+
 }
 
 function manual_load(PDO $db_mai, int $ecode): string {
@@ -97,8 +105,16 @@ function manual_load(PDO $db_mai, int $ecode): string {
     tr_begin($db_mai);
 
     $save = $ga->save; 
-    // save_idで探す。見つからなければエラー。見つかれば$saveにDB反映済み
-    [$result, $save_id] = ($save)->get_from_odb($db_mai, $gv->mes);
+
+    // ユニーク・ナンバーでsave_idを探す。見つからなければエラー。見つかれば$saveにDB反映済み
+    $result = $save->get_save_id_at_tbl($db_mai, $gv->mes);
+    if (!$result) {
+        tr_rollback($db_mai);
+        return all_encode($ecode, $save);;
+    }
+
+    // mezeやteam等の関連するデータを反映する
+    $result = $save->get_from_odb($db_mai, $gv->mes);
     if (!$result) {
         tr_rollback($db_mai);
         return all_encode($ecode, $save);;
@@ -214,7 +230,7 @@ function all_save_info(int $code, array $save_array): string {
         foreach ($save_array as $save) {
             array_push($save_dat_array, $save->encode());
         }
-        $ret_assoc['save']    = $save_dat_array;
+        $ret_assoc['save_info']    = $save_dat_array;
     }
 
     $ret_JSON = json_encode(

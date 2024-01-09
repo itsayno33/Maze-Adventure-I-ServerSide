@@ -192,8 +192,7 @@
             } 
         
             if (count($resultRecordSet) < 1) {
-                $mes->set_err_message("データが有りません 39: {$get_team_SQL}");
-                return [false, []];
+                return [true,  []];
             }
             $team_array = [];
             foreach ($resultRecordSet as $resultRecord) {

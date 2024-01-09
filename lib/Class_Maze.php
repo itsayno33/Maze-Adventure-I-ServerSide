@@ -186,7 +186,7 @@
         public function get_size_x(): int {return $this->size_x;}
         public function get_size_y(): int {return $this->size_y;}
         public function get_size_z(): int {return $this->size_z;}
-        public function get_title():  string {return $this->title;}
+        public function get_name():   string {return $this->name;}
 
         public function get_cell(int $pos_x, int $pos_y, int $pos_z): MzKind {
             if (!$this->within_XYZ($pos_x, $pos_y, $pos_z)) return false;
@@ -499,8 +499,7 @@ GET_MAZE01;
             } 
         
             if (count($resultRecordSet) < 1) {
-                $mes->set_err_message("データが有りません 36: {$get_maze_SQL}");
-                return [false, []];
+                return [true,  []];
             }
             $maze_array = [];
             foreach ($resultRecordSet as $resultRecord) {
