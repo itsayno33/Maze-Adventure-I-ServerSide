@@ -15,6 +15,7 @@
         protected int      $id       = 0;
         protected int      $save_id  = 0;
         protected int      $team_id  = 0;
+        protected string   $uniq_id  = '';
         protected string   $name     = '';
         protected bool     $is_alive = true;
 
@@ -29,14 +30,15 @@
     
 
         public function __construct(array $a = null) {
-            $this->id    = 0; // --Hero::$max_id;
-            $this->name  = 'New Hero #' . sprintf('%03d', -1 * $this->id);
-            $this->sex   = 0; 
-            $this->age   = 0; 
-            $this->gold  = 0; 
-            $this->state = 0; 
-            $this->lv    = 0; 
-            $this->val   = [
+            $this->id      = 0; // --Hero::$max_id;
+            $this->name    = 'New Hero #' . sprintf('%03d', -1 * $this->id);
+            $this->uniq_id = '';
+            $this->sex     = 0; 
+            $this->age     = 0; 
+            $this->gold    = 0; 
+            $this->state   = 0; 
+            $this->lv      = 0; 
+            $this->val     = [
                 'skp' => ['ttl' => 0, 'now' => 0], 
                 'exp' => ['ttl' => 0, 'now' => 0],
                 'nxe' => 0
@@ -54,6 +56,7 @@
         public function random_make(): Hero {
             $this->id       = 0; // --Hero::$max_id;
             $this->name     = "冒険者 " . Rand::random_str(10);
+            $this->uniq_id  = Rand::uniq_id('mai_hero#');
             $this->sex      = Rand::i_rand( 0,     1); 
             $this->age      = Rand::i_rand( 15,   25); 
             $this->gold     = Rand::i_rand(100, 1000); 
@@ -132,7 +135,8 @@
             int $id
         ): array {
             $get_heroes_SQL =<<<GET_HEROES01
-                SELECT 	id, save_id, team_id, name, sex, age, gold, state, lv,  
+                SELECT 	id, save_id, team_id, uniq_id, 
+                        name, sex, age, gold, state, lv,  
                         skp_ttl, skp_now, exp_ttl, exp_now, nxe, 
                         abi_p, abi_m, is_alive 
                 FROM    tbl_hero
@@ -160,6 +164,7 @@ GET_HEROES01;
             $a['id']        = $hero_data['id'];
             $a['save_id']   = $hero_data['save_id'];
             $a['team_id']   = $hero_data['team_id'];
+            $a['uniq_id']   = $hero_data['uniq_id'];
             $a['name']      = $hero_data['name'];
             if ($hero_data['is_alive'] !='0') $a['is_alive'] = '1'; else $a['is_alive'] = '0';
             $a['sex']       = $hero_data['sex']; 
@@ -194,7 +199,8 @@ GET_HEROES01;
             int $team_id
         ): array {
             $get_heroes_SQL =<<<GET_HEROES01
-                SELECT 	id, save_id, team_id, name, sex, age, gold, state, lv,  
+                SELECT 	id, save_id, team_id, uniq_id, 
+                        name, sex, age, gold, state, lv,  
                         skp_ttl, skp_now, exp_ttl, exp_now, nxe, 
                         abi_p, abi_m, is_alive 
                 FROM    tbl_hero
@@ -223,6 +229,7 @@ GET_HEROES01;
                 $a['id']        = $hero_data['id'];
                 $a['save_id']   = $hero_data['save_id'];
                 $a['team_id']   = $hero_data['team_id'];
+                $a['uniq_id']   = $hero_data['uniq_id'];
                 $a['name']      = $hero_data['name'];
                 if ($hero_data['is_alive'] !='0') $a['is_alive'] = '1'; else $a['is_alive'] = '0';
                 $a['sex']       = $hero_data['sex']; 
@@ -259,12 +266,14 @@ GET_HEROES01;
 
             $insert_hero_SQL =<<<INSERT_HERO01
             INSERT INTO tbl_hero (
-                save_id, team_id, name, sex, age, gold, state, lv, 
+                save_id, team_id, uniq_id, 
+                name, sex, age, gold, state, lv, 
                 skp_ttl, skp_now, exp_ttl, exp_now, nxe,
                 abi_p, abi_m, is_alive 
             )
             VALUES ( 
-                :save_id, :team_id, :name, :sex, :age, :gold, :state, :lv, 
+                :save_id, :team_id, :uniq_id, 
+                :name, :sex, :age, :gold, :state, :lv, 
                 :skp_ttl, :skp_now, :exp_ttl, :exp_now, :nxe,
                 :abi_p, :abi_m, :is_alive 
             )
@@ -274,6 +283,7 @@ INSERT_HERO01;
                 $insert_hero_stmt = $db_mai->prepare($insert_hero_SQL);
                 $insert_hero_stmt->bindValue(':save_id',   $save_id); 
                 $insert_hero_stmt->bindValue(':team_id',   $team_id); 
+                $insert_hero_stmt->bindValue(':uniq_id',   $this->uniq_id); 
                 $insert_hero_stmt->bindValue(':name',      $this->name);
                 $insert_hero_stmt->bindValue(':sex',       $this->sex);
                 $insert_hero_stmt->bindValue(':age',       $this->age);
@@ -351,6 +361,7 @@ DELETE_HERO01;
             $a['id']        = $this->id;
             $a['save_id']   = $this->save_id;
             $a['team_id']   = $this->team_id;
+            $a['uniq_id']   = $this->uniq_id;
             $a['name']      = $this->name;
             if ($this->is_alive) $a['is_alive'] = '1'; else $a['is_alive'] = '0';
             $a['sex']       = $this->sex; 
@@ -381,6 +392,9 @@ DELETE_HERO01;
                 }
                 if (array_key_exists('team_id', $a) && (is_numeric($a['team_id']))) {
                     $this->team_id = intval($a['team_id']);
+                }
+                if (array_key_exists('uniq_id', $a) && ($a['uniq_id'] != '')) {
+                    $this->uniq_id = intval($a['uniq_id']);
                 }
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
                     $this->name    = $a['name'];

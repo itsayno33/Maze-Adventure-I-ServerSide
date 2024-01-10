@@ -46,10 +46,16 @@
             return sqrt(-2.0 * log($a)) * cos(2 * pi() * $b);
         }
 
-        public static function uniq_id(): string {
-            return uniqid(Rand::random_str(10), true);
+
+        public static function uniq_id(string $pre = ''): string {
+            return uniqid($pre . mt_rand(0, 100), true);
         }
- 
+
+        public static function random_id(int $len = 10): string {
+            $id_array = random_bytes($len);
+            return bin2hex($id_array);
+        }
+
         public static function random_str(int $len = 10): string {
             $ch_array = [];
             for ($i = 0; $i < $len; $i++) {Rand::__make_ch(Rand::i_rand(0, 62));

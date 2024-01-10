@@ -10,11 +10,13 @@
     require_once 'Class_PointSet.php';   // 位置情報のクラス
     require_once 'Class_Direct.php';     // 方向(東西南北)のクラス
     require_once 'Class_Hero.php';       // Hero(チームメンバー)のクラス
+    require_once 'Class_Rand.php'; 
 
     class Guild {
         public int    $id      = -1;
         public int    $save_id = -1;
         public int    $team_id = -1;
+        public string $uniq_id = '';
         public string $name    = '';
         public array  $heroes  = [];
 
@@ -22,6 +24,7 @@
             $this->id      = -1;
             $this->save_id = -1;
             $this->team_id = -1;
+            $this->uniq_id = Rand::uniq_id('mai_guld#');
             $this->name    = '';
             $this->heroes  = [];
     
@@ -83,7 +86,7 @@
             int $save_id
         ): array {
             $get_guld_SQL =<<<GET_GULD01
-                SELECT 	id, save_id, team_id, name 
+                SELECT 	id, save_id, team_id, uniq_id, name 
                 FROM tbl_guld
                 WHERE   save_id = :save_id
 GET_GULD01;
@@ -121,13 +124,14 @@ GET_GULD01;
         ): array {
 
             $insert_guld_SQL =<<<INSERT_GULD02
-                INSERT INTO tbl_guld ( save_id, team_id, name )
+                INSERT INTO tbl_guld ( save_id, team_id, uniq_id, name )
                 VALUES ( :save_id, :team_id, :name )
 INSERT_GULD02;
             try {
                 $insert_guld_stmt = $db_mai->prepare($insert_guld_SQL);
                 $insert_guld_stmt->bindValue(':save_id', $save_id);  
                 $insert_guld_stmt->bindValue(':team_id', $team_id);  
+                $insert_guld_stmt->bindValue(':uniq_id', $team_id);  
                 $insert_guld_stmt->bindValue(':name',    $this->name); 
                 $insert_guld_stmt->execute();
             } catch (PDOException $e) {
@@ -176,12 +180,12 @@ INSERT_GULD02;
 
             $insert_team_SQL =<<<INSERT_TEAM03
                 INSERT INTO tbl_team (
-                    save_id, name,  maze_name, guld_name, 
+                    save_id, uniq_id, name,  maze_name, guld_name, 
                     pos_x,   pos_y, pos_z, pos_d, 
                     gold,  is_hero
                 )
                 VALUES ( 
-                    :save_id, :name,  :maze_name, :guld_name, 
+                    :save_id, :uniq_id, :name,  :maze_name, :guld_name, 
                     :pos_x,   :pos_y, :pos_z, :pos_d,
                     :gold, :is_hero
                 )
@@ -189,6 +193,7 @@ INSERT_TEAM03;
             try {
                 $insert_team_stmt = $db_mai->prepare($insert_team_SQL);
                 $insert_team_stmt->bindValue(':save_id',   $save_id);  
+                $insert_team_stmt->bindValue(':uniq_id',   $this->uniq_id);  
                 $insert_team_stmt->bindValue(':name',      $this->name); 
                 $insert_team_stmt->bindValue(':maze_name', ' '); 
                 $insert_team_stmt->bindValue(':guld_name', $this->name); 
@@ -238,6 +243,7 @@ DELETE_GULD01;
             $e['id']      = strval($this->id);
             $e['save_id'] = strval($this->save_id);
             $e['team_id'] = strval($this->team_id);
+            $e['uniq_id'] = strval($this->uniq_id);
             $e['name']    = $this->name;
             $e['heroes']  = Hero::encode_heroes($this->heroes);
             return $e;
@@ -252,6 +258,9 @@ DELETE_GULD01;
                 }
                 if (array_key_exists('team_id', $a) && (is_numeric($a['team_id']))) {
                     $this->team_id = intval($a['team_id']);
+                }
+                if (array_key_exists('uniq_id', $a) && (is_numeric($a['uniq_id']))) {
+                    $this->team_id = intval($a['uniq_id']);
                 }
                 if (array_key_exists('name', $a) && ($a['name'] != '')) {
                     $this->team_id = $a['name'];

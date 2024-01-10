@@ -232,16 +232,27 @@ function new_team(): Team {
                     <li id='guild_appd'>冒険者募集
                         <p>　新しいキャラクターを募集出来ます</p></li>
                     <li id='guild_load'>冒険の呼び出し
-                        <p>　冒険情報をロードできます(実装中)</p></li>
+                        <p>　冒険情報をロードできます</p></li>
                     <li id='guild_save'>冒険の記録
                         <p>　冒険情報をセーブできます</p></li>
-                    <li id='guild_to_maze'>冒険出発
+                    <li id='guild_tomz'>冒険出発
                         <p>　ダンジョンに出発します(未実装)</p></li>
                 </dl>
             </div>
             <div id='gld_view_switch_hres'>
                 <h2>冒険者情報の一覧</h2>
-                <ul id='hres_list'></ul>
+                <fieldset id='hres_team_fields'>
+                    <legend>パーティ・メンバー</legend>
+                    <ul id='team_list'></ul>
+                </fieldset>
+                <fieldset id='hres_hero_fields'>
+                    <legend>ギルド・メンバー</legend>
+                    <ul id='hres_list'></ul>
+                </fieldset>
+                <fieldset id='hres_menu_fields'>
+                <legend>コマンド</legend>
+                    <ul id='menu_list'></ul>
+                </fieldset>
                 <fieldset id='hres_hero_fields'>
                     <legend>冒険者の詳細情報</legend>
                     <ul id='hres_hero_info'></ul>
@@ -279,6 +290,13 @@ function new_team(): Team {
                     <ul id='save_info_detail'></ul>
                 </fieldset>
             </div>
+            <div id='gld_view_switch_tomz'>
+                <h2>迷宮への挑戦</h2>
+                <ul id='tomz_list'></ul>
+                <fieldset id='tomz_info_fields'>
+                    <legend>迷宮への入り口</legend>
+                    <ul id='tomz_info_detail'></ul>
+                </fieldset>
         </div>
         <div id='gld_view_message_div'><p id='gld_view_message'></p></div>
     </article>

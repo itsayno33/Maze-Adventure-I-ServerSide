@@ -12,6 +12,7 @@
     
     // 利用クラス等の読み込み
     require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once 'Class_Rand.php'; 
     
     // ダンジョンマップのセルの種類を表す列挙型
     // MzKind::NoDef: 未定義・不明
@@ -89,6 +90,7 @@
     class Maze {
         protected int    $maze_id;
         protected int    $save_id;
+        protected string $uniq_id;
         protected int    $maze_floor;
         protected string $name;
 
@@ -111,6 +113,7 @@
 
             $this->maze_id    = 0;
             $this->save_id    = 0;
+            $this->uniq_id    = '';
             $this->maze_floor = 0;
             $this->name       = 'NewMaze_'. sprintf("%03x",$this->maze_id);
 
@@ -136,6 +139,11 @@
                 }
                 if(array_key_exists('id', $pp) && (is_numeric($pp['id']))) {
                     $this->maze_id    = $pp['id'];
+                }
+                if(array_key_exists('uniq_id', $pp) && ($pp['uniq_id'] != '')) {
+                    $this->uniq_id    = $pp['uniq_id'];
+                } else {
+                    $this->uniq_id    = Rand::uniq_id('mai_maze#');
                 }
                 if(array_key_exists('floor', $pp) && (is_numeric($pp['floor']) && $pp['floor'] > 0)) {
                     $this->maze_floor = $pp['floor'];
@@ -481,7 +489,8 @@
                 int $save_id
             ): array {
                 $get_maze_SQL =<<<GET_MAZE01
-                SELECT 	id, save_id, name, size_x, size_y, size_z, maps AS maze, mask 
+                SELECT 	id, save_id, unq_id, name, 
+                        size_x, size_y, size_z, maps AS maze, mask 
                 FROM tbl_maze
                 WHERE   save_id = :save_id
 GET_MAZE01;
@@ -519,12 +528,19 @@ GET_MAZE01;
             ): array {
 
             $insert_maze_SQL =<<<INSERT_MAZE01
-                INSERT INTO tbl_maze (save_id, name, size_x, size_y, size_z, maps, mask)
-                VALUES ( :save_id , :name , :size_x , :size_y , :size_z , :maps , :mask )
+                INSERT INTO tbl_maze (
+                    save_id, uniq_id, name, 
+                    size_x, size_y, size_z, maps, mask
+                )
+                VALUES (
+                    :save_id, :uniq_id, :name, 
+                    :size_x, :size_y, :size_z, :maps, :mask 
+                )
 INSERT_MAZE01;
             try {
                 $insert_maze_stmt = $db_mai->prepare($insert_maze_SQL);
                 $insert_maze_stmt->bindValue(':save_id', $save_id); 
+                $insert_maze_stmt->bindValue(':uniq_id', $this->uniq_id); 
                 $insert_maze_stmt->bindValue(':name',    $this->name); 
                 $insert_maze_stmt->bindValue(':size_x',  $this->size_x); 
                 $insert_maze_stmt->bindValue(':size_y',  $this->size_y); 
@@ -594,6 +610,7 @@ DELETE_MAZE01;
             $ret = [    
                 'id'      => $this->maze_id,
                 'save_id' => $this->save_id,
+                'uniq_id' => $this->uniq_id,
                 'floor'   => $this->maze_floor,
                 'name'    => $this->name,
                 'size_x'  => $this->size_x,
@@ -647,7 +664,10 @@ DELETE_MAZE01;
                 $this->maze_id    = $e['maze_id'];
             }
             if(array_key_exists('save_id', $e) && is_numeric($e['save_id'])) {
-                $this->maze_id    = $e['save_id'];
+                $this->save_id    = $e['save_id'];
+            }
+            if(array_key_exists('uniq_id', $e) && $e['uniq_id'] != '') {
+                $this->uniq_id    = $e['uniq_id'];
             }
             if(array_key_exists('floor', $e) && is_numeric($e['floor'])) {
                 $this->maze_floor = $e['floor'];

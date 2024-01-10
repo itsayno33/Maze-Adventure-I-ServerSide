@@ -10,10 +10,12 @@
     require_once 'Class_PointSet.php';   // 位置情報のクラス
     require_once 'Class_Direct.php';     // 方向(東西南北)のクラス
     require_once 'Class_Hero.php';       // Hero(チームメンバー)のクラス
+    require_once 'Class_Rand.php'; 
 
     class Team {
         protected int     $id      = 0;
         protected int     $save_id = 0;
+        protected string  $uniq_id = '';
         protected string  $name;
         protected string  $maze_name;
         protected string  $guld_name;
@@ -27,6 +29,7 @@
             $this->cur_pos   = new Point3D(0, 0, 0);
             $this->cur_dir   = new Direct(Direct::N);
             $this->name      = 'New Team';
+            $this->uniq_id   =  Rand::uniq_id('mai_team#');
             $this->maze_name = 'New Maze';
             $this->guld_name = 'New Guld';
             $this->gold      = 0;
@@ -38,16 +41,19 @@
         protected function __init(array $a = null) {
             if (!is_null($a) && is_array($a)) {
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
-                    $this->name = $a['name'];
+                    $this->name   = $a['name'];
+                }
+                if (array_key_exists('uniq_id', $a)   && ($a['uniq_id'] !== '')) {
+                    $this->uniq_id = $a['uniq_id'];
                 }
                 if (array_key_exists('maze_name', $a) && ($a['maze_name'] !== '')) {
-                    $this->name = $a['maze_name'];
+                    $this->name    = $a['maze_name'];
                 }
                 if (array_key_exists('guld_name', $a) && ($a['guld_name'] !== '')) {
-                    $this->name = $a['guld_name'];
+                    $this->name    = $a['guld_name'];
                 }
                 if (array_key_exists('gold', $a) && (is_numeric($a['gold']))) {
-                    $this->gold = intval($a['gold']);
+                    $this->gold    = intval($a['gold']);
                 }
                 if (array_key_exists('is_hero', $a) && (is_numeric($a['is_hero']))) {
                     if ($a['is_hero'] != '0') $this->is_hero = true; else $this->is_hero = false;
@@ -172,7 +178,7 @@
             int $save_id
         ): array {
             $get_team_SQL =<<<GET_TEAM01
-                SELECT 	id,    save_id, name,  maze_name, guld_name,  
+                SELECT 	id,    save_id, uniq_id, name, maze_name, guld_name,  
                         pos_x, pos_y,   pos_z, pos_d,
                         gold,  is_hero 
                 FROM tbl_team
@@ -213,12 +219,12 @@
 
             $insert_team_SQL =<<<INSERT_TEAM01
                 INSERT INTO tbl_team (
-                    save_id, name,  maze_name, guld_name, 
+                    save_id, name,  uniq_id, maze_name, guld_name, 
                     pos_x,   pos_y, pos_z, pos_d, 
                     gold,    is_hero
                 )
                 VALUES ( 
-                    :save_id, :name,  :maze_name, :guld_name, 
+                    :save_id, :name,  :uniq_id, :maze_name, :guld_name, 
                     :pos_x,   :pos_y, :pos_z, :pos_d,
                     :gold,    :is_hero
                 )
@@ -228,6 +234,7 @@ INSERT_TEAM01;
                 $insert_team_stmt = $db_mai->prepare($insert_team_SQL);
                 $insert_team_stmt->bindValue(':save_id',   $save_id);  
                 $insert_team_stmt->bindValue(':name',      $this->name); 
+                $insert_team_stmt->bindValue(':uniq_id',   $this->uniq_id); 
                 $insert_team_stmt->bindValue(':maze_name', $this->maze_name); 
                 $insert_team_stmt->bindValue(':guld_name', $this->guld_name); 
                 $insert_team_stmt->bindValue(':pos_x',     $this->cur_pos->x); 
@@ -297,6 +304,7 @@ DELETE_TEAM01;
             $e['id']        = strval($this->id);
             $e['save_id']   = strval($this->save_id);
             $e['name']      = $this->name;
+            $e['uniq_id']   = $this->uniq_id;
             $e['maze_name'] = $this->maze_name;
             $e['guld_name'] = $this->guld_name;
             $e['point']     = $this->cur_pos->encode();
@@ -318,6 +326,9 @@ DELETE_TEAM01;
                 }
                 if (array_key_exists('name', $a) && ($a['name'] !== '')) {
                     $this->name       = $a['name'];
+                }
+                if (array_key_exists('uniq_id', $a) && ($a['uniq_id'] !== '')) {
+                    $this->uniq_id    = $a['uniq_id'];
                 }
                 if (array_key_exists('maze_name', $a) && ($a['maze_name'] !== '')) {
                     $this->maze_name = $a['maze_name'];
