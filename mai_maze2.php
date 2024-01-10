@@ -38,11 +38,10 @@
 
     $ret_JSON = '';
     switch ($ga->mode) {
-        case 'new':
-            $save = new SaveData([]);
-            $save->all_maze = new_maze($save);
-            $save->all_team = new_team($save);
-            $ret_JSON = all_encode(0,  $save);
+        case 'new_maze':
+            $new_maze = create_maze(); 
+            $new_pos  = create_pos();
+            $ret_JSON = all_encode(0,  ['maze' => $new_maze->encode(), 'pos' => $new_pos]);
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
@@ -58,7 +57,7 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
-function all_encode(int $code, SaveData $save): string {
+function all_encode(int $code, array $data): string {
     global $gv, $ga;
 
     $ret_assoc = [];
@@ -68,12 +67,7 @@ function all_encode(int $code, SaveData $save): string {
         $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
     } else {
         $ret_assoc['emsg'] = 'Status OK';
-
-        if (!is_null($save)) {
-            $ret_assoc['save']    = $save->encode();
-        } else {
-            $ret_assoc['save']    = 'null';
-        }
+        $ret_assoc['data'] = $data;
     }
 
     $ret_JSON = json_encode(
@@ -86,32 +80,26 @@ function all_encode(int $code, SaveData $save): string {
     return $ret_JSON;
 }
 
-function new_maze(): array {
-    global $gv;
-    $gv->maze->decode(['title' => '始まりの迷宮']);
+function create_maze(): Maze {
+    $maze = new Maze();
+    $maze->decode(['title' => '始まりの迷宮']);
     for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
-        $gv->maze->create_maze($i);
+        $maze->create_maze($i);
     }
     for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor - 1; $i++) {
-        $gv->maze->create_stair($i);
+        $maze->create_stair($i);
     }
-    return [$gv->maze];
+    return $maze;
 }
 
-function new_team(SaveData $save): array {
+function create_pos(): array {
     global $gv;
     $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
     $z = 0;  //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
     $d = random_int(0, Direct::MAX);
 
-    $heroes = [];
-    for ($i = 0; $i <= 3; $i++) {
-        array_push($heroes, new Hero());
-    }
-    $gv->team->set_prp(['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d, 'Heroes' => $heroes]);
-
-    return [$gv->team];
+    return ['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d];
 }
 
 

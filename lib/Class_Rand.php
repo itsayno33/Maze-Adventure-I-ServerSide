@@ -1,0 +1,70 @@
+<?php
+    declare(strict_types=1);
+
+    // 日本語の利用
+    mb_internal_encoding("UTF-8");
+    mb_regex_encoding("UTF-8");
+
+    // 利用クラス等の読み込み
+    require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
+
+    Class Rand {
+        public static function i_rand(int $min = 0,int $max = 100 ): int {
+            return mt_rand($min, $max);
+        }
+
+        public static function f_rand(float $min = 0.0, float $max = 1.0): float {
+            return  $min + mt_rand() / mt_getrandmax() * ($max - $min);
+        }
+        public static function in_rand(int $min = 0, int $max = 100): int {
+            return intVal(Rand::n_rand($min, $max));
+        }
+/*
+        public static function in_rand(int $min = 0, int $max = 100): int {
+            [$x, $y] = Rand::n_rand($min, $max);
+            return intval(floor($x));
+        }
+*/
+        public static function n_rand(float $min = 0.0, float $max = 1.0, float $dd = 3.0): float {
+            $ave = 0.5;
+            $a = Rand::f_rand(0.0, 1.0);
+            $b = Rand::f_rand(0.0, 1.0);
+
+            $x = $ave + Rand::__fab($a, $b) / (2.0 * $dd);
+//            $y = $ave + Rand::__gab($a, $b) / 6.0;
+
+            $xx = $min + $x * ($max - $min);
+            if ($xx < $min) $xx = $min;
+            if ($xx > $max) $xx = $max;
+
+            return $xx;
+        }
+        protected static function __fab(float $a, float $b): float {
+            return sqrt(-2.0 * log($a)) * sin(2 * pi() * $b);
+        }
+        protected static function __gab(float $a, float $b): float {
+            return sqrt(-2.0 * log($a)) * cos(2 * pi() * $b);
+        }
+
+        public static function uniq_id(): string {
+            return uniqid(Rand::random_str(10), true);
+        }
+ 
+        public static function random_str(int $len = 10): string {
+            $ch_array = [];
+            for ($i = 0; $i < $len; $i++) {Rand::__make_ch(Rand::i_rand(0, 62));
+            }
+            $ch_array = [];
+            return implode('', $ch_array);
+        }
+        protected static function __make_ch(int $ch): string {
+            if ($ch < 10) return chr($ch +  60);
+            if ($ch < 36) return chr($ch + 101 - 10);
+            if ($ch < 62) return chr($ch + 141 - 36);
+            return '_';
+        }
+    }
+
+
+
+?>

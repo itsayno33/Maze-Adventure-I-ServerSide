@@ -7,24 +7,25 @@
 
     // 利用クラス等の読み込み
     require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once 'Class_Rand.php'; 
     require_once 'Class_HeroAbility.php'; 
 
     class Hero {
-        protected static  $max_id   = 0;
-        protected int     $id       = 0;
-        protected int     $save_id  = 0;
-        protected int     $team_id  = 0;
-        protected string  $name     = '';
-        protected bool    $is_alive = true;
+        protected static   $max_id   = 0;
+        protected int      $id       = 0;
+        protected int      $save_id  = 0;
+        protected int      $team_id  = 0;
+        protected string   $name     = '';
+        protected bool     $is_alive = true;
 
-        protected int     $sex      = 0; 
-        protected int     $age      = 0; 
-        protected int     $gold     = 0; 
-        protected int     $state    = 0; 
-        protected int     $lv       = 0; 
-        protected array   $val      = [];
-        protected array   $abi_p    = [];
-        protected array   $abi_m    = [];
+        protected int      $sex      = 0; /* 0:男、1:女 */
+        protected int      $age      = 0; 
+        protected int      $gold     = 0; 
+        protected int      $state    = 0; 
+        protected int      $lv       = 0; 
+        protected array    $val      = [];
+        protected array    $abi_p    = [];
+        protected array    $abi_m    = [];
     
 
         public function __construct(array $a = null) {
@@ -48,6 +49,39 @@
             ];
 
             if(!is_null(($a)) && is_array($a)) $this->decode($a);
+        }
+
+        public function random_make(): Hero {
+            $this->id       = 0; // --Hero::$max_id;
+            $this->name     = "冒険者 " . Rand::random_str(10);
+            $this->sex      = Rand::i_rand( 0,     1); 
+            $this->age      = Rand::i_rand( 15,   25); 
+            $this->gold     = Rand::i_rand(100, 1000); 
+            $this->state    = 0; 
+            $this->lv       = 0; 
+            $this->val      = [
+                'skp' => ['ttl' => 0, 'now' => 0], 
+                'exp' => ['ttl' => 0, 'now' => 0],
+                'nxe' => 1000
+            ];
+
+            $abi_p = (new HeroAbility())->random_make();
+            $abi_p->add_xp_bonus(($this->age - 15) * 10);
+            $abi_p->add_el_bonus(($this->age - 15) *  5);
+            $abi_p->add_pr_bonus(($this->age - 15) *  2);
+            $this->abi_p   = [
+                'bsc' => $abi_p 
+            ];
+
+            $abi_m = (new HeroAbility())->random_make();
+            $abi_m->add_xp_bonus(($this->age - 15) * 10);
+            $abi_m->add_el_bonus(($this->age - 15) *  5);
+            $abi_m->add_pr_bonus(($this->age - 15) *  2);
+            $this->abi_m   = [
+                'bsc' => $abi_m 
+            ];
+
+            return $this;
         }
 
 
