@@ -22,8 +22,8 @@
         public int      $uniq_no;
         public string   $title;
         public string   $detail;
+        public string   $scene;
         public string   $point;
-        public string   $team_name;
         public bool     $auto_mode;
         public bool     $is_active;
         public bool     $is_delete;
@@ -33,14 +33,18 @@
         public array    $all_team; // 同、迷宮探検中のチーム一式 Team[]
         public array    $all_guld; // 同、ギルド等で待機しているキャラ一式 Hero[] <- ここはギルドクラス(Guild。略称guld)を作ってそのインスタンスを持つべきか
 
+        public string   $cur_maze; // その時点で挑戦中のMazeのuniq_id
+        public string   $cur_team; // その時点で挑戦中のTeamのuniq_id
+        public string   $cur_guld; // その時点で参加中のGuildのuniq_id
+
         public function __construct(array $a) {
             $this->save_id   = -1;
             $this->player_id = 1; 
             $this->uniq_no   = -1;
             $this->title     = '';
             $this->detail    = '';
+            $this->scene     = '';
             $this->point     = '';
-            $this->team_name = '';
             $this->auto_mode = false;
             $this->is_active = true;
             $this->is_delete = false;
@@ -49,7 +53,11 @@
             $this->all_maze  = [];
             $this->all_team  = [];
             $this->all_guld  = []; 
-            
+
+            $this->cur_maze  = '';
+            $this->cur_team  = '';
+            $this->cur_guld  = ''; 
+
             if (!is_null($a) && is_array($a)) $this->decode($a);
         }
 
@@ -162,8 +170,9 @@
         // 
         public static function get_list_by_pid(PDO $db_mai, DspMessage $mes, int $player_id): array {
             $get_save_SQL =<<<GET_SAVE_INFO01
-                SELECT save_id, player_id, uniq_no, title, detail, point, team_name, 
+                SELECT save_id, player_id, uniq_no, title, detail, scene, point, 
                        auto_mode, is_active, is_delete, 
+                       cur_maze,  cur_team,  cur_guld,
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
                 WHERE  player_id = :player_id 
@@ -201,8 +210,9 @@ GET_SAVE_INFO01;
         // 
         public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): bool {
             $seek_save_SQL =<<<SEEK_SAVE01
-            SELECT save_id, player_id, uniq_no, title, detail, point, team_name, 
+            SELECT save_id, player_id, uniq_no, title, detail, scene, point, 
                    auto_mode, is_active, is_delete, 
+                   cur_maze,  cur_team,  cur_guld,
                    DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
             FROM   tbl_save
             WHERE  player_id = :player_id AND uniq_no = :uniq_no
@@ -235,8 +245,9 @@ SEEK_SAVE01;
         // 
         protected function get_from_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $get_save_SQL =<<<GET_SAVE01
-                SELECT save_id, player_id, uniq_no, title, detail, point, team_name, 
+                SELECT save_id, player_id, uniq_no, title, detail, scene, point, 
                        auto_mode, is_active, is_delete, 
+                       cur_maze,  cur_team,  cur_guld,
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
                 WHERE  save_id = :save_id
@@ -272,11 +283,13 @@ GET_SAVE01;
 
             $insert_save_SQL =<<<NEW_SAVE01
                 INSERT  INTO tbl_save (
-                        player_id, uniq_no, title, detail, point, team_name, 
+                        player_id, uniq_no, title, detail, scene, point, 
+                        cur_maze,  cur_team,  cur_guld,
                         auto_mode, is_active, is_delete
                     )
                 VALUES ( 
-                        :player_id, :uniq_no, :title, :detail, :point, :team_name, 
+                        :player_id, :uniq_no,   :title, :detail, :scene, :point, 
+                        :cur_maze,  :cur_team,  :cur_guld,
                         :auto_mode, :is_active, :is_delete)
 NEW_SAVE01;
             try {
@@ -285,8 +298,11 @@ NEW_SAVE01;
                 $insert_save_stmt->bindValue(':uniq_no',   $this->uniq_no);
                 $insert_save_stmt->bindValue(':title',     $this->title);
                 $insert_save_stmt->bindValue(':detail',    $this->detail);
+                $insert_save_stmt->bindValue(':scene',     $this->scene); 
                 $insert_save_stmt->bindValue(':point',     $this->point);
-                $insert_save_stmt->bindValue(':team_name', $this->team_name);
+                $insert_save_stmt->bindValue(':cur_maze',  $this->cur_maze);
+                $insert_save_stmt->bindValue(':cur_team',  $this->cur_team);
+                $insert_save_stmt->bindValue(':cur_guld',  $this->cur_guld);
                 $insert_save_stmt->bindValue(':auto_mode', $auto_mode);
                 $insert_save_stmt->bindValue(':is_active', $is_active);
                 $insert_save_stmt->bindValue(':is_delete', $is_delete);
@@ -331,8 +347,8 @@ NEW_SAVE01;
             $a['uniq_no']    = strval($this->uniq_no);
             $a['title']      = $this->title;
             $a['detail']     = $this->detail;
+            $a['scene']      = $this->scene;
             $a['point']      = $this->point;
-            $a['team_name']  = $this->team_name;
             if ($this->auto_mode) $a['auto_mode'] = '1'; else $a['auto_mode'] = '0';
             if ($this->is_active) $a['is_active'] = '1'; else $a['is_active'] = '0';
             if ($this->is_delete) $a['is_delete'] = '1'; else $a['is_delete'] = '0';
@@ -342,6 +358,9 @@ NEW_SAVE01;
             $a['all_maze']  = Maze ::encode_all($this->all_maze);
             $a['all_team']  = Team ::encode_all($this->all_team);
             $a['all_guld']  = Guild::encode_all($this->all_guld);
+            $a['cur_maze']  = $this->cur_maze;
+            $a['cur_team']  = $this->cur_team;
+            $a['cur_guld']  = $this->cur_guld;
 
             return $a;
         }
@@ -363,11 +382,11 @@ NEW_SAVE01;
             if (array_key_exists('detail', $a) && $a['detail'] != '') {
                 $this->detail     = $a['detail'];
             }
+            if (array_key_exists('scene', $a) && $a['scene'] != '') {
+                $this->scene      = $a['scene']; 
+            } 
             if(array_key_exists('point', $a) && $a['point'] != '') {
                 $this->point      = $a['point'];
-            }
-            if(array_key_exists('team_name', $a) && $a['team_name'] != '') {
-                $this->team_name  = $a['team_name'];
             }
             if (array_key_exists('auto_mode', $a)) {
                 if ($a['auto_mode'] != '0') $this->auto_mode = true; else $this->auto_mode = false; 
@@ -389,6 +408,15 @@ NEW_SAVE01;
             }
             if (array_key_exists('all_guld', $a) && is_array($a['all_guld'])) {
                 $this->all_guld  = Guild::decode_all($a['all_guld']);
+            }
+            if(array_key_exists('cur_maze', $a) && $a['cur_maze'] != '') {
+                $this->cur_maze  = $a['cur_maze'];
+            }
+            if(array_key_exists('cur_team', $a) && $a['cur_team'] != '') {
+                $this->cur_team  = $a['cur_team'];
+            }
+            if(array_key_exists('cur_guld', $a) && $a['cur_guld'] != '') {
+                $this->cur_guld  = $a['cur_guld'];
             }
             return $this;
         }

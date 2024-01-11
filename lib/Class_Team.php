@@ -89,6 +89,8 @@
         }
         public function get_id()  : int    {return $this->id;}
         public function get_name(): string {return $this->name;}
+        public function get_uniq_id(): string {return $this->uniq_id;}
+
         
         public function get_pos(): Point3D {
             return $this->cur_pos; 

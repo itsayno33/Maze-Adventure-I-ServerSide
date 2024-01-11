@@ -41,8 +41,14 @@
 
     $ret_JSON = '';
     switch ($ga->mode) {
+        case 'new_game':
+            $guld = new_guld();
+            $team = new_team();
+            $save = new_save($guld, $team);
+            $ret_JSON = save_encode(0,  $save);
+            break;
         case 'new_hero':
-            $hres = new_hero();
+            $hres = new_hres();
             $ret_JSON = hres_encode(0,  $hres);
             break;
         default:
@@ -81,6 +87,28 @@ function all_encode(int $code, array $data = []): string {
     return $ret_JSON;
 
 }
+function save_encode(int $code, SaveData $save): string {
+    global $gv, $ga;
+
+    $ret_assoc = [];
+
+    $ret_assoc['ecode'] = $code;
+    if ($code !== 0 || $gv->mes->is_err()) {
+        $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+    } else {
+        $ret_assoc['emsg'] = 'Status OK';
+        $ret_assoc['save'] = $save;
+    }
+
+    $ret_JSON = json_encode(
+                    $ret_assoc, 
+                    JSON_NUMERIC_CHECK     | 
+                    JSON_PRETTY_PRINT      | 
+                    JSON_UNESCAPED_UNICODE |
+                    JSON_PARTIAL_OUTPUT_ON_ERROR
+                );
+    return $ret_JSON;
+}
 function hres_encode(int $code, array $hres): string {
     global $gv, $ga;
 
@@ -109,7 +137,7 @@ function hres_encode(int $code, array $hres): string {
     return $ret_JSON;
 }
 
-function new_hero(): array {
+function new_hres(): array {
     global $gv, $ga;
     $heroes = [];
     for ($i = 0; $i < $ga->number; $i++) {
@@ -118,6 +146,35 @@ function new_hero(): array {
     return $heroes;
 }
 
+function new_save(Guild $guld, Team $team): SaveData {
+    return new SaveData([
+        'auto_mode' => '0',
+        'is_active' => '1',
+        'is_delete' => '0',
+
+        'all_maze'  => [],
+        'all_guld'  => [$guld->encode()], 
+        'all_team'  => [$team->encode()],
+
+        'cur_maze'  => '', 
+        'cur_guld'  => $guld->get_uniq_id(),
+        'cur_team'  => $team->get_uniq_id(),
+    ]);
+}
+
+function new_guld(): Guild {
+    global $gv, $ga;
+    $guld = new Guild();
+    $guld->decode(['name' => '始まりの街のギルド']);
+    return $guld;
+}
+
+function new_team(): Team {
+    global $gv, $ga;
+    $team = new Team();
+    $team->decode(['name' => 'ひよこさんチーム']);
+    return $team;
+}
 
 
 /*******************************************************************************/

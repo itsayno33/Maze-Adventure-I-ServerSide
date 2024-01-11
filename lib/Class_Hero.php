@@ -53,6 +53,9 @@
             if(!is_null(($a)) && is_array($a)) $this->decode($a);
         }
 
+        public function get_uniq_id(): string {return $this->uniq_id;}
+
+
         public function random_make(): Hero {
             $this->id       = 0; // --Hero::$max_id;
             $this->name     = "冒険者 " . Rand::random_str(10);

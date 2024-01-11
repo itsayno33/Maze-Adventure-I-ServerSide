@@ -31,6 +31,8 @@
             if (!is_null($a) && is_array($a)) $this->decode($a);
         } 
 
+        public function get_uniq_id(): string {return $this->uniq_id;}
+
 
         public static function get_from_odb_all(PDO $db_mai, DspMessage $mes, int $save_id): array {
             [$rslt0, $guld_array] = self::get_from_tbl_all($db_mai, $mes, $save_id);
@@ -260,10 +262,10 @@ DELETE_GULD01;
                     $this->team_id = intval($a['team_id']);
                 }
                 if (array_key_exists('uniq_id', $a) && (is_numeric($a['uniq_id']))) {
-                    $this->team_id = intval($a['uniq_id']);
+                    $this->uniq_id = intval($a['uniq_id']);
                 }
                 if (array_key_exists('name', $a) && ($a['name'] != '')) {
-                    $this->team_id = $a['name'];
+                    $this->name    = $a['name'];
                 }
                 if (array_key_exists('heroes', $a) && (is_array($a['heroes']))) {
                     $this->heroes  = Hero::decode_heroes($a['heroes']);
