@@ -489,7 +489,7 @@
                 int $save_id
             ): array {
                 $get_maze_SQL =<<<GET_MAZE01
-                SELECT 	id, save_id, unq_id, name, 
+                SELECT 	id, save_id, uniq_id, name, 
                         size_x, size_y, size_z, maps AS maze, mask 
                 FROM tbl_maze
                 WHERE   save_id = :save_id

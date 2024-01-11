@@ -33,7 +33,7 @@
             [$result, $save_array] = SaveData::get_list_by_pid($gv->db_mai, $gv->mes, $ga->pid);
             if (!$result) {
                 $code = 500;
-                $ret_JSON = all_encode($code, null);
+                $ret_JSON = err_encode($code);
                 break;
             }
             $ret_JSON = all_save_info(0, $save_array);
@@ -58,7 +58,7 @@
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
-            $ret_JSON = all_encode(999);
+            $ret_JSON = err_encode(999);
             break;
     }
 
@@ -243,6 +243,25 @@ function all_save_info(int $code, array $save_array): string {
     return $ret_JSON;
 }
 
+
+function err_encode(int $code): string {
+    global $gv, $ga;
+
+    $ret_assoc = [];
+
+    $ret_assoc['ecode'] = $code;
+    if ($code === 0) $ret_assoc['ecode'] = 888;
+    $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+
+    $ret_JSON = json_encode(
+                    $ret_assoc, 
+                    JSON_NUMERIC_CHECK     | 
+                    JSON_PRETTY_PRINT      | 
+                    JSON_UNESCAPED_UNICODE |
+                    JSON_PARTIAL_OUTPUT_ON_ERROR
+                );
+    return $ret_JSON;
+}
 
 /*******************************************************************************/
 /*                                                                             */

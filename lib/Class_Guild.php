@@ -127,13 +127,13 @@ GET_GULD01;
 
             $insert_guld_SQL =<<<INSERT_GULD02
                 INSERT INTO tbl_guld ( save_id, team_id, uniq_id, name )
-                VALUES ( :save_id, :team_id, :name )
+                VALUES ( :save_id, :team_id, :uniq_id, :name )
 INSERT_GULD02;
             try {
                 $insert_guld_stmt = $db_mai->prepare($insert_guld_SQL);
                 $insert_guld_stmt->bindValue(':save_id', $save_id);  
                 $insert_guld_stmt->bindValue(':team_id', $team_id);  
-                $insert_guld_stmt->bindValue(':uniq_id', $team_id);  
+                $insert_guld_stmt->bindValue(':uniq_id', $this->uniq_id);  
                 $insert_guld_stmt->bindValue(':name',    $this->name); 
                 $insert_guld_stmt->execute();
             } catch (PDOException $e) {
