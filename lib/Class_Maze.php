@@ -202,7 +202,7 @@
         }
 
         public function set_cell(MzKind $kind, int $pos_x, int $pos_y, int $pos_z = 0): bool {
-                return $this->cells[$pos_z][$pos_y][$pos_x]->set_cell($kind);
+            return $this->cells[$pos_z][$pos_y][$pos_x]->set_cell($kind);
         }
 
         public function fill_cell(MzKind $kind, int $floor = 0): void {

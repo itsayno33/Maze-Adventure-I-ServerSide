@@ -22,8 +22,17 @@
     // MAZE関係クラス全般
     require_once './lib/Class_Maze.php';
 
+    // ギルドクラス全般
+    require_once './lib/Class_Guild.php';
+
     // パーティークラス全般
     require_once './lib/Class_Team.php';
+
+    // ヒーロークラス全般
+    require_once './lib/Class_Hero.php';
+
+    // セーブデータ(クライアントとの連携)全般
+    require_once './lib/Class_SaveData.php';
 
 /*******************************************************************************/
 /*                                                                             */
@@ -38,10 +47,15 @@
 
     $ret_JSON = '';
     switch ($ga->mode) {
-        case 'new_maze':
-            $new_maze = create_maze(); 
-            $new_pos  = create_pos();
-            $ret_JSON = all_encode(0,  ['maze' => $new_maze->encode(), 'pos' => $new_pos]);
+        case 'new_game':
+            $guld = new_guld();
+            $team = new_team();
+            $save = new_save($guld, $team);
+            $ret_JSON = save_encode(0,  $save);
+            break;
+        case 'new_hero':
+            $hres = new_hres();
+            $ret_JSON = hres_encode(0,  $hres);
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
@@ -57,11 +71,10 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
-function all_encode(int $code, array $data): string {
+function all_encode(int $code, array $data = []): string {
     global $gv, $ga;
 
     $ret_assoc = [];
-
     $ret_assoc['ecode'] = $code;
     if ($code !== 0 || $gv->mes->is_err()) {
         $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
@@ -78,28 +91,95 @@ function all_encode(int $code, array $data): string {
                     JSON_PARTIAL_OUTPUT_ON_ERROR
                 );
     return $ret_JSON;
+
+}
+function save_encode(int $code, SaveData $save): string {
+    global $gv, $ga;
+
+    $ret_assoc = [];
+
+    $ret_assoc['ecode'] = $code;
+    if ($code !== 0 || $gv->mes->is_err()) {
+        $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+    } else {
+        $ret_assoc['emsg'] = 'Status OK';
+        $ret_assoc['save'] = $save;
+    }
+
+    $ret_JSON = json_encode(
+                    $ret_assoc, 
+                    JSON_NUMERIC_CHECK     | 
+                    JSON_PRETTY_PRINT      | 
+                    JSON_UNESCAPED_UNICODE |
+                    JSON_PARTIAL_OUTPUT_ON_ERROR
+                );
+    return $ret_JSON;
+}
+function hres_encode(int $code, array $hres): string {
+    global $gv, $ga;
+
+    $ret_assoc = [];
+
+    $ret_assoc['ecode'] = $code;
+    if ($code !== 0 || $gv->mes->is_err()) {
+        $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+    } else {
+        $ret_assoc['emsg'] = 'Status OK';
+
+        $hres_array = [];
+        foreach($hres as $hero) {
+            array_push($hres_array, $hero->encode());
+        }
+        $ret_assoc['hres'] = $hres_array;
+    }
+
+    $ret_JSON = json_encode(
+                    $ret_assoc, 
+                    JSON_NUMERIC_CHECK     | 
+                    JSON_PRETTY_PRINT      | 
+                    JSON_UNESCAPED_UNICODE |
+                    JSON_PARTIAL_OUTPUT_ON_ERROR
+                );
+    return $ret_JSON;
 }
 
-function create_maze(): Maze {
-    $maze = new Maze();
-    $maze->decode(['title' => '始まりの迷宮']);
-    for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
-        $maze->create_maze($i);
+function new_hres(): array {
+    global $gv, $ga;
+    $heroes = [];
+    for ($i = 0; $i < $ga->number; $i++) {
+        array_push($heroes, (new Hero())->random_make());
     }
-    for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor - 1; $i++) {
-        $maze->create_stair($i);
-    }
-    return $maze;
+    return $heroes;
 }
 
-function create_pos(): array {
-    global $gv;
-    $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
-    $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
-    $z = 0;  //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
-    $d = random_int(0, Direct::MAX);
+function new_save(Guild $guld, Team $team): SaveData {
+    return new SaveData([
+        'auto_mode' => '0',
+        'is_active' => '1',
+        'is_delete' => '0',
 
-    return ['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d];
+        'all_maze'  => [],
+        'all_guld'  => [$guld->encode()], 
+        'all_team'  => [$team->encode()],
+
+        'cur_maze'  => '', 
+        'cur_guld'  => $guld->get_uniq_id(),
+        'cur_team'  => $team->get_uniq_id(),
+    ]);
+}
+
+function new_guld(): Guild {
+    global $gv, $ga;
+    $guld = new Guild();
+    $guld->decode(['name' => '始まりの街のギルド']);
+    return $guld;
+}
+
+function new_team(): Team {
+    global $gv, $ga;
+    $team = new Team();
+    $team->decode(['name' => 'ひよこさんチーム']);
+    return $team;
 }
 
 
@@ -156,16 +236,6 @@ function create_pos(): array {
             $this->icon_home   = "{$this->cgi_home}/icon-img/kkrn_icon_home_3.png";
 
             $this->db_mai      = PDO_db_open($db_host, 'db_mai'); 
-
-            $this->maze        = new Maze([
-                'fill_kind'    => MzKind::Empty,
-                'size_x'       => GlobalVar::Maze_size_x,
-                'size_y'       => GlobalVar::Maze_size_y,
-                'size_z'       => GlobalVar::Max_of_Maze_Floor, 
-                'limit_room'   => GlobalVar::Limit_of_room,
-                'room_size'    => GlobalVar::Max_size_of_room,
-            ]);
-            $this->team        =  new Team(['name' => 'New Team', 'x'=>1, 'y'=>1, 'z'=>1, 'd'=>Direct::N]);
         }
     }
     
@@ -173,8 +243,8 @@ function create_pos(): array {
     // POST引数の設定
     class GlobalArguments {
         public string $mode;
-        public string $maze_JSON   = '';
-        public string $team_JSON   = '';
+        public string $hres_JSON   = '';
+        public int    $number      =  1;
 
         public int    $pid         =  1;
 
@@ -199,13 +269,43 @@ function create_pos(): array {
                     $this->pid      = 1;
                 } 
             }
-            if ( array_key_exists('maze', $_POST) &&  $_POST['maze'] != '') {
-                $this->maze_JSON    = $_POST['maze'];
+            if ( array_key_exists('hres', $_POST) &&  $_POST['hres'] != '') {
+                $this->hres_JSON    = $_POST['hres'];
             } 
-            if ( array_key_exists('team', $_POST) &&  $_POST['team'] != '') {
-                $this->team_JSON    = $_POST['team'];
+            if ( array_key_exists('number', $_POST) &&  is_numeric($_POST['number'])) {
+                $this->number   = intval($_POST['number']);
+            } else {
+                $this->number   = 1;
             } 
         }
+    }
+
+
+    function PDO_db_open(string $db_host, string $db_name): PDO {
+        global $gv;
+
+        // データベース関連定数
+        $db_user = "namwons33";
+        $db_passwd = "PE333833";
+        $db_options =  array(
+            // SQL実行失敗時には例外をスローしてくれる
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            // カラム名をキーとする連想配列で取得する．これが一番ポピュラーな設定
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            // ページ終了時に終わらない持続的な接続を使う 
+            // PDO::ATTR_PERSISTENT => true,
+            // バッファードクエリを使う(一度に結果セットをすべて取得し、サーバー負荷を軽減)
+            // SELECTで得た結果に対してもrowCountメソッドを使えるようにする
+            // PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+        );
+
+        $dsn = "mysql:dbname={$db_name};host={$db_host};charset=utf8mb4";
+        try {
+            $dbh = new PDO($dsn,$db_user,$db_passwd,$db_options);
+        } catch (PDOException $e) {
+            $gv->mes->pdo_error($e, "データベース接続エラー: {$dsn}");
+        }
+        return $dbh;
     }
 
     function free(): void{
