@@ -116,7 +116,7 @@ function save_encode(int $code, SaveData $save): string {
         $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
     } else {
         $ret_assoc['emsg'] = 'Status OK';
-        $ret_assoc['save'] = $save;
+        $ret_assoc['save'] = $save->encode();
     }
 
     $ret_JSON = json_encode(

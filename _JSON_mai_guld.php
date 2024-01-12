@@ -49,7 +49,7 @@
     switch ($ga->mode) {
         case 'new_game':
             $guld = new_guld();
-            $team = new_team();
+            $team = new_team($guld);
             $save = new_save($guld, $team);
             $ret_JSON = save_encode(0,  $save);
             break;
@@ -59,7 +59,7 @@
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
-            $ret_JSON = all_encode(999);
+            $ret_JSON = err_encode(999);
             break;
     }
 
@@ -93,6 +93,26 @@ function all_encode(int $code, array $data = []): string {
     return $ret_JSON;
 
 }
+
+function err_encode(int $code): string {
+    global $gv, $ga;
+
+    if ($code == 0 && $gv->mes->is_err()) $code = 888;
+
+    $ret_assoc = [];
+    $ret_assoc['ecode'] = $code;
+    $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+
+    $ret_JSON = json_encode(
+                    $ret_assoc, 
+                    JSON_NUMERIC_CHECK     | 
+                    JSON_PRETTY_PRINT      | 
+                    JSON_UNESCAPED_UNICODE |
+                    JSON_PARTIAL_OUTPUT_ON_ERROR
+                );
+    return $ret_JSON;
+}
+
 function save_encode(int $code, SaveData $save): string {
     global $gv, $ga;
 
@@ -103,7 +123,7 @@ function save_encode(int $code, SaveData $save): string {
         $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
     } else {
         $ret_assoc['emsg'] = 'Status OK';
-        $ret_assoc['save'] = $save;
+        $ret_assoc['save'] = $save->encode();
     }
 
     $ret_JSON = json_encode(
@@ -115,6 +135,7 @@ function save_encode(int $code, SaveData $save): string {
                 );
     return $ret_JSON;
 }
+
 function hres_encode(int $code, array $hres): string {
     global $gv, $ga;
 

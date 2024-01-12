@@ -201,7 +201,7 @@ function all_encode(int $code, SaveData $save): string {
         if (!is_null($save)) {
             $ret_assoc['save']    = $save->encode();
         } else {
-            $ret_assoc['save']    = 'null';
+            $ret_assoc['save']    = [];
         }
     }
 
