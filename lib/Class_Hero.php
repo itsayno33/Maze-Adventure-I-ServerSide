@@ -21,12 +21,12 @@
 
         protected int      $sex      = 0; /* 0:男、1:女 */
         protected int      $age      = 0; 
-        protected int      $gold     = 0; 
         protected int      $state    = 0; 
         protected int      $lv       = 0; 
         protected array    $val      = [];
         protected array    $abi_p    = [];
         protected array    $abi_m    = [];
+        protected Goods    $goods;
     
 
         public function __construct(array $a = null) {
@@ -35,7 +35,6 @@
             $this->uniq_id = '';
             $this->sex     = 0; 
             $this->age     = 0; 
-            $this->gold    = 0; 
             $this->state   = 0; 
             $this->lv      = 0; 
             $this->val     = [
@@ -49,6 +48,7 @@
             $this->abi_m   = [
                 'bsc' =>  new HeroAbility()
             ];
+            $this->goods   = new Goods();
 
             if(!is_null(($a)) && is_array($a)) $this->decode($a);
         }
@@ -62,7 +62,6 @@
             $this->uniq_id  = Rand::uniq_id('mai_hero#');
             $this->sex      = Rand::i_rand( 0,     1); 
             $this->age      = Rand::i_rand( 15,   25); 
-            $this->gold     = Rand::i_rand(100, 1000); 
             $this->state    = 0; 
             $this->lv       = 0; 
             $this->val      = [
@@ -71,21 +70,22 @@
                 'nxe' => 1000
             ];
 
-            $abi_p = (new HeroAbility())->random_make();
-            $abi_p->add_xp_bonus(($this->age - 15) * 10);
-            $abi_p->add_el_bonus(($this->age - 15) *  5);
-            $abi_p->add_pr_bonus(($this->age - 15) *  2);
-            $this->abi_p   = [
-                'bsc' => $abi_p 
-            ];
+            $this->goods->random_make(); 
 
-            $abi_m = (new HeroAbility())->random_make();
-            $abi_m->add_xp_bonus(($this->age - 15) * 10);
-            $abi_m->add_el_bonus(($this->age - 15) *  5);
-            $abi_m->add_pr_bonus(($this->age - 15) *  2);
-            $this->abi_m   = [
-                'bsc' => $abi_m 
-            ];
+            $abi_p_bsc = $this->abi_p['bsc'];
+            $abi_p_bsc->random_make();
+            $abi_p_bsc->add_xp_bonus(($this->age - 15) * 10);
+            $abi_p_bsc->add_el_bonus(($this->age - 15) *  5);
+            $abi_p_bsc->add_pr_bonus(($this->age - 15) *  2);
+            $this->abi_p['bsc'] = $abi_p_bsc;
+
+            $abi_m_bsc = $this->abi_m['bsc'];
+            $abi_m_bsc->random_make();
+            $abi_m_bsc->add_xp_bonus(($this->age - 15) * 10);
+            $abi_m_bsc->add_el_bonus(($this->age - 15) *  5);
+            $abi_m_bsc->add_pr_bonus(($this->age - 15) *  2);
+            $this->abi_m['bsc'] = $abi_m_bsc;
+
 
             return $this;
         }
@@ -119,8 +119,8 @@
         }
 
 
-        public static function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
-            $rslt = self::del_tbl($db_mai, $mes, $save_id);
+        public static function del_to_odb_all(PDO $db_mai, DspMessage $mes, int $save_id, int $team_id): bool {
+            $rslt = self::del_tbl_all($db_mai, $mes, $save_id, $team_id);
             if (!$rslt || $mes->is_err()) {
                 return false;
             }
@@ -139,9 +139,9 @@
         ): array {
             $get_heroes_SQL =<<<GET_HEROES01
                 SELECT 	id, save_id, team_id, uniq_id, 
-                        name, sex, age, gold, state, lv,  
+                        name, sex, age, goods, state, lv,  
                         skp_ttl, skp_now, exp_ttl, exp_now, nxe, 
-                        abi_p, abi_m, is_alive 
+                        abi_p_bsc, abi_m_bsc, is_alive 
                 FROM    tbl_hero
                 WHERE   id = :id
 GET_HEROES01;
@@ -162,32 +162,7 @@ GET_HEROES01;
                 $mes->set_err_message("データが有りません 39: {$get_heroes_SQL}");
                 return [false, []];
             }
-            $hero_data = $resultRecordSet[0];
-            $a = [];
-            $a['id']        = $hero_data['id'];
-            $a['save_id']   = $hero_data['save_id'];
-            $a['team_id']   = $hero_data['team_id'];
-            $a['uniq_id']   = $hero_data['uniq_id'];
-            $a['name']      = $hero_data['name'];
-            if ($hero_data['is_alive'] !='0') $a['is_alive'] = '1'; else $a['is_alive'] = '0';
-            $a['sex']       = $hero_data['sex']; 
-            $a['age']       = $hero_data['age']; 
-            $a['gold']      = $hero_data['gold']; 
-            $a['state']     = $hero_data['state']; 
-            $a['lv']        = $hero_data['lv']; 
-            $a['val']       = [
-                'skp' => ['ttl' => $hero_data['skp_ttl'], 'now' => $hero_data['skp_now']], 
-                'exp' => ['ttl' => $hero_data['exp_ttl'], 'now' => $hero_data['exp_now']],
-                'nxe' => $hero_data['nxe']
-            ];
-            $a['abi_p']     = [  
-                'bsc'   => HeroAbility::from_JSON_to_array($hero_data['abi_p']), 
-            ];
-            $a['abi_m']     = [  
-                'bsc'   => HeroAbility::from_JSON_to_array($hero_data['abi_m']), 
-            ];
-
-            $this->decode($a);
+            $this->decode($resultRecordSet[0]);
             return [true, $this];
         }
 
@@ -203,9 +178,9 @@ GET_HEROES01;
         ): array {
             $get_heroes_SQL =<<<GET_HEROES01
                 SELECT 	id, save_id, team_id, uniq_id, 
-                        name, sex, age, gold, state, lv,  
+                        name, sex, age, goods, state, lv,  
                         skp_ttl, skp_now, exp_ttl, exp_now, nxe, 
-                        abi_p, abi_m, is_alive 
+                        abi_p_bsc, abi_m_bsc, is_alive 
                 FROM    tbl_hero
                 WHERE   save_id = :save_id AND team_id = :team_id
 GET_HEROES01;
@@ -228,30 +203,7 @@ GET_HEROES01;
             }
             $hres_array = [];
             foreach ($resultRecordSet as $hero_data) {
-                $a = [];
-                $a['id']        = $hero_data['id'];
-                $a['save_id']   = $hero_data['save_id'];
-                $a['team_id']   = $hero_data['team_id'];
-                $a['uniq_id']   = $hero_data['uniq_id'];
-                $a['name']      = $hero_data['name'];
-                if ($hero_data['is_alive'] !='0') $a['is_alive'] = '1'; else $a['is_alive'] = '0';
-                $a['sex']       = $hero_data['sex']; 
-                $a['age']       = $hero_data['age']; 
-                $a['gold']      = $hero_data['gold']; 
-                $a['state']     = $hero_data['state']; 
-                $a['lv']        = $hero_data['lv']; 
-                $a['val']       = [
-                    'skp' => ['ttl' => $hero_data['skp_ttl'], 'now' => $hero_data['skp_now']], 
-                    'exp' => ['ttl' => $hero_data['exp_ttl'], 'now' => $hero_data['exp_now']],
-                    'nxe' => $hero_data['nxe']
-                ];
-                $a['abi_p']       = [
-                    'bsc'   => HeroAbility::from_JSON_to_array($hero_data['abi_p']), 
-                ];
-                $a['abi_m']       = [
-                    'bsc'   => HeroAbility::from_JSON_to_array($hero_data['abi_m']), 
-                ];
-                array_push($hres_array, (new Hero())->decode($a));
+                array_push($hres_array, (new Hero())->decode($hero_data));
             }
             return [true, $hres_array];
         }
@@ -270,15 +222,15 @@ GET_HEROES01;
             $insert_hero_SQL =<<<INSERT_HERO01
             INSERT INTO tbl_hero (
                 save_id, team_id, uniq_id, 
-                name, sex, age, gold, state, lv, 
+                name, sex, age, goods, state, lv, 
                 skp_ttl, skp_now, exp_ttl, exp_now, nxe,
-                abi_p, abi_m, is_alive 
+                abi_p_bsc, abi_m_bsc, is_alive 
             )
             VALUES ( 
                 :save_id, :team_id, :uniq_id, 
-                :name, :sex, :age, :gold, :state, :lv, 
+                :name, :sex, :age, :goods, :state, :lv, 
                 :skp_ttl, :skp_now, :exp_ttl, :exp_now, :nxe,
-                :abi_p, :abi_m, :is_alive 
+                :abi_p_bsc, :abi_m_bsc, :is_alive 
             )
 INSERT_HERO01;
             try {
@@ -290,7 +242,7 @@ INSERT_HERO01;
                 $insert_hero_stmt->bindValue(':name',      $this->name);
                 $insert_hero_stmt->bindValue(':sex',       $this->sex);
                 $insert_hero_stmt->bindValue(':age',       $this->age);
-                $insert_hero_stmt->bindValue(':gold',      $this->gold);
+                $insert_hero_stmt->bindValue(':goods',     $this->goods->to_JSON());
                 $insert_hero_stmt->bindValue(':state',     $this->state);
                 $insert_hero_stmt->bindValue(':lv',        $this->lv);
                 $insert_hero_stmt->bindValue(':skp_ttl',   $this->val['skp']['ttl']);
@@ -298,8 +250,8 @@ INSERT_HERO01;
                 $insert_hero_stmt->bindValue(':exp_ttl',   $this->val['exp']['ttl']);
                 $insert_hero_stmt->bindValue(':exp_now',   $this->val['exp']['now']);
                 $insert_hero_stmt->bindValue(':nxe',       $this->val['nxe']);
-                $insert_hero_stmt->bindValue(':abi_p',     $this->abi_p['bsc']->to_JSON());
-                $insert_hero_stmt->bindValue(':abi_m',     $this->abi_m['bsc']->to_JSON());
+                $insert_hero_stmt->bindValue(':abi_p_bsc', $this->abi_p['bsc']->to_JSON());
+                $insert_hero_stmt->bindValue(':abi_m_bsc', $this->abi_m['bsc']->to_JSON());
                 $insert_hero_stmt->bindValue(':is_alive',  $is_alive);
                 $insert_hero_stmt->execute();
             } catch (PDOException $e) {
@@ -338,16 +290,17 @@ INSERT_HERO01;
         }
 
         
-        // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
+        // DB処理。save_idとteam_idで指定されたレコード(複数)を削除(delete)する
         // 
-        protected static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+        protected static function del_tbl_all(PDO $db_mai, DspMessage $mes, int $save_id, int $team_id): bool {
             $delete_hero_SQL =<<<DELETE_HERO01
                 DELETE FROM tbl_hero 
-                WHERE  save_id = :save_id
+                WHERE  save_id = :save_id  AND  team_id = :team_id
 DELETE_HERO01;
             try {
                 $delete_hero_stmt = $db_mai->prepare($delete_hero_SQL);
                 $delete_hero_stmt->bindValue(':save_id', $save_id);
+                $delete_hero_stmt->bindValue(':team_id', $team_id);
                 $delete_hero_stmt->execute();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 17: {$delete_hero_SQL}");
@@ -369,7 +322,6 @@ DELETE_HERO01;
             if ($this->is_alive) $a['is_alive'] = '1'; else $a['is_alive'] = '0';
             $a['sex']       = $this->sex; 
             $a['age']       = $this->age; 
-            $a['gold']      = $this->gold; 
             $a['state']     = $this->state; 
             $a['lv']        = $this->lv; 
             $a['val']       = [
@@ -383,74 +335,105 @@ DELETE_HERO01;
             $a['abi_m']       = [ 
                 'bsc' => $this->abi_m['bsc']->encode(), 
             ];
+            $a['goods'] = $this->goods->encode(); 
+
             return $a;
         }
         public function decode(array $a = null): Hero {
             if (!is_null($a) && is_array($a)) {
-                if (array_key_exists('id', $a) && (is_numeric($a['id']))) {
+                if (array_key_exists('id', $a) && is_numeric($a['id'])) {
                     $this->id      = intval($a['id']);
                 }
-                if (array_key_exists('save_id', $a) && (is_numeric($a['save_id']))) {
+                if (array_key_exists('save_id', $a) && is_numeric($a['save_id'])) {
                     $this->save_id = intval($a['save_id']);
                 }
-                if (array_key_exists('team_id', $a) && (is_numeric($a['team_id']))) {
+                if (array_key_exists('team_id', $a) && is_numeric($a['team_id'])) {
                     $this->team_id = intval($a['team_id']);
                 }
-                if (array_key_exists('uniq_id', $a) && ($a['uniq_id'] != '')) {
+                if (array_key_exists('uniq_id', $a) && is_string($a['uniq_id'])) {
                     $this->uniq_id = intval($a['uniq_id']);
                 }
-                if (array_key_exists('name', $a) && ($a['name'] !== '')) {
+                if (array_key_exists('name', $a) && is_string($a['name'])) {
                     $this->name    = $a['name'];
                 }
-                if (array_key_exists('is_alive', $a) && (is_numeric($a['is_alive']))) {
+                if (array_key_exists('is_alive', $a) && is_numeric($a['is_alive'])) {
                     if ($a['is_alive'] !== '0') $this->is_alive = true; else $this->is_alive = false;
                 }
-                if (array_key_exists('sex', $a) && (is_numeric($a['sex']))) {
+                if (array_key_exists('sex', $a) && is_numeric($a['sex'])) {
                     $this->sex     = intval($a['sex']);
                 }
-                if (array_key_exists('age', $a) && (is_numeric($a['age']))) {
+                if (array_key_exists('age', $a) && is_numeric($a['age'])) {
                     $this->age     = intval($a['age']);
                 }
-                if (array_key_exists('gold', $a) && (is_numeric($a['gold']))) {
-                    $this->gold    = intval($a['gold']);
-                }
-                if (array_key_exists('state', $a) && (is_numeric($a['state']))) {
+                if (array_key_exists('state', $a) && is_numeric($a['state'])) {
                     $this->state   = intval($a['state']);
                 }
-                if (array_key_exists('lv', $a) && (is_numeric($a['lv']))) {
+                if (array_key_exists('lv', $a) && is_numeric($a['lv'])) {
                     $this->lv      = intval($a['lv']);
                 }
-                if (array_key_exists('val', $a) && (is_array($a['val']))) {
+
+                // サーバークライアント連携の場合
+                if (array_key_exists('val', $a) && is_array($a['val'])) {
                     $val = $a['val'];
-                    if (array_key_exists('skp', $val) && (is_array($val['skp']))) {
-                        if (array_key_exists('ttl', $val['skp']) && (is_numeric($val['skp']['ttl']))) {
+                    if (array_key_exists('skp', $val) && is_array($val['skp'])) {
+                        if (array_key_exists('ttl', $val['skp']) && is_numeric($val['skp']['ttl'])) {
                             $this->val['skp']['ttl']  = intval($val['skp']['ttl']); 
                         }
-                        if (array_key_exists('now', $val['skp']) && (is_numeric($val['skp']['now']))) {
+                        if (array_key_exists('now', $val['skp']) && is_numeric($val['skp']['now'])) {
                             $this->val['skp']['now']  = intval($val['skp']['now']); 
                         }
                     }
-                    if (array_key_exists('exp', $val) && (is_array($val['exp']))) {
-                        if (array_key_exists('ttl', $val['exp']) && (is_numeric($val['exp']['ttl']))) {
+                    if (array_key_exists('exp', $val) && is_array($val['exp'])) {
+                        if (array_key_exists('ttl', $val['exp']) && is_numeric($val['exp']['ttl'])) {
                             $this->val['exp']['ttl']  = intval($val['exp']['ttl']); 
                         }
-                        if (array_key_exists('now', $val['exp']) && (is_numeric($val['exp']['now']))) {
+                        if (array_key_exists('now', $val['exp']) && is_numeric($val['exp']['now'])) {
                             $this->val['exp']['now']  = intval($val['exp']['now']); 
                         }
                     }
-                    if (array_key_exists('nxe', $val) && (is_array($val['nxe']))) {
+                    if (array_key_exists('nxe', $val) && is_array($val['nxe'])) {
                         $this->val['nxe']  = intval($val['nxe']); 
                     }
                 }
-                if (array_key_exists('abi_p', $a) && (is_array($a['abi_p']))) {
-                    if (array_key_exists('bsc', $a['abi_p']) && (is_array($a['abi_p']['bsc']))) {
+                if (array_key_exists('abi_p', $a) && is_array($a['abi_p'])) {
+                    if (array_key_exists('bsc', $a['abi_p']) && is_array($a['abi_p']['bsc'])) {
                         $this->abi_p['bsc']->decode($a['abi_p']['bsc']);
                     }
                 }
-                if (array_key_exists('abi_m', $a) && (is_array($a['abi_m']))) {
-                    if (array_key_exists('bsc', $a['abi_m']) && (is_array($a['abi_m']['bsc']))) {
+                if (array_key_exists('abi_m', $a) && is_array($a['abi_m'])) {
+                    if (array_key_exists('bsc', $a['abi_m']) && is_array($a['abi_m']['bsc'])) {
                         $this->abi_m['bsc']->decode($a['abi_m']['bsc']);
                     }
+                }
+                if (array_key_exists('goods', $a) && is_array($a['goods'])) {
+                    $this->goods->decode($a['goods']);
+                }
+                
+                // データベース連携の場合
+                if (array_key_exists('skp_ttl', $a) && is_numeric($a['skp_ttl'])) {
+                    $this->val['skp']['ttl']  = intval($a['skp_ttl']); 
+                }
+                if (array_key_exists('skp_now', $a) && is_numeric($a['skp_now'])) {
+                    $this->val['skp']['now']  = intval($a['skp_now']); 
+                }
+                if (array_key_exists('exp_ttl', $a) && is_numeric($a['exp_ttl'])) {
+                    $this->val['exp']['ttl']  = intval($a['exp_ttl']); 
+                }
+                if (array_key_exists('exp_now', $a) && is_numeric($a['exp_now'])) {
+                    $this->val['exp']['now']  = intval($a['exp_now']); 
+                }
+                if (array_key_exists('nxe',     $a) && is_numeric($a['nxe'])) {
+                    $this->val['nxe']  = intval($a['nxe']); 
+                }
+
+                if (array_key_exists('abi_p_bsc', $a) && is_string($a['abi_p_bsc'])) {
+                    $this->abi_p['bsc']->from_JSON($a['abi_p_bsc']);
+                }
+                if (array_key_exists('abi_m_bsc', $a) && is_string($a['abi_m_bsc'])) {
+                    $this->abi_m['bsc']->from_JSON($a['abi_m_bsc']);
+                }
+                if (array_key_exists('goods', $a) && is_string($a['goods'])) {
+                    $this->goods->from_JSON($a['goods']);
                 }
             }
             return $this;

@@ -437,15 +437,16 @@
             if (!$rslt0 || $mes->is_err()) {
                 return [false, []];
             }
-            /*
+/*
             foreach ($maze_array as $maze) {
-                [$rslt1, $hres_array] = Hero::get_from_odb_all($db_mai, $mes, $save_id, $maze->id);
-                if (!$rslt1 || $mes->is_err()) {
-                    return [false, []];
+                foreach ($maze->all_exist as $exist) {
+                    $rslt1 = $exist->set_to_odb($db_mai, $mes, $save_id, $maze->id);
+                    if (!$rslt1 || $mes->is_err()) {
+                        return false;
+                    }
                 }
-                $maze->hres = $hres_array;
             }
-            */
+*/
             return [true, $maze_array];
         }
 
@@ -456,8 +457,8 @@
                 return false;
             }
             /*
-            foreach ($this->heroes as $hero) {
-                $rslt1 = $hero->set_to_odb($db_mai, $mes, $save_id, $mase_id);
+            foreach ($this->all_exist as $exist) {
+                $rslt1 = $exist->set_to_odb($db_mai, $mes, $save_id, $this->id);
                 if (!$rslt1 || $mes->is_err()) {
                     return false;
                 }
@@ -467,11 +468,19 @@
         }
 
         
-        public static function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
-            $rslt = self::del_tbl($db_mai, $mes, $save_id);
+        public function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $rslt = $this->del_tbl($db_mai, $mes, $save_id);
             if (!$rslt || $mes->is_err()) {
                 return false;
             }
+            /*
+            foreach ($this->all_exist as $exist) {
+                $rslt1 = $exist->del_to_odb($db_mai, $mes, $save_id, $this->id);
+                if (!$rslt1 || $mes->is_err()) {
+                    return false;
+                }
+            }
+            */
             return true;
         }
 
@@ -555,40 +564,18 @@ INSERT_MAZE01;
             $this->maze_id =  intval($db_mai->lastInsertId());
             return [true, $this->maze_id];
         }
-
-        // DB処理(クラス・メソッド)。Mazeクラスの配列を受け取って、
-        // 指定されたsave_idで　mazeテーブルに追加(insert)して
-        // そのID(maze_id)の配列を返す
-        // 
-        protected static function add_tbl_all(
-                PDO $db_mai, 
-                DspMessage $mes, 
-                array $maze_array, 
-                int $save_id
-            ): array 
-            {
-                if(!is_null($maze_array) && is_array($maze_array)) {
-                    $maze_id_set = [];
-                    foreach ($maze_array as $maze) {
-                        [$rslt, $maze_id] = $maze->add_tbl($db_mai, $mes, $save_id);
-                        if (!$rslt) return [false, []];
-                        array_push($maze_id_set, $maze_id);
-                    }
-                    return [true, $maze_id_set];
-                }
-                return [false, -1];
-        }
         
-        // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
+        // DB処理。save_idと自身のuniq_idで指定されたレコード(複数)を削除(delete)する
         // 
-        protected static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+        protected function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $delete_maze_SQL =<<<DELETE_MAZE01
                 DELETE FROM tbl_maze 
-                WHERE  save_id = :save_id
+                WHERE  save_id = :save_id  AND  uniq_id = :uniq_id
 DELETE_MAZE01;
             try {
                 $delete_maze_stmt = $db_mai->prepare($delete_maze_SQL);
                 $delete_maze_stmt->bindValue(':save_id', $save_id);
+                $delete_maze_stmt->bindValue(':uniq_id', $this->uniq_id);
                 $delete_maze_stmt->execute();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 12: {$delete_maze_SQL}");

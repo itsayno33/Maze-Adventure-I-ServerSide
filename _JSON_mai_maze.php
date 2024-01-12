@@ -19,11 +19,16 @@
     // 位置・経路を表すクラス全般
     require_once './lib/Class_PointSet.php';
 
+    require_once './lib/Class_Location.php'; 
+
     // MAZE関係クラス全般
     require_once './lib/Class_Maze.php';
 
     // パーティークラス全般
     require_once './lib/Class_Team.php';
+
+    // セーブデータ(クライアントとの連携)全般
+    require_once './lib/Class_SaveData.php';
 
 /*******************************************************************************/
 /*                                                                             */
@@ -40,12 +45,14 @@
     switch ($ga->mode) {
         case 'new_maze':
             $new_maze = create_maze(); 
-            $new_pos  = create_pos();
-            $ret_JSON = all_encode(0,  ['maze' => $new_maze->encode(), 'pos' => $new_pos]);
+            $new_team = create_team($new_maze);
+            $save     = new_save($maze, $team);
+
+            $ret_JSON = save_encode(0,  $save);
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
-            $ret_JSON = all_encode(999, []);
+            $ret_JSON = err_encode(999);
             break;
     }
 
@@ -80,6 +87,63 @@ function all_encode(int $code, array $data): string {
     return $ret_JSON;
 }
 
+function err_encode(int $code): string {
+    global $gv, $ga;
+
+    if ($code == 0 && $gv->mes->is_err()) $code = 888;
+
+    $ret_assoc = [];
+    $ret_assoc['ecode'] = $code;
+    $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+
+    $ret_JSON = json_encode(
+                    $ret_assoc, 
+                    JSON_NUMERIC_CHECK     | 
+                    JSON_PRETTY_PRINT      | 
+                    JSON_UNESCAPED_UNICODE |
+                    JSON_PARTIAL_OUTPUT_ON_ERROR
+                );
+    return $ret_JSON;
+}
+
+function save_encode(int $code, SaveData $save): string {
+    global $gv, $ga;
+
+    $ret_assoc = [];
+
+    $ret_assoc['ecode'] = $code;
+    if ($code !== 0 || $gv->mes->is_err()) {
+        $ret_assoc['emsg'] = implode("\n", $gv->mes->get_err_messages());
+    } else {
+        $ret_assoc['emsg'] = 'Status OK';
+        $ret_assoc['save'] = $save;
+    }
+
+    $ret_JSON = json_encode(
+                    $ret_assoc, 
+                    JSON_NUMERIC_CHECK     | 
+                    JSON_PRETTY_PRINT      | 
+                    JSON_UNESCAPED_UNICODE |
+                    JSON_PARTIAL_OUTPUT_ON_ERROR
+                );
+    return $ret_JSON;
+}
+
+
+function new_save(Maze $maze, Team $team): SaveData {
+    return new SaveData([
+        'auto_mode' => '0',
+        'is_active' => '1',
+        'is_delete' => '0',
+
+        'all_maze'  => [$maze->encode()],
+        'all_guld'  => [], 
+        'all_team'  => [$team->encode()],
+
+        'team_uid'  => $team->uid(), 
+    ]);
+}
+
 function create_maze(): Maze {
     $maze = new Maze([
         'title' => '始まりの迷宮', 
@@ -96,14 +160,33 @@ function create_maze(): Maze {
     return $maze;
 }
 
-function create_pos(): array {
-    global $gv;
-    $x = 2 * random_int(0, (($gv->maze->get_size_x() - 1) / 2) - 1) + 1;
-    $y = 2 * random_int(0, (($gv->maze->get_size_y() - 1) / 2) - 1) + 1;
+function create_team(Maze $maze): Team {
+    $x = 2 * random_int(0, (($maze->get_size_x() - 1) / 2) - 1) + 1;
+    $y = 2 * random_int(0, (($maze->get_size_y() - 1) / 2) - 1) + 1;
     $z = 0;  //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
+
     $d = random_int(0, Direct::MAX);
 
-    return ['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d];
+    $loc  = new Location();
+    $loc->decode([
+        'kind' => 'Maze',
+        'name' => $maze->get_name(),
+        'uid'  => $maze->uid(),
+        'x'    => $x,
+        'y'    => $y,
+        'z'    => $z,
+        'd'    => $d,
+    ]);
+
+    $team = new Team();
+
+    $team->set_name('ひよこさんチーム');
+    $team->set_loc($loc);
+    for ($i = 0; $i <= 3; $i++) {
+        $team->append_hero((new Hero())->random_make());
+    }
+
+    return $team;
 }
 
 

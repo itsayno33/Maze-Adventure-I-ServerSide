@@ -162,9 +162,7 @@ function new_save(Guild $guld, Team $team): SaveData {
         'all_guld'  => [$guld->encode()], 
         'all_team'  => [$team->encode()],
 
-        'cur_maze'  => '', 
-        'cur_guld'  => $guld->get_uniq_id(),
-        'cur_team'  => $team->get_uniq_id(),
+        'team_uid'  => $team->uid(), 
     ]);
 }
 
@@ -175,10 +173,28 @@ function new_guld(): Guild {
     return $guld;
 }
 
-function new_team(): Team {
+function new_team(Guild $guld): Team {
     global $gv, $ga;
+
+    $loc  = new Location();
+    $loc->decode([
+        'kind' => 'Guld',
+        'name' => $guld->get_name(),
+        'uid'  => $guld->uid(),
+        'x'    => 0,
+        'y'    => 0,
+        'z'    => 0,
+        'd'    => 0,
+    ]);
+
     $team = new Team();
-    $team->decode(['name' => 'ひよこさんチーム']);
+
+    $team->set_name('ひよこさんチーム');
+    $team->set_loc($loc);
+    for ($i = 0; $i <= 3; $i++) {
+        $team->append_hero((new Hero())->random_make());
+    }
+
     return $team;
 }
 
