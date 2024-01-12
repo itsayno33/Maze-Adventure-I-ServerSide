@@ -31,7 +31,7 @@
             if (!is_null($a) && is_array($a)) $this->decode($a);
         } 
 
-        public function get_uniq_id(): string {return $this->uniq_id;}
+        public function uid(): string {return $this->uniq_id;}
 
 
         public static function get_from_odb_all(PDO $db_mai, DspMessage $mes, int $save_id): array {

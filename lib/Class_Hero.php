@@ -53,7 +53,7 @@
             if(!is_null(($a)) && is_array($a)) $this->decode($a);
         }
 
-        public function get_uniq_id(): string {return $this->uniq_id;}
+        public function uid(): string {return $this->uniq_id;}
 
 
         public function random_make(): Hero {

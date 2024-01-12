@@ -55,9 +55,6 @@
 
             $k = MzKind::tryFrom($kind_id);
             if (is_null($k)) {
-                $gv->mes->set_err_message("ダンジョンに不正なセルを代入しようとしてます。(3)");
-                $gv->mes->set_err_message("Value = 『{$kind_id}』");
-
                 $this->cell =  MzKind::NoDef;
                 return false;
             }
@@ -113,7 +110,7 @@
 
             $this->maze_id    = 0;
             $this->save_id    = 0;
-            $this->uniq_id    = '';
+            $this->uniq_id    = Rand::uniq_id('mai_team#');
             $this->maze_floor = 0;
             $this->name       = 'NewMaze_'. sprintf("%03x",$this->maze_id);
 
@@ -142,8 +139,6 @@
                 }
                 if(array_key_exists('uniq_id', $pp) && ($pp['uniq_id'] != '')) {
                     $this->uniq_id    = $pp['uniq_id'];
-                } else {
-                    $this->uniq_id    = Rand::uniq_id('mai_maze#');
                 }
                 if(array_key_exists('floor', $pp) && (is_numeric($pp['floor']) && $pp['floor'] > 0)) {
                     $this->maze_floor = $pp['floor'];
@@ -184,6 +179,8 @@
                 }
             }
         }
+
+        public function uid(): string {return $this->uniq_id;}
 
         public function within_XYZ(int $pos_x, int $pos_y, int $pos_z): bool {
             return (    $pos_x >  0 && $pos_x < $this->size_x
