@@ -45,9 +45,22 @@
     switch ($ga->mode) {
         case 'new_maze':
             $new_maze = create_maze(); 
+            $ret_JSON = all_encode(
+                0, 
+                ['maze' => $new_maze->encode()],
+            );
+            break;
+        case 'new_game':
+            $new_maze = create_maze(); 
             $new_pos  = create_pos($new_maze); // 暫定
-
-            $ret_JSON = all_encode(0, ['maze' => $new_maze->encode(), 'pos' => $new_pos]);
+            $new_hres = create_hres();         // 暫定
+            $ret_JSON = all_encode(
+                0, 
+                [
+                    'maze' => $new_maze->encode(), 
+                    'pos'  => $new_pos,
+                    'hres' => $new_hres,
+                ]);
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
@@ -159,6 +172,7 @@ function create_maze(): Maze {
     return $maze;
 }
 
+// 迷宮探索 新規ゲーム用の暫定版処置。その一
 function create_pos(Maze $maze): array {
     $x = 2 * random_int(0, (($maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($maze->get_size_y() - 1) / 2) - 1) + 1;
@@ -168,6 +182,15 @@ function create_pos(Maze $maze): array {
     return ['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d];
 }
 
+// 迷宮探索 新規ゲーム用の暫定版処置。その二
+function create_hres(): array {
+    $hres = [];
+    for ($i = 0; $i <= 3; $i++) {
+        array_push($hres, (new Hero())->random_make()->encode());
+    }
+
+    return $hres;
+}
 
 function create_team(Maze $maze): Team {
     $x = 2 * random_int(0, (($maze->get_size_x() - 1) / 2) - 1) + 1;
