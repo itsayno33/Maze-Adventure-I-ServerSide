@@ -202,10 +202,6 @@ function new_team(Guild $guld): Team {
         'kind' => 'Guld',
         'name' => $guld->get_name(),
         'uid'  => $guld->uid(),
-        'x'    => 0,
-        'y'    => 0,
-        'z'    => 0,
-        'd'    => 0,
     ]);
 
     $team = new Team();

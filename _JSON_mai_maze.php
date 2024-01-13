@@ -45,10 +45,9 @@
     switch ($ga->mode) {
         case 'new_maze':
             $new_maze = create_maze(); 
-            $new_team = create_team($new_maze);
-            $save     = new_save($maze, $team);
+            $new_pos  = create_pos($new_maze); // 暫定
 
-            $ret_JSON = save_encode(0,  $save);
+            $ret_JSON = all_encode(0, ['maze' => $new_maze->encode(), 'pos' => $new_pos]);
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
@@ -160,6 +159,16 @@ function create_maze(): Maze {
     return $maze;
 }
 
+function create_pos(Maze $maze): array {
+    $x = 2 * random_int(0, (($maze->get_size_x() - 1) / 2) - 1) + 1;
+    $y = 2 * random_int(0, (($maze->get_size_y() - 1) / 2) - 1) + 1;
+    $z = 0;  //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
+
+    $d = random_int(0, Direct::MAX);
+    return ['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d];
+}
+
+
 function create_team(Maze $maze): Team {
     $x = 2 * random_int(0, (($maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($maze->get_size_y() - 1) / 2) - 1) + 1;
@@ -172,10 +181,12 @@ function create_team(Maze $maze): Team {
         'kind' => 'Maze',
         'name' => $maze->get_name(),
         'uid'  => $maze->uid(),
-        'x'    => $x,
-        'y'    => $y,
-        'z'    => $z,
-        'd'    => $d,
+        'loc'  => [
+            'x'    => $x,
+            'y'    => $y,
+            'z'    => $z,
+            'd'    => $d,
+        ],
     ]);
 
     $team = new Team();

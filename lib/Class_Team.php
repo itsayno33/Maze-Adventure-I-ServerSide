@@ -11,6 +11,7 @@
     require_once 'Class_Direct.php';     // 方向(東西南北)のクラス
     require_once 'Class_Hero.php';       // Hero(チームメンバー)のクラス
     require_once 'Class_Location.php'; 
+    require_once 'Class_Goods.php'; 
     require_once 'Class_Rand.php'; 
 
     class Team implements I_Locate { 
