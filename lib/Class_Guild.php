@@ -70,10 +70,12 @@
             if (!$rslt1 || $mes->is_err()) {
                 return false;
             }
+            /* TeamクラスはTeamクラスで同じタイミングで同じsave_idのデータをすべて消すはず
             $rslt2 = $this->myteam->del_to_odb($db_mai, $mes, $save_id);
             if (!$rslt2 || $mes->is_err()) {
                 return false;
             }
+            */
             return true;
         }
 
@@ -146,17 +148,16 @@ INSERT_GULD02;
             return [true, $this->id];
         }
 
-        // DB処理。save_idとuniq_idで指定されたレコード(複数)を削除(delete)する
+        // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
         // 
         protected function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $delete_guld_SQL =<<<DELETE_GULD01
                 DELETE FROM tbl_guld 
-                WHERE  save_id = :save_id  AND  uniq_id = :uniq_id
+                WHERE  save_id = :save_id
 DELETE_GULD01;
             try {
                 $delete_guld_stmt = $db_mai->prepare($delete_guld_SQL);
                 $delete_guld_stmt->bindValue(':save_id', $save_id);
-                $delete_guld_stmt->bindValue(':uniq_id', $this->uniq_id);
                 $delete_guld_stmt->execute();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 68: {$delete_guld_SQL}");

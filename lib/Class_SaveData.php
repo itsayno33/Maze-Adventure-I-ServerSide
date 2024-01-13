@@ -166,7 +166,7 @@
         // 
         public static function get_list_by_pid(PDO $db_mai, DspMessage $mes, int $player_id): array {
             $get_save_SQL =<<<GET_SAVE_INFO01
-                SELECT save_id, player_id, uniq_no, title, detail, scene, point, 
+                SELECT save_id, player_id, uniq_no, title, detail, point, 
                        auto_mode, is_active, is_delete, 
                        team_uid,
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
@@ -206,7 +206,7 @@ GET_SAVE_INFO01;
         // 
         public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): bool {
             $seek_save_SQL =<<<SEEK_SAVE01
-            SELECT save_id, player_id, uniq_no, title, detail, scene, point, 
+            SELECT save_id, player_id, uniq_no, title, detail, point, 
                    auto_mode, is_active, is_delete, 
                    team_uid,
                    DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
@@ -228,7 +228,7 @@ SEEK_SAVE01;
                 return false;
             } 
             if (count($resultRecordSet) < 1) {
-                return true;
+                return false;
             }
 
             $this->decode($resultRecordSet[0]);
@@ -241,7 +241,7 @@ SEEK_SAVE01;
         // 
         protected function get_from_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $get_save_SQL =<<<GET_SAVE01
-                SELECT save_id, player_id, uniq_no, title, detail, scene, point, 
+                SELECT save_id, player_id, uniq_no, title, detail, point, 
                        auto_mode, is_active, is_delete, 
                        team_uid, 
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
@@ -279,12 +279,12 @@ GET_SAVE01;
 
             $insert_save_SQL =<<<NEW_SAVE01
                 INSERT  INTO tbl_save (
-                        player_id, uniq_no,   title, detail, scene, point, 
+                        player_id, uniq_no,   title, detail, point, 
                         team_uid,
                         auto_mode, is_active, is_delete
                     )
                 VALUES ( 
-                        :player_id, :uniq_no,   :title, :detail, :scene, :point, 
+                        :player_id, :uniq_no,   :title, :detail, :point, 
                         :team_uid,
                         :auto_mode, :is_active, :is_delete)
 NEW_SAVE01;
@@ -294,7 +294,6 @@ NEW_SAVE01;
                 $insert_save_stmt->bindValue(':uniq_no',   $this->uniq_no);
                 $insert_save_stmt->bindValue(':title',     $this->title);
                 $insert_save_stmt->bindValue(':detail',    $this->detail);
-                $insert_save_stmt->bindValue(':scene',     $this->scene); 
                 $insert_save_stmt->bindValue(':point',     $this->point);
                 $insert_save_stmt->bindValue(':team_uid',  $this->team_uid);
                 $insert_save_stmt->bindValue(':auto_mode', $auto_mode);
@@ -341,7 +340,6 @@ NEW_SAVE01;
             $a['uniq_no']    = strval($this->uniq_no);
             $a['title']      = $this->title;
             $a['detail']     = $this->detail;
-            $a['scene']      = $this->scene;
             $a['point']      = $this->point;
             if ($this->auto_mode) $a['auto_mode'] = '1'; else $a['auto_mode'] = '0';
             if ($this->is_active) $a['is_active'] = '1'; else $a['is_active'] = '0';
@@ -374,9 +372,6 @@ NEW_SAVE01;
             if (array_key_exists('detail', $a) && $a['detail'] != '') {
                 $this->detail     = $a['detail'];
             }
-            if (array_key_exists('scene', $a) && $a['scene'] != '') {
-                $this->scene      = $a['scene']; 
-            } 
             if(array_key_exists('point', $a) && $a['point'] != '') {
                 $this->point      = $a['point'];
             }

@@ -563,17 +563,16 @@ INSERT_MAZE01;
             return [true, $this->maze_id];
         }
         
-        // DB処理。save_idと自身のuniq_idで指定されたレコード(複数)を削除(delete)する
+        // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
         // 
         protected function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $delete_maze_SQL =<<<DELETE_MAZE01
                 DELETE FROM tbl_maze 
-                WHERE  save_id = :save_id  AND  uniq_id = :uniq_id
+                WHERE  save_id = :save_id
 DELETE_MAZE01;
             try {
                 $delete_maze_stmt = $db_mai->prepare($delete_maze_SQL);
                 $delete_maze_stmt->bindValue(':save_id', $save_id);
-                $delete_maze_stmt->bindValue(':uniq_id', $this->uniq_id);
                 $delete_maze_stmt->execute();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 12: {$delete_maze_SQL}");

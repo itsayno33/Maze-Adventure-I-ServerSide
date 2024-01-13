@@ -195,11 +195,11 @@
 
         
         public function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
-            $rslt1 = $this->del_tbl($db_mai, $mes, $save_id);
+            $rslt1 = Hero::del_to_odb_all($db_mai, $mes, $save_id, $this->id);
             if (!$rslt1 || $mes->is_err()) {
                 return false;
             }
-            $rslt2 = Hero::del_to_odb_all($db_mai, $mes, $save_id, $this->id);
+            $rslt2 = $this->del_tbl($db_mai, $mes, $save_id);
             if (!$rslt2 || $mes->is_err()) {
                 return false;
             }

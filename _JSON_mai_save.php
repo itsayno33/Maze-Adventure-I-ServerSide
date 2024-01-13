@@ -143,7 +143,7 @@ function auto_save(PDO $db_mai, int $uniq_no, string $title, int $ecode): string
     }
     // 同じユニーク・ナンバーの既存データが有るので一旦削除する
     if ($rslt) {
-        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save->save_id);
+        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save->save_id); 
         if ($rslt === false) {
             tr_rollback($db_mai);
             return all_encode($ecode + 33, $save);
@@ -166,15 +166,15 @@ function manual_save(PDO $db_mai, int $ecode): string {
     $save = $ga->save;
     tr_begin($db_mai);
 
-    // ユニーク・ナンバーでsave_idを探す。見つからなければ$save_idとして-1が返る
-    [$rslt, $save_id] = $save->get_save_id_at_tbl($db_mai, $gv->mes);
+    // ユニーク・ナンバーでsaveデータを探す。見つかれば$saveにセットする
+    $rslt = $save->get_save_id_at_tbl($db_mai, $gv->mes);
     if ($gv->mes->is_err()) {
         tr_rollback($db_mai);
         return all_encode($ecode + 10, $save);
     }
-    // 既存データが有るので一旦すべて削除する
+    // 同じユニーク・ナンバーの既存データが有るので一旦削除する
     if ($rslt) {
-        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save_id);
+        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save->save_id);
         if ($rslt === false) {
             tr_rollback($db_mai);
             return all_encode($ecode + 33, $save);
