@@ -110,7 +110,7 @@
 
             $this->maze_id    = 0;
             $this->save_id    = 0;
-            $this->uniq_id    = Rand::uniq_id('mai_team#');
+            $this->uniq_id    = Rand::uniq_id('mai_maze#');
             $this->maze_floor = 0;
             $this->name       = 'NewMaze_'. sprintf("%03x",$this->maze_id);
 
@@ -145,8 +145,6 @@
                 }
                 if(array_key_exists('name', $pp) && ($pp['name'] != '')) {
                     $this->name       = $pp['name'];
-                } else {
-                    $this->name       = 'NewMaze_'. sprintf("%x03",$this->maze_id);
                 }
                 if(array_key_exists('size_x', $pp) && is_numeric($pp['size_x']) && $pp['size_x'] > 3) {
                     $this->size_x     = $pp['size_x'];

@@ -39,16 +39,16 @@
             $ret_JSON = all_save_info(0, $save_array);
             break;
         case 'UD_load':
-            $ret_JSON = auto_load($gv->db_mai, $ga->pid, '__UpDownSaveData__', 350);
+            $ret_JSON = auto_load($gv->db_mai, 101, '__UpDownSaveData__', 350);
             break;
         case 'UD_save':
-            $ret_JSON = auto_save($gv->db_mai, $ga->pid, '__UpDownSaveData__', 250);
+            $ret_JSON = auto_save($gv->db_mai, 101, '__UpDownSaveData__', 250);
             break;
         case 'instant_load':
-            $ret_JSON = auto_load($gv->db_mai, $ga->pid, '__InstantSaveData__', 310);
+            $ret_JSON = auto_load($gv->db_mai, 102, '__InstantSaveData__', 310);
             break;
         case 'instant_save':
-            $ret_JSON = auto_save($gv->db_mai, $ga->pid, '__InstantSaveData__', 210);
+            $ret_JSON = auto_save($gv->db_mai, 102, '__InstantSaveData__', 210);
             break;
         case 'load':
             $ret_JSON = manual_load($gv->db_mai, 30);
@@ -70,17 +70,19 @@
 ///   サブルーチン
 //////////////////////////////////////////////
 
-function auto_load(PDO $db_mai, int $pid, string $title, int $ecode): string {
+function auto_load(PDO $db_mai, int $uniq_no, string $title, int $ecode): string {
     global $gv, $ga;
-
-    tr_begin($db_mai);
 /*
     $a = ['player_id' =>  $pid, 'save_id' => -1, 'title' => $title];
     $save = new SaveData($a);
 */
     $save = $ga->save;
+    $save->uniq_no = $uniq_no;
+    $save->title   = $title;
 
-    // ユニーク・ナンバーでsave_idを探す。見つからなければエラー。見つかれば$saveにDB反映済み
+    tr_begin($db_mai);
+
+    // ユニーク・ナンバーでsaveデータを探す。見つかれば$saveにセットする
     $result = $save->get_save_id_at_tbl($db_mai, $gv->mes);
     if (!$result) {
         tr_rollback($db_mai);
@@ -124,21 +126,24 @@ function manual_load(PDO $db_mai, int $ecode): string {
     return all_encode(0, $save);
 }
 
-function auto_save(PDO $db_mai, int $ecode): string {
+function auto_save(PDO $db_mai, int $uniq_no, string $title, int $ecode): string {
     global $gv, $ga;
 
     $save = $ga->save;
+    $save->uniq_no = $uniq_no;
+    $save->title   = $title;
+
     tr_begin($db_mai);
 
-    // ユニーク・ナンバーでsave_idを探す。見つからなければ$save_idとして-1が返る
-    [$rslt, $save_id] = $save->get_save_id_at_tbl($db_mai, $gv->mes);
+    // ユニーク・ナンバーでsaveデータを探す。見つかれば$saveにセットする
+    $rslt = $save->get_save_id_at_tbl($db_mai, $gv->mes);
     if ($gv->mes->is_err()) {
         tr_rollback($db_mai);
         return all_encode($ecode + 10, $save);
     }
-    // 既存データが有るので一旦すべて削除する
+    // 同じユニーク・ナンバーの既存データが有るので一旦削除する
     if ($rslt) {
-        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save_id);
+        $rslt = $save->del_to_odb($db_mai, $gv->mes, $save->save_id);
         if ($rslt === false) {
             tr_rollback($db_mai);
             return all_encode($ecode + 33, $save);
