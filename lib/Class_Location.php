@@ -100,17 +100,10 @@
             $a['name'] = $this->loc_name;
             $a['uid']  = $this->loc_uid;
 
-            switch ($this->loc_kind) {
-                case 'Maze':
-                    $b = [];
-                    $b['x']    = $this->x;
-                    $b['y']    = $this->y;
-                    $b['z']    = $this->z;
-                    $b['d']    = $this->d;
-
-                    $a['loc']  = $b;
-                    break;
-            }
+            $a['x']    = $this->x;
+            $a['y']    = $this->y;
+            $a['z']    = $this->z;
+            $a['d']    = $this->d;
 
             return $a;
         }
@@ -127,25 +120,22 @@
             if (array_key_exists('name', $a)  && is_string($a['name'])) {
                 $this->loc_name = $a['name'];
             }
-            if (array_key_exists('loc', $a)  && is_array($a['loc'])) {
-                $b = $a['loc'];
-                if (
-                    array_key_exists('x', $b) && (is_numeric($b['x']) && $b['x'] >  0)
-                &&  array_key_exists('y', $b) && (is_numeric($b['y']) && $b['y'] >  0)
-                &&  array_key_exists('z', $b) && (is_numeric($b['z']) && $b['z'] >= 0)
-                ) {
-                    $this->x = $b['x'];
-                    $this->y = $b['y'];
-                    $this->z = $b['z'];
-                }
-                if (
-                    array_key_exists('d', $b) 
-                    && (is_numeric($b['d'])) 
-                    && $b['d']  >=  0 
-                    && $b['d']  <=  3
-                ) {
-                    $this->d = $b['d'];
-                }
+            if (
+                array_key_exists('x', $a) && (is_numeric($a['x']) && $a['x'] >  0)
+            &&  array_key_exists('y', $a) && (is_numeric($a['y']) && $a['y'] >  0)
+            &&  array_key_exists('z', $a) && (is_numeric($a['z']) && $a['z'] >= 0)
+            ) {
+                $this->x = $a['x'];
+                $this->y = $a['y'];
+                $this->z = $a['z'];
+            }
+            if (
+                array_key_exists('d', $a) 
+                && (is_numeric($a['d'])) 
+                && $a['d']  >=  0 
+                && $a['d']  <=  3
+            ) {
+                $this->d = $a['d'];
             }
             return $this;
         }
