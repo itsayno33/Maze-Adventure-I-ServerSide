@@ -129,25 +129,24 @@
 
         
         public function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
-            foreach ($this->all_guld as $guld) {
-                $rslt = $guld->del_to_odb($db_mai, $mes, $save_id);
-                if (!$rslt || $mes->is_err()) {
-                    return false;
-                }
+            $rslt = Hero::del_tbl_all($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
             }
 
-            foreach ($this->all_team as $team) {
-                $rslt = $team->del_to_odb($db_mai, $mes, $save_id);
-                if (!$rslt || $mes->is_err()) {
-                    return false;
-                }
+            $rslt = Guild::del_tbl($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
             }
 
-            foreach ($this->all_maze as $maze) {
-                $rslt = $maze->del_to_odb($db_mai, $mes, $save_id);
-                if (!$rslt || $mes->is_err()) {
-                    return false;
-                }
+            $rslt = Team::del_tbl($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+
+            $rslt = Maze::del_tbl($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
             }
 
             $rslt = $this->del_tbl($db_mai, $mes, $save_id);

@@ -290,17 +290,16 @@ INSERT_HERO01;
         }
 
         
-        // DB処理。save_idとteam_idで指定されたレコード(複数)を削除(delete)する
+        // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
         // 
-        protected static function del_tbl_all(PDO $db_mai, DspMessage $mes, int $save_id, int $team_id): bool {
+        public static function del_tbl_all(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $delete_hero_SQL =<<<DELETE_HERO01
                 DELETE FROM tbl_hero 
-                WHERE  save_id = :save_id  AND  team_id = :team_id
+                WHERE  save_id = :save_id 
 DELETE_HERO01;
             try {
                 $delete_hero_stmt = $db_mai->prepare($delete_hero_SQL);
                 $delete_hero_stmt->bindValue(':save_id', $save_id);
-                $delete_hero_stmt->bindValue(':team_id', $team_id);
                 $delete_hero_stmt->execute();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 17: {$delete_hero_SQL}");
@@ -351,7 +350,7 @@ DELETE_HERO01;
                     $this->team_id = intval($a['team_id']);
                 }
                 if (array_key_exists('uniq_id', $a) && is_string($a['uniq_id'])) {
-                    $this->uniq_id = intval($a['uniq_id']);
+                    $this->uniq_id = $a['uniq_id'];
                 }
                 if (array_key_exists('name', $a) && is_string($a['name'])) {
                     $this->name    = $a['name'];

@@ -341,7 +341,7 @@ INSERT_TEAM01;
 
         // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
         // 
-        protected static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+        public static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $delete_team_SQL =<<<DELETE_TEAM01
                 DELETE FROM tbl_team 
                 WHERE  save_id = :save_id

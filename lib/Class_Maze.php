@@ -565,7 +565,7 @@ INSERT_MAZE01;
         
         // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
         // 
-        protected function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+        public static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $delete_maze_SQL =<<<DELETE_MAZE01
                 DELETE FROM tbl_maze 
                 WHERE  save_id = :save_id

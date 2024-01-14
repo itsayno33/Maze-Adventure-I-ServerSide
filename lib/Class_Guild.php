@@ -70,12 +70,12 @@
             if (!$rslt1 || $mes->is_err()) {
                 return false;
             }
-            /* TeamクラスはTeamクラスで同じタイミングで同じsave_idのデータをすべて消すはず
+            // TeamクラスはTeamクラスで同じタイミングで同じsave_idのデータをすべて消すはず
             $rslt2 = $this->myteam->del_to_odb($db_mai, $mes, $save_id);
             if (!$rslt2 || $mes->is_err()) {
                 return false;
             }
-            */
+            //
             return true;
         }
 
@@ -150,7 +150,7 @@ INSERT_GULD02;
 
         // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
         // 
-        protected function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+        public static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
             $delete_guld_SQL =<<<DELETE_GULD01
                 DELETE FROM tbl_guld 
                 WHERE  save_id = :save_id
