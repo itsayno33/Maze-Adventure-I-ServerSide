@@ -67,6 +67,14 @@
         public function get_dir(): Direct {
             return new Direct($this->d);
         }
+        public function set_pos(Point3D $pos): void {
+            $this->x = $pos->x;
+            $this->y = $pos->y;
+            $this->z = $pos->z;
+        }
+        public function set_dir(Direct $dir): void {
+            $this->d = $dir->get();
+        }
 
         public function from_JSON(string $j): self {
             $this->decode(self::from_JSON_to_array($j));

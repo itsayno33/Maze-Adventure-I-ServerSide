@@ -33,7 +33,7 @@
             $this->name      = 'New Team';
             $this->uniq_id   =  Rand::uniq_id('mai_team#');
             $this->loc_kind  = '';
-            $this->loc       = (new Location())->set($this);
+            $this->loc       =  new Location();
             $this->goods     =  new Goods();
             $this->heroes    =  [];
             $this->is_hero   =  true;
@@ -63,15 +63,15 @@
                 &&  array_key_exists('z', $a) && (is_numeric($a['z']) && $a['z'] >= 0)
                 ) {
                     $this->cur_pos = new Point3D($a['x'], $a['y'], $a['z']);
-                    $this->loc->set($this);
+                    $this->loc->set_pos($this->cur_pos);
                 }
                 if (array_key_exists('Direct', $a) && ($a['Direct'] instanceof Direct)) {
                     $this->cur_dir = $a['Direct'];
-                    $this->loc->set($this);
+                    $this->loc->set_dir($this->cur_dir);
                 }
                 if (array_key_exists('d', $a) && (is_numeric($a['d']))) {
                     $this->cur_dir = new Direct($a['d']);
-                    $this->loc->set($this);
+                    $this->loc->set_dir($this->cur_dir);
                 }
                 if (array_key_exists('Hero', $a) && ($a['Hero'] instanceof Hero)) {
                     $this->append_hero($a['Hero']);
@@ -106,21 +106,18 @@
         }
         public function set_pos(Point3D $p): void {
             $this->cur_pos  = $p;
-            $this->loc->set($this);
         }
         public function get_z(): int {
             return $this->cur_pos->z;
         }
         public function set_z(int $z): void {
             $this->cur_pos->z = $z;
-            $this->loc->set($this);
         }
         public function get_dir(): Direct {
             return $this->cur_dir;
         }
         public function set_dir(Direct $d): void {
             $this->cur_dir = $d;
-            $this->loc->set($this);
         }
         public function get_loc(): Location {
             return $this->loc;

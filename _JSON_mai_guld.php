@@ -191,6 +191,28 @@ function new_guld(): Guild {
     global $gv, $ga;
     $guld = new Guild();
     $guld->decode(['name' => '始まりの街のギルド']);
+
+    $myteam = new Team();
+    $myteam->decode([
+        'name' => $guld->get_name(),
+        'locate' => [
+            'kind' => 'Guld',
+            'name' => $guld->get_name(),
+            'uid'  => $guld->uid(),
+            'loc'  => [
+                'x' => 0,
+                'y' => 0,
+                'z' => 0,
+                'd' => 0,
+            ],
+        ],
+    ]);
+    for ($i = 0; $i <= 10; $i++) {
+        $myteam->append_hero((new Hero())->random_make());
+    }
+
+    $guld->myteam = $myteam;
+
     return $guld;
 }
 
@@ -202,10 +224,31 @@ function new_team(Guild $guld): Team {
         'kind' => 'Guld',
         'name' => $guld->get_name(),
         'uid'  => $guld->uid(),
+        'loc'  => [
+            'x'    => 0,
+            'y'    => 0,
+            'z'    => 0,
+            'd'    => 0,
+        ],
     ]);
 
     $team = new Team();
-
+/*
+    $team->decode([
+        'name' => 'ひよこさんチーム',
+        'locate' => [
+            'kind' => 'Guld',
+            'name' => $guld->get_name(),
+            'uid'  => $guld->uid(),
+            'loc'  => [
+                'x' => 0,
+                'y' => 0,
+                'z' => 0,
+                'd' => 0,
+            ],
+        ],
+    ]);
+*/
     $team->set_name('ひよこさんチーム');
     $team->set_loc($loc);
     for ($i = 0; $i <= 3; $i++) {
