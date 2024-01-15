@@ -328,12 +328,8 @@ DELETE_HERO01;
                 'exp' => ['ttl' => $this->val['exp']['ttl'], 'now' => $this->val['exp']['now']],
                 'nxe' => $this->val['nxe']
             ];
-            $a['abi_p']       = [ 
-                'bsc' => $this->abi_p['bsc']->encode(), 
-            ];
-            $a['abi_m']       = [ 
-                'bsc' => $this->abi_m['bsc']->encode(), 
-            ];
+            $a['abi_p_bsc'] = $this->abi_p['bsc']->encode();
+            $a['abi_m_bsc'] = $this->abi_m['bsc']->encode(); 
             $a['goods'] = $this->goods->encode(); 
 
             return $a;
@@ -394,15 +390,11 @@ DELETE_HERO01;
                         $this->val['nxe']  = intval($val['nxe']); 
                     }
                 }
-                if (array_key_exists('abi_p', $a) && is_array($a['abi_p'])) {
-                    if (array_key_exists('bsc', $a['abi_p']) && is_array($a['abi_p']['bsc'])) {
-                        $this->abi_p['bsc']->decode($a['abi_p']['bsc']);
-                    }
+                if (array_key_exists('abi_p_bsc', $a) && is_array($a['abi_p_bsc'])) {
+                        $this->abi_p['bsc']->decode($a['abi_p_bsc']);
                 }
-                if (array_key_exists('abi_m', $a) && is_array($a['abi_m'])) {
-                    if (array_key_exists('bsc', $a['abi_m']) && is_array($a['abi_m']['bsc'])) {
-                        $this->abi_m['bsc']->decode($a['abi_m']['bsc']);
-                    }
+                if (array_key_exists('abi_m_bsc', $a) && is_array($a['abi_m_bsc'])) {
+                        $this->abi_m['bsc']->decode($a['abi_m_bsc']);
                 }
                 if (array_key_exists('goods', $a) && is_array($a['goods'])) {
                     $this->goods->decode($a['goods']);
