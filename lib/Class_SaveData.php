@@ -31,6 +31,8 @@
         public DateTime $save_time;
 
         public string   $team_uid; // 保存時操作していたチームのuniq_id。ロード時の操作対象
+        public Location $location; // 保存時の現在地
+
         public array    $all_maze; // その時点で挑戦した迷宮一式 Maze[]
         public array    $all_team; // 同、迷宮探検中のチーム一式 Team[]
         public array    $all_guld; // 同、ギルド等で待機しているキャラ一式 Hero[] <- ここはギルドクラス(Guild。略称guld)を作ってそのインスタンスを持つべきか
@@ -167,7 +169,7 @@
             $get_save_SQL =<<<GET_SAVE_INFO01
                 SELECT save_id, player_id, uniq_no, title, detail, point, 
                        auto_mode, is_active, is_delete, 
-                       team_uid,
+                       team_uid, locate,
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
                 WHERE  player_id = :player_id 
@@ -207,7 +209,7 @@ GET_SAVE_INFO01;
             $seek_save_SQL =<<<SEEK_SAVE01
             SELECT save_id, player_id, uniq_no, title, detail, point, 
                    auto_mode, is_active, is_delete, 
-                   team_uid,
+                   team_uid, locate,
                    DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
             FROM   tbl_save
             WHERE  player_id = :player_id AND uniq_no = :uniq_no
@@ -242,7 +244,7 @@ SEEK_SAVE01;
             $get_save_SQL =<<<GET_SAVE01
                 SELECT save_id, player_id, uniq_no, title, detail, point, 
                        auto_mode, is_active, is_delete, 
-                       team_uid, 
+                       team_uid, locate,
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
                 WHERE  save_id = :save_id
@@ -279,12 +281,12 @@ GET_SAVE01;
             $insert_save_SQL =<<<NEW_SAVE01
                 INSERT  INTO tbl_save (
                         player_id, uniq_no,   title, detail, point, 
-                        team_uid,
+                        team_uid, locate, 
                         auto_mode, is_active, is_delete
                     )
                 VALUES ( 
                         :player_id, :uniq_no,   :title, :detail, :point, 
-                        :team_uid,
+                        :team_uid,  :locate, 
                         :auto_mode, :is_active, :is_delete)
 NEW_SAVE01;
             try {
@@ -295,6 +297,7 @@ NEW_SAVE01;
                 $insert_save_stmt->bindValue(':detail',    $this->detail);
                 $insert_save_stmt->bindValue(':point',     $this->point);
                 $insert_save_stmt->bindValue(':team_uid',  $this->team_uid);
+                $insert_save_stmt->bindValue(':locate',    $this->location->to_JSON());
                 $insert_save_stmt->bindValue(':auto_mode', $auto_mode);
                 $insert_save_stmt->bindValue(':is_active', $is_active);
                 $insert_save_stmt->bindValue(':is_delete', $is_delete);
@@ -347,6 +350,8 @@ NEW_SAVE01;
             $a['save_time']  = $this->save_time->format('Y-m-d H:i:s:u');
 
             $a['team_uid']  = $this->team_uid;
+            $a['location']  = $this->location->encode();
+
             $a['all_maze']  = Maze ::encode_all($this->all_maze);
             $a['all_team']  = Team ::encode_all($this->all_team);
             $a['all_guld']  = Guild::encode_all($this->all_guld);
@@ -386,9 +391,17 @@ NEW_SAVE01;
             if (array_key_exists('save_time', $a)) {
                 $this->save_time = date_create($a['save_time'], new DateTimeZone('Asia/Tokyo')); 
             }
+
             if (array_key_exists('team_uid', $a) && is_string($a['team_uid'])) {
                 $this->team_uid  = $a['team_uid'];
             }
+            if (array_key_exists('locate', $a)   && is_string($a['locate'])) {
+                $this->location  = (new Location())->from_JSON($a['locate']);
+            }
+            if (array_key_exists('location', $a) && is_array($a['location'])) {
+                $this->location  = (new Location())->decode($a['location']);
+            }
+
             if (array_key_exists('all_maze', $a) && is_array($a['all_maze'])) {
                 $this->all_maze  = Maze::decode_all($a['all_maze']);
             }

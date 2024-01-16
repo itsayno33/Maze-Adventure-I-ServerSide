@@ -242,9 +242,9 @@ function new_team(): Team {
                     <legend>パーティ・メンバー</legend>
                     <ul id='team_list'></ul>
                 </fieldset>
-                <fieldset id='hres_hero_fields'>
+                <fieldset id='hres_guld_fields'>
                     <legend>ギルド・メンバー</legend>
-                    <ul id='hres_list'></ul>
+                    <ul id='guld_list'></ul>
                 </fieldset>
                 <fieldset id='hres_menu_fields'>
                 <legend>コマンド</legend>
