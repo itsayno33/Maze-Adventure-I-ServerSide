@@ -184,6 +184,7 @@ function new_save(Guild $guld, Team $team): SaveData {
         'all_team'  => [$team->encode()],
 
         'team_uid'  => $team->uid(), 
+        'location'  => $team->get_loc()->encode(), 
     ]);
 }
 

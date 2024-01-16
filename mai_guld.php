@@ -305,7 +305,8 @@ function new_team(): Team {
             <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
             <button id='y_btn'   type='button' name='y_btn'   value='U'>〇</button>
             <button id='n_btn'   type='button' name='n_btn'   value='N'>✖</button>
-            <button id='c_btn'   type='button' name='c_btn'   value='C'>キャンプ（Ｃ）</button>
+            <button id='s_btn'   type='button' name='s_btn'   value='S'>選</button>
+            <button id='r_btn'   type='button' name='r_btn'   value='R'>戻</button>
         </div></div>
     </article>
     <article class='message_pane' id='message_pane'>

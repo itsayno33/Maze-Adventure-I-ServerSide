@@ -51,6 +51,8 @@
             $this->save_time = new DateTime('now');
 
             $this->team_uid  = '';
+            $this->location  = new Location();
+
             $this->all_maze  = [];
             $this->all_team  = [];
             $this->all_guld  = []; 
