@@ -181,20 +181,20 @@ DELETE_GULD01;
         }
         public function decode(array $a): Guild {
             if (!is_null($a) && is_array($a)) {
-                if (array_key_exists('id', $a) && (is_numeric($a['id']))) {
+                if (array_key_exists('id', $a) && is_numeric($a['id'])) {
                     $this->id      = intval($a['id']);
                 }
-                if (array_key_exists('save_id', $a) && (is_numeric($a['save_id']))) {
+                if (array_key_exists('save_id', $a) && is_numeric($a['save_id'])) {
                     $this->save_id = intval($a['save_id']);
                 }
-                if (array_key_exists('uniq_id', $a) && (is_numeric($a['uniq_id']))) {
-                    $this->uniq_id = intval($a['uniq_id']);
+                if (array_key_exists('uniq_id', $a) && is_string($a['uniq_id'])) {
+                    $this->uniq_id = $a['uniq_id'];
                 }
                 if (array_key_exists('name', $a) && ($a['name'] != '')) {
                     $this->name    = $a['name'];
                 }
-                if (array_key_exists('myteam', $a) && (is_array($a['myteam']))) {
-                    $this->myteam  = (new Team())->decode($a['myteam']);
+                if (array_key_exists('myteam', $a) && is_array($a['myteam'])) {
+                    $this->myteam->decode($a['myteam']);
                 }
             }
             return $this;

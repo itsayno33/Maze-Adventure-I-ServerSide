@@ -252,7 +252,7 @@ function new_team(Guild $guld): Team {
 */
     $team->set_name('ひよこさんチーム');
     $team->set_loc($loc);
-    for ($i = 0; $i <= 3; $i++) {
+    for ($i = 0; $i <= 3; $i++) { 
         $team->append_hero((new Hero())->random_make());
     }
 
@@ -296,10 +296,10 @@ function new_team(Guild $guld): Team {
         public const  Max_size_of_room  = 3;
         public const  Max_of_Maze_Floor = 3;
 
-        public array  $maze_assoc = [];
-        public Maze   $maze;
         public array  $team_assoc = [];
         public Team   $team;
+        public array  $guld_assoc = [];
+        public Team   $guld;
         public array  $heroes = [];
 
         public function __construct() {

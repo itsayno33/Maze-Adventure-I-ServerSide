@@ -373,19 +373,19 @@ DELETE_TEAM01;
         }
         public function decode(array $a): Team {
             if (!is_null($a) && is_array($a)) {
-                if (array_key_exists('id', $a) && (is_numeric($a['id']))) {
+                if (array_key_exists('id', $a) && is_numeric($a['id'])) {
                     $this->id         = intval($a['id']);
                 }
-                if (array_key_exists('save_id', $a) && (is_numeric($a['save_id']))) {
+                if (array_key_exists('save_id', $a) && is_numeric($a['save_id'])) {
                     $this->save_id    = intval($a['save_id']);
                 }
-                if (array_key_exists('uniq_id', $a) && ($a['uniq_id'] !== '')) {
+                if (array_key_exists('uniq_id', $a) && is_string($a['uniq_id'])) {
                     $this->uniq_id    = $a['uniq_id'];
                 }
-                if (array_key_exists('name', $a) && ($a['name'] !== '')) {
+                if (array_key_exists('name', $a) && $a['name'] !== '') {
                     $this->name       = $a['name'];
                 }
-                if (array_key_exists('is_hero', $a) && (is_numeric($a['is_hero']))) {
+                if (array_key_exists('is_hero', $a) && is_numeric($a['is_hero'])) {
                     if ($a['is_hero'] != '0') $this->is_hero = true; else $this->is_hero = false;
                 }
                 if (array_key_exists('locate', $a)) {
@@ -395,14 +395,14 @@ DELETE_TEAM01;
                         $this->loc->decode($a['locate']);
                     }
                 }
-                if (array_key_exists('goods', $a) && (is_array($a['goods']))) {
+                if (array_key_exists('goods', $a) && is_array($a['goods'])) {
                     if (is_string($a['goods'])) {
                         $this->goods->from_JSON($a['goods']);
                     } else {
                         $this->goods->decode($a['goods']);
                     }
                 }
-                if (array_key_exists('heroes', $a) && (is_array($a['heroes']))) {
+                if (array_key_exists('heroes', $a) && is_array($a['heroes'])) {
                     $this->heroes     = Hero::decode_heroes($a['heroes']);
                 }
             }

@@ -647,7 +647,7 @@ DELETE_MAZE01;
             if(array_key_exists('save_id', $e) && is_numeric($e['save_id'])) {
                 $this->save_id    = $e['save_id'];
             }
-            if(array_key_exists('uniq_id', $e) && $e['uniq_id'] != '') {
+            if(array_key_exists('uniq_id', $e) && is_string($e['uniq_id'])) {
                 $this->uniq_id    = $e['uniq_id'];
             }
             if(array_key_exists('floor', $e) && is_numeric($e['floor'])) {

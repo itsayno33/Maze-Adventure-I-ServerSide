@@ -100,8 +100,10 @@ div#gld_view_switch {
     width: auto;
 }
 
-ul#guild_list,
-ul#hres_list,
+ul#guild_list, 
+ul#team_list,
+ul#guld_list,
+ul#menu_list,
 ul#edit_list,
 ul#appd_list,
 ul#load_list, 
