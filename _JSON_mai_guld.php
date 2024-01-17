@@ -191,7 +191,7 @@ function new_save(Guild $guld, Team $team): SaveData {
 function new_guld(): Guild {
     global $gv, $ga;
     $guld = new Guild();
-    $guld->decode(['name' => '始まりの街のギルド']);
+    $guld->decode(['name' => '始まりの街の冒険者ギルド']);
 
     $myteam = new Team();
     $myteam->decode([

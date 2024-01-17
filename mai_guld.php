@@ -220,7 +220,7 @@ function new_team(): Team {
         <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
         <div id='gld_view_switch'>
             <div id='gld_view_switch_guild'>
-                <h2>ギルド窓口</h2>
+                <h2>冒険者ギルド窓口</h2>
                 <ul id='guild_list'>
                     <li id='guild_hres'>冒険者情報
                         <p>　冒険者情報を見ることができます(実装中)</p></li>
