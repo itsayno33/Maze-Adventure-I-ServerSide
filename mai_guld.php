@@ -218,6 +218,7 @@ function new_team(): Team {
     <h1 class='h1'>ダンジョンアドベンチャーⅠ【ギルド】</h1>
     <article class='gld_view_pane' id='gld_view_pane'>
         <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
+        <div id='gld_view_message_div'><p id='gld_view_message'></p></div>
         <div id='gld_view_switch'>
             <div id='gld_view_switch_guild'>
                 <h2>冒険者ギルド窓口</h2>
@@ -249,6 +250,10 @@ function new_team(): Team {
                 <fieldset id='hres_menu_fields'>
                 <legend>コマンド</legend>
                     <ul id='menu_list'></ul>
+                </fieldset>
+                <fieldset id='hres_inpt_fields'>
+                <legend>入力</legend>
+                    <ul id='inpt_list'></ul>
                 </fieldset>
                 <fieldset id='hres_hero_fields'>
                     <legend>冒険者の詳細情報</legend>
@@ -294,8 +299,8 @@ function new_team(): Team {
                     <legend>迷宮への入り口</legend>
                     <ul id='tomz_info_detail'></ul>
                 </fieldset>
+            </div>
         </div>
-        <div id='gld_view_message_div'><p id='gld_view_message'></p></div>
     </article>
     <article class='gld_ctl' id='gld_ctl_pane'>
         <div id ='ctl_view'><div id='ctl_panel'>
