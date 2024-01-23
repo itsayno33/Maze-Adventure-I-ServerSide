@@ -250,6 +250,10 @@ function new_team(): Team {
                     <legend>ギルド・メンバー</legend>
                     <ul id='guld_list'></ul>
                 </fieldset>
+                <fieldset id='hres_appd_fields'>
+                    <legend>求人募集メンバー</legend>
+                    <ul id='appd_list'></ul>
+                </fieldset>
                 <fieldset id='hres_menu_fields'>
                 <legend>コマンド</legend>
                     <ul id='menu_list'></ul>
