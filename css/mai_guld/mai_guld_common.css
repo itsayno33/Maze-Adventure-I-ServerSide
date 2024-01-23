@@ -220,19 +220,19 @@ div#ctl_panel button#c_btn {
     font-weight: bold;
 }
 
-div#ctl_panel button#u_arrow {
+div#ctl_panel button#u_arr {
     grid-area: u_arrow;
 }
 
-div#ctl_panel button#d_arrow {
+div#ctl_panel button#d_arr {
     grid-area: d_arrow;
 }
 
-div#ctl_panel button#l_arrow {
+div#ctl_panel button#l_arr {
     grid-area: l_arrow;
 }
 
-div#ctl_panel button#r_arrow {
+div#ctl_panel button#r_arr {
     grid-area: r_arrow;
 }
 

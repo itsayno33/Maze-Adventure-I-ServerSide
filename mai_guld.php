@@ -218,7 +218,10 @@ function new_team(): Team {
     <h1 class='h1'>ダンジョンアドベンチャーⅠ【ギルド】</h1>
     <article class='gld_view_pane' id='gld_view_pane'>
         <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
-        <div id='gld_view_message_div'><p id='gld_view_message'></p></div>
+        <div id='gld_view_message_div'>
+            <button id='r_cp1' name='r_cp1' value='R'>ギルド窓口に戻る</button>
+            <p id='gld_view_message'></p>
+        </div>
         <div id='gld_view_switch'>
             <div id='gld_view_switch_guild'>
                 <h2>冒険者ギルド窓口</h2>
@@ -254,6 +257,8 @@ function new_team(): Team {
                 <fieldset id='hres_inpt_fields'>
                 <legend>入力</legend>
                     <ul id='inpt_list'></ul>
+                    <button id='y_cp1' name='y_cp1' value='Y'>はい</button>
+                    <button id='n_cp1' name='n_cp1' value='N'>いいえ</button>
                 </fieldset>
                 <fieldset id='hres_hero_fields'>
                     <legend>冒険者の詳細情報</legend>
@@ -304,14 +309,14 @@ function new_team(): Team {
     </article>
     <article class='gld_ctl' id='gld_ctl_pane'>
         <div id ='ctl_view'><div id='ctl_panel'>
-            <button id='u_arrow' type='button' name='u_arrow' value='U'>↑</button>
-            <button id='d_arrow' type='button' name='d_arrow' value='D'>↓</button>
-            <button id='l_arrow' type='button' name='l_arrow' value='L'>←</button>
-            <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
-            <button id='y_btn'   type='button' name='y_btn'   value='U'>〇</button>
-            <button id='n_btn'   type='button' name='n_btn'   value='N'>✖</button>
-            <button id='s_btn'   type='button' name='s_btn'   value='S'>選</button>
-            <button id='r_btn'   type='button' name='r_btn'   value='R'>戻</button>
+            <button id='u_arr' type='button' name='u_arrow' value='U'>↑</button>
+            <button id='d_arr' type='button' name='d_arrow' value='D'>↓</button>
+            <button id='l_arr' type='button' name='l_arrow' value='L'>←</button>
+            <button id='r_arr' type='button' name='r_arrow' value='R'>→</button>
+            <button id='y_btn' type='button' name='y_btn'   value='U'>〇</button>
+            <button id='n_btn' type='button' name='n_btn'   value='N'>✖</button>
+            <button id='s_btn' type='button' name='s_btn'   value='S'>選</button>
+            <button id='r_btn' type='button' name='r_btn'   value='R'>戻</button>
         </div></div>
     </article>
     <article class='message_pane' id='message_pane'>
