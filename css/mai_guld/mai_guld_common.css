@@ -100,17 +100,27 @@ div#gld_view_switch {
     width: auto;
 }
 
-ul#guild_list, 
+ul#guld_menu_list, 
 ul#team_list,
 ul#guld_list,
-ul#menu_list,
-ul#edit_list,
 ul#appd_list,
+ul#menu_list,
 ul#load_list, 
 ul#save_list {
     color:            chocolate;
     background-color: cornsilk;
 }
+
+button#debug_mode {
+    float: left;
+}
+p#gld_view_message {
+    clear: left;
+}
+button#r_cp1 {
+    float: right;
+}
+
 
 div#gld_view_message_div {
     font-size:   var(--view_message_font_size, 1.1rem);
@@ -118,7 +128,9 @@ div#gld_view_message_div {
 
 }
 
-article#gld_ctl_pane{
+
+
+article#gld_ctl_pane {
     display: grid;
 }
 

@@ -208,7 +208,7 @@ function new_guld(): Guild {
             ],
         ],
     ]);
-    for ($i = 0; $i <= 10; $i++) {
+    for ($i = 0; $i < 12; $i++) {
         $myteam->append_hero((new Hero())->random_make());
     }
 

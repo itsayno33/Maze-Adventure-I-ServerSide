@@ -223,20 +223,20 @@ function new_team(): Team {
             <p id='gld_view_message'></p>
         </div>
         <div id='gld_view_switch'>
-            <div id='gld_view_switch_guild'>
+            <div id='gld_view_switch_guld'>
                 <h2>冒険者ギルド窓口</h2>
-                <ul id='guild_list'>
-                    <li id='guild_hres'>冒険者情報
+                <ul id='guld_menu_list'>
+                    <li id='guld_hres'>冒険者情報
                         <p>　冒険者情報を見ることができます(実装中)</p></li>
-                    <li id='guild_edit'>冒険者編集
-                        <p>　既存キャラクターを編集出来ます(デバッグモードのみ)(未実装)</p></li>
-                    <li id='guild_appd'>冒険者募集
-                        <p>　新しいキャラクターを募集出来ます</p></li>
-                    <li id='guild_load'>冒険の呼び出し
+                    <!-- li id='guld_edit'>冒険者編集
+                        <p>　既存キャラクターを編集出来ます(デバッグモードのみ)(未実装)</p></li -->
+                    <!-- li id='guld_appd'>冒険者募集
+                        <p>　新しいキャラクターを募集出来ます</p></li -->
+                    <li id='guld_load'>冒険の呼び出し
                         <p>　冒険情報をロードできます</p></li>
-                    <li id='guild_save'>冒険の記録
+                    <li id='guld_save'>冒険の記録
                         <p>　冒険情報をセーブできます</p></li>
-                    <li id='guild_tomz'>冒険出発
+                    <li id='guld_tomz'>冒険出発
                         <p>　ダンジョンに出発します(未実装)</p></li>
                 </dl>
             </div>
@@ -269,22 +269,22 @@ function new_team(): Team {
                     <ul id='hres_hero_info'></ul>
                 </fieldset>
             </div>
-            <div id='gld_view_switch_edit'>
+            <!-- div id='gld_view_switch_edit'>
                 <h2>冒険者情報の編集</h2>
                 <ul id='edit_list'></ul>
                 <fieldset id='edit_hero_fields'>
                     <legend>冒険者の情報</legend>
                     <ul id='edit_hero_info'></ul>
                 </fieldset>
-            </div>
-            <div id='gld_view_switch_appd'>
+            </div -->
+            <!-- div id='gld_view_switch_appd'>
                 <h2>冒険者の募集票</h2>
                 <ul id='appd_list'></ul>
                 <fieldset id='appd_hero_fields'>
                     <legend>冒険者の情報</legend>
                     <ul id='appd_hero_info'></ul>
                 </fieldset>
-            </div>
+            </div -->
             <div id='gld_view_switch_load'>
                 <h2>冒険の呼び出し</h2>
                 <ul id='load_list'></ul>
