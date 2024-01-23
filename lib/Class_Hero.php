@@ -58,7 +58,7 @@
 
         public function random_make(): Hero {
             $this->id       = 0; // --Hero::$max_id;
-            $this->name     = "冒険者 " . Rand::random_str(10);
+            $this->name     = "冒険者 " . Rand::random_str(05);
             $this->uniq_id  = Rand::uniq_id('mai_hero#');
             $this->sex      = Rand::i_rand( 0,     1); 
             $this->age      = Rand::i_rand( 15,   25); 

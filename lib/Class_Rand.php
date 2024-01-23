@@ -58,16 +58,19 @@
 
         public static function random_str(int $len = 10): string {
             $ch_array = [];
-            for ($i = 0; $i < $len; $i++) {Rand::__make_ch(Rand::i_rand(0, 62));
+            for ($i = 0; $i < $len; $i++) {
+                array_push($ch_array, Rand::__make_ch());
             }
-            $ch_array = [];
             return implode('', $ch_array);
         }
-        protected static function __make_ch(int $ch): string {
-            if ($ch < 10) return chr($ch +  60);
-            if ($ch < 36) return chr($ch + 101 - 10);
-            if ($ch < 62) return chr($ch + 141 - 36);
+        protected static function __make_ch(): string {
+/*            $ch = Rand::i_rand(0, 62);
+            if ($ch < 10) return chr($ch + 48);
+            if ($ch < 36) return chr($ch + 65);
+            if ($ch < 62) return chr($ch + 97);
             return '_';
+*/
+            return chr(Rand::i_rand(65, 90));
         }
     }
 
