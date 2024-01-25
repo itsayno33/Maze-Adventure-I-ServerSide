@@ -283,7 +283,7 @@ GET_SAVE01;
             $insert_save_SQL =<<<NEW_SAVE01
                 INSERT  INTO tbl_save (
                         player_id, uniq_no,   title, detail, point, 
-                        team_uid, locate, 
+                        team_uid,  locate, 
                         auto_mode, is_active, is_delete
                     )
                 VALUES ( 

@@ -18,14 +18,16 @@
         public int     $save_id = -1;
         public string  $uniq_id = '';
         public string  $name    = '';
+        public string  $team_uid;
         public Team    $myteam;
 
         public function __construct(array $a = null) {
-            $this->id      = -1;
-            $this->save_id = -1;
-            $this->uniq_id = Rand::uniq_id('mai_guld#');
-            $this->name    = '始まりの街のギルド';
-            $this->myteam  = new Team();
+            $this->id        = -1;
+            $this->save_id   = -1;
+            $this->uniq_id   = Rand::uniq_id('mai_guld#');
+            $this->name      = '始まりの街のギルド';
+            $this->myteam    = new Team();
+            $this->team_uid  = $this->myteam->uid();
 
             if (!is_null($a) && is_array($a)) $this->decode($a);
         } 
@@ -42,12 +44,16 @@
             if (!$rslt0 || $mes->is_err()) {
                 return [false, []];
             }
+
             foreach ($guld_array as $guld) {
-                $rslt1 = $guld->my_team->get_from_odb($db_mai, $mes, $save_id);
+                if (!is_object($guld) || ! ($guld instanceof Guild) ) continue;
+                $guld->myteam ->decode(['uniq_id' => $guld->team_uid]);
+                $rslt1 = $guld->myteam->get_from_odb($db_mai, $mes, $save_id);
                 if (!$rslt1 || $mes->is_err()) {
                     return [false, []];
                 }
             }
+
             return [true, $guld_array];
         }
 
@@ -108,7 +114,7 @@ GET_GULD01;
             } 
         
             if (count($resultRecordSet) < 1) {
-                return [true,  []];
+                return [false,  []];
             }
             $guld_array = [];
             foreach ($resultRecordSet as $resultRecord) {
@@ -127,8 +133,8 @@ GET_GULD01;
         ): array {
 
             $insert_guld_SQL =<<<INSERT_GULD02
-                INSERT INTO tbl_guld ( save_id, uniq_id, team_uid, name )
-                VALUES ( :save_id, :team_uid, :uniq_id, :name )
+                INSERT INTO tbl_guld ( save_id,  uniq_id,  team_uid,  name )
+                VALUES              ( :save_id, :uniq_id, :team_uid, :name )
 INSERT_GULD02;
             try {
                 $insert_guld_stmt = $db_mai->prepare($insert_guld_SQL);
@@ -172,11 +178,11 @@ DELETE_GULD01;
 
         public function encode(): array {
             $e = [];
-            $e['id']      = strval($this->id);
-            $e['save_id'] = strval($this->save_id);
-            $e['uniq_id'] = strval($this->uniq_id);
-            $e['name']    = $this->name;
-            $e['myteam']  = $this->myteam->encode();
+            $e['id']        = strval($this->id);
+            $e['save_id']   = strval($this->save_id);
+            $e['uniq_id']   = $this->uniq_id;
+            $e['name']      = $this->name;
+            $e['team_uid']  = $this->myteam->uid();
             return $e;
         }
         public function decode(array $a): Guild {
@@ -195,6 +201,13 @@ DELETE_GULD01;
                 }
                 if (array_key_exists('myteam', $a) && is_array($a['myteam'])) {
                     $this->myteam->decode($a['myteam']);
+                    $this->team_uid = $this->myteam->uid();
+                }
+
+                if (array_key_exists('team_uid', $a) && is_string($a['team_uid']) && $a['team_uid'] != '') {
+                    $this->team_uid = $a['team_uid'];
+                } else {
+                    $this->team_uid = $this->myteam->uid();
                 }
             }
             return $this;
