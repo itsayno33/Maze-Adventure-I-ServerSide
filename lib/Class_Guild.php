@@ -133,7 +133,7 @@ GET_GULD01;
             } 
         
             if (count($resultRecordSet) < 1) {
-                return [false,  []];
+                return [true,  []];
             }
             $guld_array = [];
             foreach ($resultRecordSet as $resultRecord) {

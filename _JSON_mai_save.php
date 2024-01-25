@@ -119,7 +119,7 @@ function manual_load(PDO $db_mai, int $ecode): string {
     $result = $save->get_from_odb($db_mai, $gv->mes);
     if (!$result) {
         tr_rollback($db_mai);
-        return all_encode($ecode, $save);;
+        return all_encode($ecode + 20, $save);;
     }
 
     tr_commit($db_mai);
