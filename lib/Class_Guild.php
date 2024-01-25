@@ -182,6 +182,7 @@ DELETE_GULD01;
             $e['save_id']   = strval($this->save_id);
             $e['uniq_id']   = $this->uniq_id;
             $e['name']      = $this->name;
+//            $e['myteam']    = $this->myteam->encode();
             $e['team_uid']  = $this->myteam->uid();
             return $e;
         }
