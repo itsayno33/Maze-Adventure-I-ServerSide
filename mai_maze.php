@@ -152,6 +152,7 @@ function new_team(): Team {
     class GlobalArguments {
         public string $mode;
         public int    $pid = 1;
+        public int    $uno;
 
         public function __construct() {
             global $gv;
@@ -162,7 +163,7 @@ function new_team(): Team {
                 if ( array_key_exists('mode', $_POST) &&  $_POST['mode'] != '') {
                     $this->mode     = $_POST['mode'];
                 } else {
-                    $this->mode     = 'view';
+                    $this->mode     = 'new_maze';
                 } 
             }
             if ( array_key_exists('pid', $_GET) && is_numeric($_GET['pid'])) {
@@ -172,6 +173,15 @@ function new_team(): Team {
                     $this->pid      = intval($_POST['pid']);
                 } else {
                     $this->pid      = 1;
+                } 
+            }
+            if ( array_key_exists('uno', $_GET) && is_numeric($_GET['uno'])) {
+                $this->uno          = intval($_GET ['uno']);
+            } else {
+                if ( array_key_exists('uno', $_POST) &&  is_numeric($_POST['uno'])) {
+                    $this->uno      = intval($_POST['uno']);
+                } else {
+                    $this->uno      = -1;
                 } 
             }
             $gv->mes->set_nor_message("MODE = [{$this->mode}]");
@@ -342,7 +352,12 @@ function new_team(): Team {
         <p class='foot_print'>Maze Adventure Ⅰ.</p>
     </footer>
     <script>
-        window.tsCall.get_init_data('<?php echo $gv->cgi_base; ?>', <?php echo $ga->pid; ?>);
+        window.tsCall.start_game(
+            <?php echo $ga->mode; ?>, 
+            <?php echo $gv->cgi_base; ?>, 
+            <?php echo $ga->pid; ?>, 
+            <?php echo $ga->uno; ?>, 
+        );
     </script>
 </body>
 <?php
