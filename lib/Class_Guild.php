@@ -18,16 +18,16 @@
         public int     $save_id = -1;
         public string  $uniq_id = '';
         public string  $name    = '';
-        public string  $team_uid;
-        public Team    $myteam;
+        public Goods   $goods;
+        public array   $heroes;
 
         public function __construct(array $a = null) {
             $this->id        = -1;
             $this->save_id   = -1;
             $this->uniq_id   = Rand::uniq_id('mai_guld#');
             $this->name      = '始まりの街のギルド';
-            $this->myteam    = new Team();
-            $this->team_uid  = $this->myteam->uid();
+            $this->goods     = new Goods();
+            $this->heroes    = [];
 
             if (!is_null($a) && is_array($a)) $this->decode($a);
         } 
@@ -39,6 +39,26 @@
         public function get_dir(): Direct  {return new Direct();}
 
 
+        public function get_number_of_heroes(): int {
+            return count($this->heroes);
+        }
+        public function get_hero(int $num): Hero|null {
+            if ($num < 0 || $num >= count($this->heroes)) return null;
+            return $this->heroes[$num];
+        }
+        public function append_hero(Hero $hero): void {
+            array_push($this->heroes, $hero);
+        }
+        public function remove_hero(Hero $hero): void {
+            for ($i = 0; $i < count($this->heroes); $i++) {
+                if ($hero == $this->heroes[$i]) {
+                    array_splice($this->heroes, $i, 1);
+                    return;
+                }
+            }
+        }
+
+
         public static function get_from_odb_all(PDO $db_mai, DspMessage $mes, int $save_id): array {
             [$rslt0, $guld_array] = self::get_from_tbl_all($db_mai, $mes, $save_id);
             if (!$rslt0 || $mes->is_err()) {
@@ -46,12 +66,11 @@
             }
 
             foreach ($guld_array as $guld) {
-                if (!is_object($guld) || ! ($guld instanceof Guild) ) continue;
-                $guld->myteam ->decode(['uniq_id' => $guld->team_uid]);
-                $rslt1 = $guld->myteam->get_from_odb($db_mai, $mes, $save_id);
+                [$rslt1, $hres_array] = Hero::get_from_odb_all($db_mai, $mes, $save_id, $guld->uid());
                 if (!$rslt1 || $mes->is_err()) {
                     return [false, []];
                 }
+                $guld->heroes = $hres_array;
             }
 
             return [true, $guld_array];
@@ -63,25 +82,25 @@
             if (!$rslt1 || $mes->is_err()) {
                 return false;
             }
-            $rslt2 = $this->myteam->set_to_odb($db_mai, $mes, $save_id);
-            if (!$rslt2 || $mes->is_err()) {
-                return false;
+            foreach ($this->heroes as $hero) {
+                $rslt2 = $hero->set_to_odb($db_mai, $mes, $save_id, $this->uniq_id);
+                if (!$rslt2 || $mes->is_err()) {
+                    return false;
+                }
             }
             return true;
         } 
 
 
         public function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $rslt1 = Hero::del_to_odb($db_mai, $mes, $save_id, $this->uniq_id);
+            if (!$rslt1 || $mes->is_err()) {
+                return false;
+            }
             $rslt1 = $this->del_tbl($db_mai, $mes, $save_id);
             if (!$rslt1 || $mes->is_err()) {
                 return false;
             }
-            // TeamクラスはTeamクラスで同じタイミングで同じsave_idのデータをすべて消すはず
-            $rslt2 = $this->myteam->del_to_odb($db_mai, $mes, $save_id);
-            if (!$rslt2 || $mes->is_err()) {
-                return false;
-            }
-            //
             return true;
         }
 
@@ -96,7 +115,7 @@
             int $save_id
         ): array {
             $get_guld_SQL =<<<GET_GULD01
-                SELECT 	id, save_id, uniq_id, team_uid, name 
+                SELECT 	id, save_id, uniq_id, name, goods 
                 FROM    tbl_guld
                 WHERE   save_id = :save_id
 GET_GULD01;
@@ -133,15 +152,15 @@ GET_GULD01;
         ): array {
 
             $insert_guld_SQL =<<<INSERT_GULD02
-                INSERT INTO tbl_guld ( save_id,  uniq_id,  team_uid,  name )
-                VALUES              ( :save_id, :uniq_id, :team_uid, :name )
+                INSERT INTO tbl_guld ( save_id,  uniq_id,  name,  goods )
+                VALUES              ( :save_id, :uniq_id, :name, :goods )
 INSERT_GULD02;
             try {
                 $insert_guld_stmt = $db_mai->prepare($insert_guld_SQL);
                 $insert_guld_stmt->bindValue(':save_id',  $save_id);  
                 $insert_guld_stmt->bindValue(':uniq_id',  $this->uniq_id);  
-                $insert_guld_stmt->bindValue(':team_uid', $this->myteam->uid());  
                 $insert_guld_stmt->bindValue(':name',     $this->name); 
+                $insert_guld_stmt->bindValue(':goods',    $this->goods->to_JSON());  
                 $insert_guld_stmt->execute();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 61: {$insert_guld_SQL}");
@@ -182,8 +201,8 @@ DELETE_GULD01;
             $e['save_id']   = strval($this->save_id);
             $e['uniq_id']   = $this->uniq_id;
             $e['name']      = $this->name;
-//            $e['myteam']    = $this->myteam->encode();
-            $e['team_uid']  = $this->myteam->uid();
+            $e['goods']     = $this->goods->encode();
+            $e['heroes']    = Hero::encode_heroes($this->heroes);
             return $e;
         }
         public function decode(array $a): Guild {
@@ -200,15 +219,15 @@ DELETE_GULD01;
                 if (array_key_exists('name', $a) && ($a['name'] != '')) {
                     $this->name    = $a['name'];
                 }
-                if (array_key_exists('myteam', $a) && is_array($a['myteam'])) {
-                    $this->myteam->decode($a['myteam']);
-                    $this->team_uid = $this->myteam->uid();
+                if (array_key_exists('goods', $a) && is_array($a['goods'])) {
+                    if (is_string($a['goods'])) {
+                        $this->goods->from_JSON($a['goods']);
+                    } else {
+                        $this->goods->decode($a['goods']);
+                    }
                 }
-
-                if (array_key_exists('team_uid', $a) && is_string($a['team_uid']) && $a['team_uid'] != '') {
-                    $this->team_uid = $a['team_uid'];
-                } else {
-                    $this->team_uid = $this->myteam->uid();
+                if (array_key_exists('heroes', $a) && is_array($a['heroes'])) {
+                    $this->heroes     = Hero::decode_heroes($a['heroes']);
                 }
             }
             return $this;

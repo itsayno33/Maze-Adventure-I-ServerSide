@@ -153,7 +153,7 @@
                 return [false, []];
             }
             foreach ($team_array as $team) {
-                [$rslt1, $hres_array] = Hero::get_from_odb_all($db_mai, $mes, $save_id, $team->id);
+                [$rslt1, $hres_array] = Hero::get_from_odb_all($db_mai, $mes, $save_id, $team->uid());
                 if (!$rslt1 || $mes->is_err()) {
                     return [false, []];
                 }
@@ -167,7 +167,7 @@
             if (!$rslt0 || $mes->is_err()) {
                 return false;
             }
-            [$rslt1, $hres_array] = Hero::get_from_odb_all($db_mai, $mes, $save_id, $this->id);
+            [$rslt1, $hres_array] = Hero::get_from_odb_all($db_mai, $mes, $save_id, $this->uniq_id);
             if (!$rslt1 || $mes->is_err()) {
                 return false;
             }
@@ -182,7 +182,7 @@
                 return false;
             }
             foreach ($this->heroes as $hero) {
-                $rslt1 = $hero->set_to_odb($db_mai, $mes, $save_id, $team_id);
+                $rslt1 = $hero->set_to_odb($db_mai, $mes, $save_id, $this->uniq_id);
                 if (!$rslt1 || $mes->is_err()) {
                     return false;
                 }
@@ -192,7 +192,7 @@
 
         
         public function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
-            $rslt1 = Hero::del_to_odb_all($db_mai, $mes, $save_id, $this->id);
+            $rslt1 = Hero::del_to_odb($db_mai, $mes, $save_id, $this->uniq_id);
             if (!$rslt1 || $mes->is_err()) {
                 return false;
             }

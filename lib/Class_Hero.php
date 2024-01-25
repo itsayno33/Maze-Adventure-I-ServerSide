@@ -14,8 +14,8 @@
         protected static   $max_id   = 0;
         protected int      $id       = 0;
         protected int      $save_id  = 0;
-        protected int      $team_id  = 0;
         protected string   $uniq_id  = '';
+        protected string   $join_uid = '';
         protected string   $name     = '';
         protected bool     $is_alive = true;
 
@@ -30,25 +30,26 @@
     
 
         public function __construct(array $a = null) {
-            $this->id      = 0; // --Hero::$max_id;
-            $this->name    = 'New Hero #' . sprintf('%03d', -1 * $this->id);
-            $this->uniq_id = '';
-            $this->sex     = 0; 
-            $this->age     = 0; 
-            $this->state   = 0; 
-            $this->lv      = 0; 
-            $this->val     = [
+            $this->id       = 0; // --Hero::$max_id;
+            $this->name     = 'New Hero #' . sprintf('%03d', -1 * $this->id);
+            $this->uniq_id  = '';
+            $this->join_uid = '';
+            $this->sex      = 0; 
+            $this->age      = 0; 
+            $this->state    = 0; 
+            $this->lv       = 0; 
+            $this->val      = [
                 'skp' => ['ttl' => 0, 'now' => 0], 
                 'exp' => ['ttl' => 0, 'now' => 0],
                 'nxe' => 0
             ];
-            $this->abi_p   = [
+            $this->abi_p    = [
                 'bsc' =>  new HeroAbility()
             ];
-            $this->abi_m   = [
+            $this->abi_m    = [
                 'bsc' =>  new HeroAbility()
             ];
-            $this->goods   = new Goods();
+            $this->goods    = new Goods();
 
             if(!is_null(($a)) && is_array($a)) $this->decode($a);
         }
@@ -94,10 +95,10 @@
         public static function get_from_odb_all(
             PDO $db_mai, 
             DspMessage $mes, 
-            int $save_id,
-            int $team_id): array 
+            int    $save_id,
+            string $join_uid): array 
         {
-            [$rslt, $hres_array] = Hero::get_from_tbl_all($db_mai, $mes, $save_id, $team_id);
+            [$rslt, $hres_array] = Hero::get_from_tbl_all($db_mai, $mes, $save_id, $join_uid);
             if (!$rslt || $mes->is_err()) {
                 return [false, []];
             }
@@ -108,10 +109,10 @@
         public function set_to_odb(
             PDO $db_mai, 
             DspMessage $mes, 
-            int $save_id,
-            int $team_id): bool 
+            int     $save_id,
+            string  $join_uid): bool 
         { 
-            [$rslt, $hero_id] = $this->add_tbl($db_mai, $mes, $save_id, $team_id);
+            [$rslt, $hero_id] = $this->add_tbl($db_mai, $mes, $save_id, $join_uid);
             if (!$rslt || $mes->is_err()) {
                 return false;
             }
@@ -119,8 +120,16 @@
         }
 
 
-        public static function del_to_odb_all(PDO $db_mai, DspMessage $mes, int $save_id, int $team_id): bool {
-            $rslt = self::del_tbl_all($db_mai, $mes, $save_id, $team_id);
+        public static function del_to_odb_all(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $rslt = self::del_tbl_all($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+            return true;
+        }
+
+        public static function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id, string $join_uid): bool {
+            $rslt = self::del_tbl($db_mai, $mes, $save_id, $join_uid);
             if (!$rslt || $mes->is_err()) {
                 return false;
             }
@@ -138,7 +147,7 @@
             int $id
         ): array {
             $get_heroes_SQL =<<<GET_HEROES01
-                SELECT 	id, save_id, team_id, uniq_id, 
+                SELECT 	id, save_id, uniq_id, join_uid, 
                         name, sex, age, goods, state, lv,  
                         skp_ttl, skp_now, exp_ttl, exp_now, nxe, 
                         abi_p_bsc, abi_m_bsc, is_alive 
@@ -167,27 +176,27 @@ GET_HEROES01;
         }
 
 
-        // DB処理。save_idとteam_idで指定されたheroレコードセット(複数)を読み込み
+        // DB処理。save_idとjoin_uidで指定されたheroレコードセット(複数)を読み込み
         // Heroクラスの配列にセットする
         // 
         protected static function get_from_tbl_all(
             PDO $db_mai, 
             DspMessage $mes, 
             int $save_id,
-            int $team_id
+            string $join_uid
         ): array {
             $get_heroes_SQL =<<<GET_HEROES01
-                SELECT 	id, save_id, team_id, uniq_id, 
+                SELECT 	id, save_id, uniq_id, join_uid, 
                         name, sex, age, goods, state, lv,  
                         skp_ttl, skp_now, exp_ttl, exp_now, nxe, 
                         abi_p_bsc, abi_m_bsc, is_alive 
                 FROM    tbl_hero
-                WHERE   save_id = :save_id AND team_id = :team_id
+                WHERE   save_id = :save_id AND join_uid = :join_uid
 GET_HEROES01;
             try {
                 $get_heroes_stmt = $db_mai->prepare($get_heroes_SQL);
                 $get_heroes_stmt->bindValue(':save_id',  $save_id);
-                $get_heroes_stmt->bindValue(':team_id',  $team_id);
+                $get_heroes_stmt->bindValue(':join_uid', $join_uid);
                 $get_heroes_stmt->execute();
                 $resultRecordSet = $get_heroes_stmt->fetchAll();
             } catch (PDOException $e) {
@@ -213,21 +222,21 @@ GET_HEROES01;
         // そのID(id)を返す
         // 
         protected function add_tbl(
-            PDO $db_mai, 
+            PDO        $db_mai, 
             DspMessage $mes, 
-            int $save_id,
-            int $team_id
+            int        $save_id,
+            string     $join_uid
         ): array {
 
             $insert_hero_SQL =<<<INSERT_HERO01
             INSERT INTO tbl_hero (
-                save_id, team_id, uniq_id, 
+                save_id, uniq_id, join_uid, 
                 name, sex, age, goods, state, lv, 
                 skp_ttl, skp_now, exp_ttl, exp_now, nxe,
                 abi_p_bsc, abi_m_bsc, is_alive 
             )
             VALUES ( 
-                :save_id, :team_id, :uniq_id, 
+                :save_id, :uniq_id, :join_uid, 
                 :name, :sex, :age, :goods, :state, :lv, 
                 :skp_ttl, :skp_now, :exp_ttl, :exp_now, :nxe,
                 :abi_p_bsc, :abi_m_bsc, :is_alive 
@@ -237,7 +246,7 @@ INSERT_HERO01;
                 if ($this->is_alive) $is_alive = '1'; else $is_alive = '0';
                 $insert_hero_stmt = $db_mai->prepare($insert_hero_SQL);
                 $insert_hero_stmt->bindValue(':save_id',   $save_id); 
-                $insert_hero_stmt->bindValue(':team_id',   $team_id); 
+                $insert_hero_stmt->bindValue(':join_uid',  $join_uid); 
                 $insert_hero_stmt->bindValue(':uniq_id',   $this->uniq_id); 
                 $insert_hero_stmt->bindValue(':name',      $this->name);
                 $insert_hero_stmt->bindValue(':sex',       $this->sex);
@@ -310,12 +319,34 @@ DELETE_HERO01;
             } 
             return true;
         }
-                        
+
+                // DB処理。save_idとjoin_uidで指定されたレコード(複数)を削除(delete)する
+        // 
+        public static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id, string $join_uid): bool {
+            $delete_hero_SQL =<<<DELETE_HERO02
+                DELETE FROM tbl_hero 
+                WHERE  save_id = :save_id  AND  join_uid = :join_uid
+DELETE_HERO02;
+            try {
+                $delete_hero_stmt = $db_mai->prepare($delete_hero_SQL);
+                $delete_hero_stmt->bindValue(':save_id',  $save_id);
+                $delete_hero_stmt->bindValue(':join_uid', $join_uid);
+                $delete_hero_stmt->execute();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 17: {$delete_hero_SQL}");
+                return false;
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 18: {$delete_hero_SQL}");
+                return false;
+            } 
+            return true;
+        }
+
+
         public function encode(): array {
             $a = [];
             $a['id']        = $this->id;
             $a['save_id']   = $this->save_id;
-            $a['team_id']   = $this->team_id;
             $a['uniq_id']   = $this->uniq_id;
             $a['name']      = $this->name;
             if ($this->is_alive) $a['is_alive'] = '1'; else $a['is_alive'] = '0';
@@ -342,11 +373,11 @@ DELETE_HERO01;
                 if (array_key_exists('save_id', $a) && is_numeric($a['save_id'])) {
                     $this->save_id = intval($a['save_id']);
                 }
-                if (array_key_exists('team_id', $a) && is_numeric($a['team_id'])) {
-                    $this->team_id = intval($a['team_id']);
-                }
                 if (array_key_exists('uniq_id', $a) && is_string($a['uniq_id'])) {
                     $this->uniq_id = $a['uniq_id'];
+                }
+                if (array_key_exists('join_uid', $a) && is_string($a['join_uid'])) {
+                    $this->join_uid = $a['join_uid'];
                 }
                 if (array_key_exists('name', $a) && is_string($a['name'])) {
                     $this->name    = $a['name'];
