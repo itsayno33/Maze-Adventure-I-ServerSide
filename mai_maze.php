@@ -353,8 +353,8 @@ function new_team(): Team {
     </footer>
     <script>
         window.tsCall.start_game(
-            <?php echo $ga->mode; ?>, 
-            <?php echo $gv->cgi_base; ?>, 
+            '<?php echo $ga->mode; ?>', 
+            '<?php echo $gv->script_path; ?>', 
             <?php echo $ga->pid; ?>, 
             <?php echo $ga->uno; ?>, 
         );

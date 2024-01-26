@@ -347,8 +347,8 @@ function new_team(): Team {
     <script>
 //        window.tsCall.get_init_data('<?php echo $gv->cgi_base; ?>', <?php echo $ga->pid; ?>);
         window.tsCall.start_game(
-            <?php echo $ga->mode; ?>, 
-            <?php echo $gv->cgi_base; ?>, 
+            '<?php echo $ga->mode; ?>', 
+            '<?php echo $gv->script_path; ?>', 
             <?php echo $ga->pid; ?>, 
             <?php echo $ga->uno; ?>, 
         );
