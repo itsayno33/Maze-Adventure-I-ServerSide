@@ -50,6 +50,12 @@
         case 'instant_save':
             $ret_JSON = auto_save($gv->db_mai, 102, '__InstantSaveData__', 210);
             break;
+        case 'before_load':
+            $ret_JSON = auto_load($gv->db_mai, 103, '__BeforeTheEventData__', 380);
+            break;
+        case 'before_save':
+            $ret_JSON = auto_save($gv->db_mai, 103, '__BeforeTheEventData__', 280);
+            break;
         case 'load':
             $ret_JSON = manual_load($gv->db_mai, 30);
             break;
