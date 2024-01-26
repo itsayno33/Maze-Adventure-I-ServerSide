@@ -34,11 +34,11 @@
 /*******************************************************************************/
 
     init();
-    $ga->mode = 'new'; // 暫定
+//    $ga->mode = 'new'; // 暫定
     switch ($ga->mode) {
         case 'new':
-            $gv->maze->create_maze(0);
-            $gv->team = new_team();
+//            $gv->maze->create_maze(0);
+//            $gv->team = new_team();
             break;
         default:
             break;
@@ -163,7 +163,7 @@ function new_team(): Team {
                 if ( array_key_exists('mode', $_POST) &&  $_POST['mode'] != '') {
                     $this->mode     = $_POST['mode'];
                 } else {
-                    $this->mode     = 'new_maze';
+                    $this->mode     = 'new';
                 } 
             }
             if ( array_key_exists('pid', $_GET) && is_numeric($_GET['pid'])) {

@@ -35,7 +35,7 @@
 
     init();
     switch ($ga->mode) {
-        case 'view':
+        case 'new':
             break;
         default:
             break;
@@ -142,7 +142,7 @@ function new_team(): Team {
                 if ( array_key_exists('mode', $_POST) &&  $_POST['mode'] != '') {
                     $this->mode     = $_POST['mode'];
                 } else {
-                    $this->mode     = 'new_guld';
+                    $this->mode     = 'new';
                 } 
             }
             if ( array_key_exists('pid', $_GET) && is_numeric($_GET['pid'])) {

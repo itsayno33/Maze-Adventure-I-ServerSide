@@ -153,7 +153,7 @@
                 return false;
             }
 
-            $rslt = $this->del_tbl($db_mai, $mes, $save_id);
+            $rslt = SaveData::del_tbl($db_mai, $mes, $save_id);
             if (!$rslt || $mes->is_err()) {
                 return false;
             }
@@ -207,7 +207,7 @@ GET_SAVE_INFO01;
 
         // DB処理。ユニーク・ナンバーからsave_idを得る。該当するレコードが無ければ戻り値でfalseを返す
         // 
-        public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): bool {
+        public function get_save_id_at_tbl(PDO $db_mai, DspMessage $mes): array {
             $seek_save_SQL =<<<SEEK_SAVE01
             SELECT save_id, player_id, uniq_no, title, detail, point, myurl, 
                    auto_mode, is_active, is_delete, 
@@ -225,17 +225,17 @@ SEEK_SAVE01;
                 $resultRecordSet = $seek_save_stmt->fetchAll();
             } catch (PDOException $e) {
                 $mes->pdo_error($e, "SQLエラー 20: {$seek_save_SQL}");
-                return false;
+                return [false, -1];
             } catch (Throwable $ee) {
                 $mes->pdo_error($ee, "SQLの致命的エラー 21: {$seek_save_SQL}");
-                return false;
+                return [false, -1];
             } 
             if (count($resultRecordSet) < 1) {
-                return false;
+                return [false, -1];
             }
 
-            $this->decode($resultRecordSet[0]);
-            return true;
+//            $this->decode($resultRecordSet[0]);
+            return [true, $resultRecordSet[0]];
         }
 
         // DB処理。save_idで指定されたsaveレコード(単数)を読み込み
