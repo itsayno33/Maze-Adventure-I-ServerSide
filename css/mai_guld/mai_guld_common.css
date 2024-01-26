@@ -109,6 +109,14 @@ ul#load_list,
 ul#save_list {
     color:            chocolate;
     background-color: cornsilk;
+
+    font-size:   var(--list_font,  1.0rem);
+    line-height: var(--list_heght, 1.2rem);
+}
+
+fieldset#hres_hero_fields{
+    font-size:   var(--detail_font,  0.9rem);
+    line-height: var(--detait_heght, 1.1rem);
 }
 
 button#debug_mode {
@@ -164,7 +172,7 @@ div#ctl_panel {
         var(--ud_arrow_height,  2.3rem)
         [d_arrow-end y_btn-start n_btn-start]
         var(--ud_arrow_height,  2.3rem)
-        [y_btn-end n_btn-end c_btn-start]
+        [y_btn-end n_btn-end c_btn-start] 
         var(--camp_btn_height,  2.3rem)
         [c_btn-end]
         ;
