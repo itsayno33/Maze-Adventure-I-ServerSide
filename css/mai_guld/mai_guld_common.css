@@ -291,6 +291,15 @@ ul#appd_hero_info {
     grid: var(--hero_info_grid_template, none);
 }
 
+#hres_hero_info {
+    list-style:   none;
+    padding-left: 0px;
+    text-align:   center;
+}
+#hres_hero_info li {
+    border: 2px dotted var(--hero_info_border_color, rgb(165, 255, 225));
+}
+
 #_hr_name  { grid-area: _hr_name;  }
 #_hr_lv    { grid-area: _hr_lv;    }
 #_hr_exp   { grid-area: _hr_exp;   }
