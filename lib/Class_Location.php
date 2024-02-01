@@ -20,6 +20,10 @@
     }
 
     class Location {
+        protected string  $uniq_id;
+        protected string  $cur_url;
+        protected string  $team_uid;
+
         protected string  $loc_kind;
         protected string  $loc_uid;
         protected string  $loc_name;
@@ -29,6 +33,10 @@
         protected int $d;
         public function __construct(array $a = null)
         {
+            $this->uniq_id  = Rand::uniq_id('MvLocatin#');;
+            $this->cur_url  = '';
+            $this->team_uid = '';
+
             $this->loc_kind = '';
             $this->loc_uid  = '';
             $this->loc_name = '';
@@ -104,16 +112,20 @@
 
         public function encode(): array {
             $a = [];
-            $a['kind'] = $this->loc_kind;
-            $a['name'] = $this->loc_name;
-            $a['uid']  = $this->loc_uid;
+            $a['uniq_id']  = $this->uniq_id;
+            $a['cur_url']  = $this->cur_url;
+            $a['team_uid'] = $this->team_uid;
+
+            $a['kind']     = $this->loc_kind;
+            $a['name']     = $this->loc_name;
+            $a['loc_uid']  = $this->loc_uid;
 
             $b = [];
-            $b['x']    = $this->x;
-            $b['y']    = $this->y;
-            $b['z']    = $this->z;
-            $b['d']    = $this->d;
-            $a['loc']  = $b;
+            $b['x']        = $this->x;
+            $b['y']        = $this->y;
+            $b['z']        = $this->z;
+            $b['d']        = $this->d;
+            $a['loc_pos']  = $b;
 
             return $a;
         }
@@ -121,17 +133,27 @@
             if (is_null($a)) return $this;
             if (is_string($a)) $a = self::from_JSON_to_array($a);
 
+            if (array_key_exists('uniq_id', $a) && is_string($a['uniq_id'])) {
+                $this->uniq_id  = $a['uniq_id'];
+            }
+            if (array_key_exists('cur_url', $a) && is_string($a['cur_url'])) {
+                $this->cur_url  = $a['cur_url'];
+            }
+            if (array_key_exists('team_uid', $a) && is_string($a['team_uid'])) {
+                $this->team_uid = $a['team_uid'];
+            }
+
             if (array_key_exists('kind', $a) && is_string($a['kind'])) {
                 $this->loc_kind = $a['kind'];
             }
-            if (array_key_exists('uid', $a)  && is_string($a['uid'])) {
-                $this->loc_uid  = $a['uid'];
+            if (array_key_exists('loc_uid', $a)  && is_string($a['loc_uid'])) {
+                $this->loc_uid  = $a['loc_uid'];
             }
             if (array_key_exists('name', $a)  && is_string($a['name'])) {
                 $this->loc_name = $a['name'];
             }
-            if (array_key_exists('loc', $a)  && is_array($a['loc'])) {
-                $b = $a['loc'];
+            if (array_key_exists('loc_pos', $a)  && is_array($a['loc_pos'])) {
+                $b = $a['loc_pos'];
                 if (
                     array_key_exists('x', $b) && (is_numeric($b['x']) && $b['x'] >  0)
                 &&  array_key_exists('y', $b) && (is_numeric($b['y']) && $b['y'] >  0)
@@ -151,6 +173,24 @@
                 }
             }
             return $this;
+        }
+        public static function encode_all(array $a): array {
+            $all_loc_data = [];
+            if (!is_null($a) && is_array($a)) {
+                foreach ($a as $loc) {
+                    array_push($all_loc_data, $loc->encode());
+                }
+            }
+            return $all_loc_data;
+        }
+        public static function decode_all(array $a): array {
+            $all_loc = [];
+            if (!is_null($a) && is_array($a)) {
+                foreach ($a as $loc_data) {
+                    array_push($all_loc, (new Location())->decode($loc_data));
+                }
+            }
+            return $all_loc;
         }
     }
 ?>
