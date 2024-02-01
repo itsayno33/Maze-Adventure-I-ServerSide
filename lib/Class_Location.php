@@ -60,6 +60,18 @@
             return $this;
         }        
 
+        public function get_tid(): string {
+            return $this->team_uid;
+        }
+        public function set_tid(string $tid): void {
+            $this->team_uid = $tid;
+        }
+        public function get_url(): string {
+            return $this->cur_url;
+        }
+        public function set_url(string $url): void {
+            $this->cur_url  = $url;
+        }
         public function get_uid(): string {
             return $this->loc_uid;
         }
@@ -146,18 +158,18 @@
             if (array_key_exists('kind', $a) && is_string($a['kind'])) {
                 $this->loc_kind = $a['kind'];
             }
-            if (array_key_exists('loc_uid', $a)  && is_string($a['loc_uid'])) {
-                $this->loc_uid  = $a['loc_uid'];
-            }
             if (array_key_exists('name', $a)  && is_string($a['name'])) {
                 $this->loc_name = $a['name'];
+            }
+            if (array_key_exists('loc_uid', $a)  && is_string($a['loc_uid'])) {
+                $this->loc_uid  = $a['loc_uid'];
             }
             if (array_key_exists('loc_pos', $a)  && is_array($a['loc_pos'])) {
                 $b = $a['loc_pos'];
                 if (
-                    array_key_exists('x', $b) && (is_numeric($b['x']) && $b['x'] >  0)
-                &&  array_key_exists('y', $b) && (is_numeric($b['y']) && $b['y'] >  0)
-                &&  array_key_exists('z', $b) && (is_numeric($b['z']) && $b['z'] >= 0)
+                    array_key_exists('x', $b) && is_numeric($b['x']) && $b['x'] >  0
+                &&  array_key_exists('y', $b) && is_numeric($b['y']) && $b['y'] >  0
+                &&  array_key_exists('z', $b) && is_numeric($b['z']) && $b['z'] >= 0
                 ) {
                     $this->x = $b['x'];
                     $this->y = $b['y'];
@@ -165,7 +177,7 @@
                 }
                 if (
                     array_key_exists('d', $b) 
-                    && (is_numeric($b['d'])) 
+                    && is_numeric($b['d']) 
                     && $b['d']  >=  0 
                     && $b['d']  <=  3
                 ) {

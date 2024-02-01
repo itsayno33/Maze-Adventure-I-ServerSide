@@ -29,7 +29,7 @@
         public bool     $is_delete;
         public DateTime $save_time;
 
-        public Location $location; // 保存時の現在地
+        public Location $mypos;    // 保存時の現在地
 
         public array    $all_mvpt; // その時点で挑戦した迷宮一式 Maze[]
         public array    $all_maze; // その時点で挑戦した迷宮一式 Maze[]
@@ -48,7 +48,7 @@
             $this->is_delete = false;
             $this->save_time = new DateTime('now');
 
-            $this->location  = new Location();
+            $this->mypos     = new Location();
 
             $this->all_mvpt  = [];
             $this->all_maze  = [];
@@ -169,7 +169,7 @@
             $get_save_SQL =<<<GET_SAVE_INFO01
                 SELECT save_id, player_id, uniq_no, title, detail, point, 
                        auto_mode, is_active, is_delete, 
-                       locate, all_mvpt, 
+                       mypos, all_mvpt, 
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
                 WHERE  player_id = :player_id 
@@ -209,7 +209,7 @@ GET_SAVE_INFO01;
             $seek_save_SQL =<<<SEEK_SAVE01
             SELECT save_id, player_id, uniq_no, title, detail, point, 
                    auto_mode, is_active, is_delete, 
-                   locate, all_mvpt, 
+                   mypos, all_mvpt, 
                    DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
             FROM   tbl_save
             WHERE  player_id = :player_id AND uniq_no = :uniq_no
@@ -244,7 +244,7 @@ SEEK_SAVE01;
             $get_save_SQL =<<<GET_SAVE01
                 SELECT save_id, player_id, uniq_no, title, detail, point, 
                        auto_mode, is_active, is_delete, 
-                       locate, all_mvpt, 
+                       mypos, all_mvpt, 
                        DATE_FORMAT(save_time,'%Y-%m-%dT%H:%i:%s.%fZ') AS save_time
                 FROM   tbl_save
                 WHERE  save_id = :save_id
@@ -281,12 +281,12 @@ GET_SAVE01;
             $insert_save_SQL =<<<NEW_SAVE01
                 INSERT  INTO tbl_save (
                         player_id, uniq_no,   title, detail, point, 
-                        locate, all_mvpt, 
+                        mypos, all_mvpt, 
                         auto_mode, is_active, is_delete
                     )
                 VALUES ( 
                         :player_id, :uniq_no,   :title, :detail, :point, 
-                        :locate, :all_mvpt, 
+                        :mypos, :all_mvpt, 
                         :auto_mode, :is_active, :is_delete)
 NEW_SAVE01;
             try {
@@ -296,7 +296,7 @@ NEW_SAVE01;
                 $insert_save_stmt->bindValue(':title',     $this->title);
                 $insert_save_stmt->bindValue(':detail',    $this->detail);
                 $insert_save_stmt->bindValue(':point',     $this->point);
-                $insert_save_stmt->bindValue(':locate',    $this->location->to_JSON());
+                $insert_save_stmt->bindValue(':mypos',     $this->mypos->to_JSON());
                 $insert_save_stmt->bindValue(':all_mvpt',  Location::from_array_to_JSON($this->all_mvpt));
                 $insert_save_stmt->bindValue(':auto_mode', $auto_mode);
                 $insert_save_stmt->bindValue(':is_active', $is_active);
@@ -349,7 +349,7 @@ NEW_SAVE01;
 
             $a['save_time']  = $this->save_time->format('Y-m-d H:i:s:u');
 
-            $a['locate']     = $this->location->encode();
+            $a['mypos']      = $this->mypos->encode();
 
             $a['all_mvpt']  = Location ::encode_all($this->all_mvpt);
             $a['all_maze']  = Maze ::encode_all($this->all_maze);
@@ -392,11 +392,11 @@ NEW_SAVE01;
                 $this->save_time = date_create($a['save_time'], new DateTimeZone('Asia/Tokyo')); 
             }
 
-            if (array_key_exists('locate', $a)) {
-                if (is_string($a['locate'])) {
-                    $this->location->from_JSON($a['locate']);
+            if (array_key_exists('mypos', $a)) {
+                if (is_string($a['mypos'])) {
+                    $this->mypos->from_JSON($a['mypos']);
                 } else {
-                    $this->location->decode($a['locate']);
+                    $this->mypos->decode($a['mypos']);
                 }
             }
 

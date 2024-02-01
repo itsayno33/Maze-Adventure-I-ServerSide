@@ -123,6 +123,8 @@
             return $this->loc;
         }
         public function set_loc(Location $loc): void {
+            $loc->set_tid($this->uniq_id);
+
             $this->loc = $loc;
             $this->set_pos($loc->get_pos());
             $this->set_dir($loc->get_dir());

@@ -179,12 +179,12 @@ function new_save(Guild $guld, Team $team): SaveData {
         'is_active' => '1',
         'is_delete' => '0',
 
+        'all_mvpt'  => [],
         'all_maze'  => [],
         'all_guld'  => [$guld->encode()], 
         'all_team'  => [$team->encode()],
 
-        'team_uid'  => $team->uid(), 
-        'location'  => $team->get_loc()->encode(), 
+        'mypos'     => $team->get_loc()->encode(), 
     ]);
 }
 
@@ -205,14 +205,14 @@ function new_team(Guild $guld): Team {
 
     $loc  = new Location();
     $loc->decode([
-        'kind' => 'Guld',
-        'name' => $guld->get_name(),
-        'uid'  => $guld->uid(),
-        'loc'  => [
-            'x'    => 0,
-            'y'    => 0,
-            'z'    => 0,
-            'd'    => 0,
+        'kind'    => 'Guld',
+        'name'    => $guld->get_name(),
+        'loc_uid' => $guld->uid(),
+        'loc_pos' => [
+            'x'   => 0,
+            'y'   => 0,
+            'z'   => 0,
+            'd'   => 0,
         ],
     ]);
 

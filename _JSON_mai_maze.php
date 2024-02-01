@@ -148,11 +148,12 @@ function new_save(Maze $maze, Team $team): SaveData {
         'is_active' => '1',
         'is_delete' => '0',
 
+        'all_mvpt'  => [], 
         'all_maze'  => [$maze->encode()],
         'all_guld'  => [], 
         'all_team'  => [$team->encode()],
 
-        'team_uid'  => $team->uid(), 
+        'mypos'     => $team->get_loc()->encode(),
     ]);
 }
 
@@ -201,14 +202,14 @@ function create_team(Maze $maze): Team {
 
     $loc  = new Location();
     $loc->decode([
-        'kind' => 'Maze',
-        'name' => $maze->get_name(),
-        'uid'  => $maze->uid(),
-        'loc'  => [
-            'x'    => $x,
-            'y'    => $y,
-            'z'    => $z,
-            'd'    => $d,
+        'kind'    => 'Maze',
+        'name'    => $maze->get_name(),
+        'loc_uid' => $maze->uid(),
+        'loc_pos' => [
+            'x'   => $x,
+            'y'   => $y,
+            'z'   => $z,
+            'd'   => $d,
         ],
     ]);
 
