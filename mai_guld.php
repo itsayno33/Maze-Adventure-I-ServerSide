@@ -230,6 +230,7 @@ function new_team(): Team {
         <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
         <div id='gld_view_message_div'>
             <button id='r_cp1' name='r_cp1' value='R'>ギルド窓口に戻る</button>
+            <button id='s_cp1' name='s_cp1' value='S'>リスト切替</button>
             <p id='gld_view_message'></p>
         </div>
         <div id='gld_view_switch'>

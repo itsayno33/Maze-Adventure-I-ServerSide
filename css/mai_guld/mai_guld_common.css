@@ -125,6 +125,9 @@ button#debug_mode {
 p#gld_view_message {
     clear: left;
 }
+button#s_cp1 {
+    float: right;
+}
 button#r_cp1 {
     float: right;
 }
