@@ -106,7 +106,10 @@ ul#guld_list,
 ul#appd_list,
 ul#menu_list,
 ul#load_list, 
-ul#save_list {
+ul#save_list,
+ul#maze_list,
+ul#mvpt_list
+{
     color:            chocolate;
     background-color: cornsilk;
 
@@ -279,8 +282,14 @@ ul#menu_list,
 ul#edit_list,
 ul#appd_list,
 ul#load_list, 
-ul#save_list {
+ul#save_list
+{
     column-count: var(--hres_list_count, 4); 
+}
+ul#maze_list,
+ul#mvpt_list
+{
+    column-count: var(--maze_list_count, 1); 
 }
 
 ul#hres_hero_info,
