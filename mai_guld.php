@@ -238,7 +238,7 @@ function new_team(): Team {
                 <h2>冒険者ギルド窓口</h2>
                 <ul id='guld_menu_list'>
                     <li id='guld_hres'>冒険者情報
-                        <p>　冒険者情報を見ることができます(実装中)</p></li>
+                        <p>　冒険者情報を見ることができます</p></li>
                     <!-- li id='guld_edit'>冒険者編集
                         <p>　既存キャラクターを編集出来ます(デバッグモードのみ)(未実装)</p></li -->
                     <!-- li id='guld_appd'>冒険者募集
@@ -248,7 +248,7 @@ function new_team(): Team {
                     <li id='guld_save'>冒険の記録
                         <p>　冒険情報をセーブできます</p></li>
                     <li id='guld_tomz'>冒険出発
-                        <p>　ダンジョンに出発します(未実装)</p></li>
+                        <p>　ダンジョンに出発します</p></li>
                 </dl>
             </div>
             <div id='gld_view_switch_hres'>
