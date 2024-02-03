@@ -23,6 +23,7 @@
 
     // MAZE関係クラス全般
     require_once './lib/Class_Maze.php';
+    require_once './lib/Class_MazeInfo.php'; // Maze作成のテンプレート情報
 
     // パーティークラス全般
     require_once './lib/Class_Team.php';
@@ -43,6 +44,14 @@
 
     $ret_JSON = '';
     switch ($ga->mode) {
+        case 'maze_info':
+            $maze_info_array = [];
+            foreach ($gv->mazeinfo as $name => $info) array_push($maze_info_array, $info->encode());
+            $ret_JSON = all_encode(
+                0, 
+                ['mazeinfo' => $maze_info_array],
+            );
+            break;
         case 'new_maze':
             $new_maze = create_maze(); 
             $ret_JSON = all_encode(
@@ -233,7 +242,7 @@ function create_team(Maze $maze): Team {
 
     function init(): void {
         global $gv,$ga;
-    
+
         return;
     }
 
@@ -254,6 +263,7 @@ function create_team(Maze $maze): Team {
         public string $icon_home;
 
         public PDO    $db_mai;
+        public array  $mazeinfo = [];
 
         public const  Maze_size_x = 21;
         public const  Maze_size_y = 21;
@@ -277,14 +287,16 @@ function create_team(Maze $maze): Team {
             $this->cgi_home    = dirname ($this->cgi_base);
             $this->icon_home   = "{$this->cgi_home}/icon-img/kkrn_icon_home_3.png";
 
-//            $this->db_mai      = PDO_db_open($db_host, 'db_mai'); 
+            $this->db_mai      = PDO_db_open($db_host, 'db_mai'); 
+           [$rslt, $mazeinfo]  = MazeInfo::get_tbl_all($this->db_mai, $this->mes);
+            if ($rslt) $this->mazeinfo = $mazeinfo; 
 
             $this->maze        = new Maze([
                 'fill_kind'    => MzKind::Empty,
                 'size_x'       => GlobalVar::Maze_size_x,
                 'size_y'       => GlobalVar::Maze_size_y,
                 'size_z'       => GlobalVar::Max_of_Maze_Floor, 
-                'limit_room'   => GlobalVar::Limit_of_room,
+                'max_room'     => GlobalVar::Limit_of_room,
                 'room_size'    => GlobalVar::Max_size_of_room,
             ]);
             $this->team        =  new Team(['name' => 'New Team', 'x'=>1, 'y'=>1, 'z'=>1, 'd'=>Direct::N]);
@@ -299,6 +311,7 @@ function create_team(Maze $maze): Team {
         public string $team_JSON   = '';
 
         public int    $pid         =  1;
+        public string $maze_name   = '';
 
         public function __construct() {
             global $gv;
@@ -327,8 +340,86 @@ function create_team(Maze $maze): Team {
             if ( array_key_exists('team', $_POST) &&  $_POST['team'] != '') {
                 $this->team_JSON    = $_POST['team'];
             } 
+            if ( array_key_exists('maze_name', $_POST) &&  $_POST['maze_name'] != '') {
+                $this->maze_name    = $_POST['maze_name'];
+            } 
         }
     }
+
+    ///////////////////////////////////////////////
+///   データベース関係 
+///////////////////////////////////////////////   
+
+
+function tr_begin(PDO $db_mai): bool {
+    global $gv;
+    try {
+        $db_mai->beginTransaction();
+    } catch (PDOException $e) {
+        $gv->mes->pdo_error($e, "トランザクションの開始失敗");
+        return false;
+    } catch (Throwable $ee) {
+        $gv->mes->pdo_error($ee, "トランザクション開始の致命的失敗");
+        return false;
+    } 
+    return true;
+}
+
+function tr_commit(PDO $db_mai): bool {
+    global $gv;
+    try {
+        $db_mai->commit();
+    } catch (PDOException $e) {
+        $gv->mes->pdo_error($e, "トランザクションのコミット失敗");
+        return false;
+    } catch (Throwable $ee) {
+        $gv->mes->pdo_error($ee, "トランザクション・コミットの致命的失敗");
+        return false;
+    } 
+    return true;
+}
+
+function tr_rollback(PDO $db_mai): bool {
+    global $gv;
+    try {
+        $db_mai->rollback();
+    } catch (PDOException $e) {
+        $gv->mes->pdo_error($e, "トランザクションのロールバック失敗");
+        return false;
+    } catch (Throwable $ee) {
+        $gv->mes->pdo_error($ee, "トランザクション・ロールバックの致命的失敗");
+        return false;
+    } 
+    return true;
+}
+
+
+
+function PDO_db_open(string $db_host, string $db_name): PDO {
+
+    // データベース関連定数
+    $db_user    = "namwons33";
+    $db_passwd  = "PE333833";
+    $db_options =  array(
+        // SQL実行失敗時には例外をスローしてくれる
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        // カラム名をキーとする連想配列で取得する．これが一番ポピュラーな設定
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        // ページ終了時に終わらない持続的な接続を使う 
+        // PDO::ATTR_PERSISTENT => true,
+        // バッファードクエリを使う(一度に結果セットをすべて取得し、サーバー負荷を軽減)
+        // SELECTで得た結果に対してもrowCountメソッドを使えるようにする
+        // PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+    );
+
+    $dsn = "mysql:dbname={$db_name};host={$db_host};charset=utf8mb4";
+    try {
+        $dbh = new PDO($dsn,$db_user,$db_passwd,$db_options);
+    } catch (PDOException $e) {
+        pdo_error1($e, "データベース接続エラー: {$dsn}");
+    }
+    return $dbh;
+}
 
     function free(): void{
         global $gv, $ga;

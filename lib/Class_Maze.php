@@ -94,7 +94,7 @@
         protected int    $size_x;  /* 外壁も含めたセルの数(横) */ 
         protected int    $size_y;  /* 外壁も含めたセルの数(縦) */
         protected int    $size_z;  /* Mazeの階層の数 */
-        protected int    $limit_of_room; /* ランダム生成の際の部屋の数の最大数 */
+        protected int    $num_of_room; /* ランダム生成の際の部屋の数の最大数 */
         protected int    $max_size_of_room; /* ランダム生成の際の部屋の大きさ */
         protected array  $cells;
         protected array  $masks;
@@ -118,7 +118,7 @@
             $this->size_x           = Maze::Max_x;
             $this->size_y           = Maze::Max_y;
             $this->size_z           = Maze::Max_z;
-            $this->limit_of_room    = Maze::Limit_of_room;
+            $this->num_of_room      = Maze::Limit_of_room;
             $this->max_size_of_room = Maze::Max_size_of_room;
 
             $this->cells = [];
@@ -156,7 +156,10 @@
                     $this->size_z     = $pp['size_z'];
                 }
                 if(array_key_exists('limit_room', $pp) && is_numeric($pp['limit_room']) && $pp['limit_room'] > 0) {
-                    $this->limit_of_room = $pp['limit_room'];
+                    $this->num_of_room = $pp['limit_room'];
+                }
+                if(array_key_exists('max_room', $pp) && is_numeric($pp['max_room']) && $pp['max_room'] > 0) {
+                    $this->num_of_room = $pp['max_room'];
                 }
                 if(array_key_exists('room_size', $pp) && is_numeric($pp['room_size']) && $pp['room_size'] >= 3) {
                     $this->max_size_of_room = $pp['room_size'];
@@ -272,7 +275,7 @@
     
             // 乱数でいくつか部屋を作る
             $rooms_array = [];
-            $num_of_room = random_int(0, $this->limit_of_room);
+            $num_of_room = random_int(0, $this->num_of_room);
             for ($cnt = 0; $cnt < $num_of_room; $cnt++) {
                 $leng_x = random_int(1,  $this->max_size_of_room) * 2 + 1;
                 $leng_y = random_int(1,  $this->max_size_of_room) * 2 + 1;

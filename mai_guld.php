@@ -314,10 +314,13 @@ function new_team(): Team {
             </div>
             <div id='gld_view_switch_tomz'>
                 <h2>迷宮への挑戦</h2>
-                <ul id='tomz_list'></ul>
-                <fieldset id='tomz_info_fields'>
-                    <legend>迷宮への入り口</legend>
-                    <ul id='tomz_info_detail'></ul>
+                <fieldset id='tomz_maze_fields'>
+                    <legend>新たな迷宮への入り口</legend>
+                    <ul id='maze_list'></ul>
+                </fieldset>
+                <fieldset id='tomz_mvpt_fields'>
+                    <legend>攻略中の迷宮に戻る</legend>
+                    <ul id='mvpt_list'></ul>
                 </fieldset>
             </div>
         </div>

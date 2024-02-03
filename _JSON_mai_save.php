@@ -43,31 +43,31 @@
             $ret_JSON = _load($gv->db_mai, $ga->pid, 100, 330);
             break;
         case 'tmp_save':
-            $ret_JSON = auto_save($gv->db_mai, 100, '__TemporarySaveData__', 230);
+            $ret_JSON = _save($gv->db_mai, 100, '__TemporarySaveData__', 230);
             break;
         case 'instant_load':
             $ret_JSON = _load($gv->db_mai, $ga->pid, 101, 310);
             break;
         case 'instant_save':
-            $ret_JSON = auto_save($gv->db_mai, 101, '__InstantSaveData__', 210);
+            $ret_JSON = _save($gv->db_mai, 101, '__InstantSaveData__', 210);
             break;
         case 'UD_load':
             $ret_JSON = _load($gv->db_mai, $ga->pid, 102, 350);
             break;
         case 'UD_save':
-            $ret_JSON = auto_save($gv->db_mai, 102, '__UpDownSaveData__', 250);
+            $ret_JSON = _save($gv->db_mai, 102, '__UpDownSaveData__', 250);
             break;
         case 'before_load':
             $ret_JSON = _load($gv->db_mai, $ga->pid, 103, 380);
             break;
         case 'before_save':
-            $ret_JSON = auto_save($gv->db_mai, 103, '__BeforeTheEventData__', 280);
+            $ret_JSON = _save($gv->db_mai, 103, '__BeforeTheEventData__', 280);
             break;
         case 'load':
             $ret_JSON = _load($gv->db_mai, $ga->pid, $ga->uno, 30);
             break;
         case 'save':
-            $ret_JSON = manual_save($gv->db_mai, 230);
+            $ret_JSON = _save($gv->db_mai, $ga->save->uniq_no, $ga->save->title, 230);
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
@@ -110,8 +110,7 @@ function _load(PDO $db_mai, int $pid, int $uno, int $ecode): string {
 
 }
 
-/*
-function _auto_load(PDO $db_mai, int $uniq_no, string $title, int $ecode): string {
+function _save(PDO $db_mai, int $uniq_no, string $title, int $ecode): string {
     global $gv, $ga;
 
     $save = $ga->save;
@@ -121,52 +120,30 @@ function _auto_load(PDO $db_mai, int $uniq_no, string $title, int $ecode): strin
     tr_begin($db_mai);
 
     // ユニーク・ナンバーでsaveデータを探す。見つかれば$save_dataにセットする
-    [$result, $save_data] = $save->get_save_id_at_tbl($db_mai, $gv->mes);
-    if (!$result) {
+    [$rslt, $save_data] = $save->get_save_id_at_tbl($db_mai, $gv->mes);
+    if ($gv->mes->is_err()) {
         tr_rollback($db_mai);
-        return all_encode($ecode, $save);;
+        return all_encode($ecode + 10, $save);
     }
-    if (is_array($save_data)) $save->decode($save_data);
-
-    // mezeやteam等の関連するデータを反映する
-    $result = $save->get_from_odb($db_mai, $gv->mes);
-    if (!$result) {
-        tr_rollback($db_mai);
-        return all_encode($ecode, $save);;
+    // 同じユニーク・ナンバーの既存データが有るので一旦削除する
+    if ($rslt) {
+        $rslt = $save->del_to_odb($db_mai, $gv->mes, intval($save_data['save_id'])); 
+        if ($rslt === false) {
+            tr_rollback($db_mai);
+            return all_encode($ecode + 33, $save);
+        }
     }
-
-    tr_commit($db_mai);
-    return all_encode(0, $save);
-
-}
-
-function _manual_load(PDO $db_mai, int $ecode): string {
-    global $gv, $ga;
-
-    tr_begin($db_mai);
-
-    $save = $ga->save; 
-
-    // ユニーク・ナンバーでsave_idを探す。見つからなければエラー。見つかれば$save_dataにDB反映済み
-    [$result, $save_data] = $save->get_save_id_at_tbl($db_mai, $gv->mes);
-    if (!$result) {
+    // 改めて(別のレコードに)セーブする
+    $rslt = $save->set_to_odb($db_mai, $gv->mes, $save);
+    if ($rslt === false) {
         tr_rollback($db_mai);
-        return all_encode($ecode, $save);;
-    }
-    if (is_array($save_data)) $save->decode($save_data);
-
-    // mezeやteam等の関連するデータを反映する
-    $result = $save->get_from_odb($db_mai, $gv->mes);
-    if (!$result) {
-        tr_rollback($db_mai);
-        return all_encode($ecode + 20, $save);;
+        return all_encode($ecode + 23, $save);
     }
 
     tr_commit($db_mai);
     return all_encode(0, $save);
 }
-*/
-
+/*
 function auto_save(PDO $db_mai, int $uniq_no, string $title, int $ecode): string {
     global $gv, $ga;
 
@@ -231,7 +208,7 @@ function manual_save(PDO $db_mai, int $ecode): string {
     tr_commit($db_mai);
     return all_encode(0, $save);
 }
-
+*/
 function all_encode(int $code, SaveData $save): string {
     global $gv, $ga;
 
