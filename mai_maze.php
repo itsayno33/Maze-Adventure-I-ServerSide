@@ -261,8 +261,10 @@ function new_team(): Team {
                         <p>以前保存した冒険を再開できます</p></li>
                     <li id='camp_save'>冒険の記録
                         <p>直前までの冒険を保存できます</p></li>
-                    <li id='camp_hres'>冒険者の準備
-                        <p>冒険者の情報を見たり装備を替えたりできます(未実装)</p></li>
+                    <li id='camp_mvpt'>街への帰還
+                        <p>街(冒険者ギルド)へジャンプします</p></li>
+                    <!-- li id='camp_hres'>冒険者の準備
+                        <p>冒険者の情報を見たり装備を替えたりできます(未実装)</p></li -->
                 </dl>
             </div>
             <div id='Maze_view_switch_load'>
