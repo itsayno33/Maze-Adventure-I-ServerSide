@@ -151,7 +151,8 @@ function hres_encode(int $code, array $hres): string {
         foreach($hres as $hero) {
             array_push($hres_array, $hero->encode());
         }
-        $ret_assoc['hres'] = $hres_array;
+        $ret_data = ['hres' => $hres_array];
+        $ret_assoc['data'] = $ret_data;
     }
 
     $ret_JSON = json_encode(

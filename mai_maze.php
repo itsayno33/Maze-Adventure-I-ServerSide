@@ -152,7 +152,7 @@ function new_team(): Team {
     class GlobalArguments {
         public string $mode;
         public int    $pid = 1;
-        public int    $uno;
+        public string $opt = '';
 
         public function __construct() {
             global $gv;
@@ -175,13 +175,13 @@ function new_team(): Team {
                     $this->pid      = 1;
                 } 
             }
-            if ( array_key_exists('uno', $_GET) && is_numeric($_GET['uno'])) {
-                $this->uno          = intval($_GET ['uno']);
+            if ( array_key_exists('opt', $_GET) && is_string($_GET['opt'])) {
+                $this->opt          = $_GET ['opt'];
             } else {
-                if ( array_key_exists('uno', $_POST) &&  is_numeric($_POST['uno'])) {
-                    $this->uno      = intval($_POST['uno']);
+                if ( array_key_exists('opt', $_POST) &&  is_string($_POST['opt'])) {
+                    $this->opt      = $_POST['opt'];
                 } else {
-                    $this->uno      = -1;
+                    $this->opt      = '';
                 } 
             }
             $gv->mes->set_nor_message("MODE = [{$this->mode}]");
@@ -355,8 +355,8 @@ function new_team(): Team {
         window.tsCall.start_game(
             '<?php echo $ga->mode; ?>', 
             '<?php echo $gv->script_path; ?>', 
-            <?php echo $ga->pid; ?>, 
-            <?php echo $ga->uno; ?>, 
+             <?php echo $ga->pid; ?>, 
+            '<?php echo $ga->opt; ?>', 
         );
     </script>
 </body>

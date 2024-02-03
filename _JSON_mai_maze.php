@@ -53,16 +53,27 @@
             );
             break;
         case 'new_maze':
-            $new_maze = create_maze(); 
+/*
+            $new_maze = create_maze($ga->maze_name); 
+            $new_team = create_team($new_maze); 
+            $new_save = new_save($new_maze, $new_team);
+            $ret_JSON = save_encode(0, $new_save);
+*/
+            $new_maze = create_maze($ga->maze_name); 
             $ret_JSON = all_encode(
                 0, 
-                ['maze' => $new_maze->encode()],
+                [
+                    'maze' => $new_maze->encode(),
+                    'pos'  => create_pos($new_maze),
+                ],
             );
             break;
         case 'new_game':
-            $new_maze = create_maze(); 
-            $new_pos  = create_pos($new_maze); // 暫定
-            $new_hres = create_hres();         // 暫定
+            $new_maze = create_maze(''); 
+            $new_team = create_team($new_maze); 
+            $new_save = new_save($new_maze, $new_team);
+            $ret_JSON = save_encode(0, $new_save);
+/*
             $ret_JSON = all_encode(
                 0, 
                 [
@@ -70,6 +81,7 @@
                     'pos'  => $new_pos,
                     'hres' => $new_hres,
                 ]);
+*/
             break;
         default:
             $gv->mes->set_err_message('Unknwn Mode was requested.');
@@ -157,29 +169,64 @@ function new_save(Maze $maze, Team $team): SaveData {
         'is_active' => '1',
         'is_delete' => '0',
 
-        'all_mvpt'  => [], 
+        'all_team'  => [$team->encode()],
         'all_maze'  => [$maze->encode()],
         'all_guld'  => [], 
-        'all_team'  => [$team->encode()],
+        'all_mvpt'  => [], 
 
         'mypos'     => $team->get_loc()->encode(),
     ]);
 }
 
-function create_maze(): Maze {
-    $maze = new Maze([
-        'title' => '始まりの迷宮', 
-        'size_x' => 21, 
-        'size_y' => 21, 
-        'size_z' => GlobalVar::Max_of_Maze_Floor
-    ]);
-    for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor; $i++) {
+function create_maze($maze_name = ''): Maze {
+    global $gv, $ga;
+
+    if ($maze_name == '') {
+        $maze = new Maze([
+            'title' => '始まりの迷宮', 
+            'size_x' => 21, 
+            'size_y' => 21, 
+            'size_z' => GlobalVar::Max_of_Maze_Floor
+        ]);
+    } else {
+        $mazeinfo = $gv->mazeinfo[$maze_name];
+        $maze = new Maze([
+            'title'  => $mazeinfo->mbname, 
+            'size_x' => $mazeinfo->size_x, 
+            'size_y' => $mazeinfo->size_y, 
+            'size_z' => $mazeinfo->size_z
+        ]);
+    }
+    for ($i = 0; $i < $maze->get_size_z(); $i++) {
         $maze->create_maze($i);
     }
-    for ($i = 0; $i < GlobalVar::Max_of_Maze_Floor - 1; $i++) {
+    for ($i = 0; $i < $maze->get_size_z() - 1; $i++) {
         $maze->create_stair($i);
     }
     return $maze;
+}
+
+function new_team(Maze $maze): Team {
+    global $gv, $ga;
+
+    $pos = create_pos($maze);
+
+    $loc  = new Location();
+    $loc->decode([
+        'kind'    => 'Guld',
+        'name'    => $maze->get_name(),
+        'loc_uid' => $maze->uid(),
+        'loc_pos' => $pos,
+    ]);
+
+    $team = new Team();
+    $team->set_name('ひよこさんチーム');
+    $team->set_loc($loc);
+    for ($i = 0; $i <= 3; $i++) { 
+        $team->append_hero((new Hero())->random_make());
+    }
+
+    return $team;
 }
 
 // 迷宮探索 新規ゲーム用の暫定版処置。その一
