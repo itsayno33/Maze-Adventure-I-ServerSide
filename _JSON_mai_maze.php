@@ -53,12 +53,6 @@
             );
             break;
         case 'new_maze':
-/*
-            $new_maze = create_maze($ga->maze_name); 
-            $new_team = create_team($new_maze); 
-            $new_save = new_save($new_maze, $new_team);
-            $ret_JSON = save_encode(0, $new_save);
-*/
             $new_maze = create_maze($ga->maze_name); 
             $ret_JSON = all_encode(
                 0, 
@@ -178,7 +172,7 @@ function new_save(Maze $maze, Team $team): SaveData {
     ]);
 }
 
-function create_maze($maze_name = ''): Maze {
+function create_maze(string $maze_name = ''): Maze {
     global $gv, $ga;
 
     if ($maze_name == '') {
