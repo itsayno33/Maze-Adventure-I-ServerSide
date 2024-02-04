@@ -100,6 +100,15 @@
             $this->decode(self::from_JSON_to_array($j));
             return $this;
         }
+        public static function from_JSON_to_obj(string $j): array {
+            $loc_data_array = self::from_JSON_to_array($j);
+
+            $loc_array = [];
+            foreach ($loc_data_array as $loc_data) {
+                array_push($loc_array, (new Location())->decode($loc_data));
+            }
+            return $loc_array;
+        }
         public static function from_JSON_to_array(string $j): array {
             return  json_decode(
                 $j, true, 512, 
@@ -111,6 +120,11 @@
         }
         public function to_JSON(): string {
             return self::from_array_to_JSON($this->encode());
+        }
+        public static function from_obj_to_JSON(array $a): string {
+            $loc_data_array = [];
+            foreach ($a as $loc) array_push($loc_data_array, $loc->encode());
+            return self::from_array_to_JSON($loc_data_array);
         }
         public static function from_array_to_JSON(array $a): string {
             return json_encode( 

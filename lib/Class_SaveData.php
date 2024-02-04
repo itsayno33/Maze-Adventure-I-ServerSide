@@ -297,7 +297,7 @@ NEW_SAVE01;
                 $insert_save_stmt->bindValue(':detail',    $this->detail);
                 $insert_save_stmt->bindValue(':point',     $this->point);
                 $insert_save_stmt->bindValue(':mypos',     $this->mypos->to_JSON());
-                $insert_save_stmt->bindValue(':all_mvpt',  Location::from_array_to_JSON($this->all_mvpt));
+                $insert_save_stmt->bindValue(':all_mvpt',  Location::from_obj_to_JSON($this->all_mvpt));
                 $insert_save_stmt->bindValue(':auto_mode', $auto_mode);
                 $insert_save_stmt->bindValue(':is_active', $is_active);
                 $insert_save_stmt->bindValue(':is_delete', $is_delete);
@@ -400,6 +400,9 @@ NEW_SAVE01;
                 }
             }
 
+            if (array_key_exists('all_mvpt', $a) && is_string($a['all_mvpt'])) {
+                $this->all_mvpt  = Location::from_JSON_to_obj($a['all_mvpt']);
+            }
             if (array_key_exists('all_mvpt', $a) && is_array($a['all_mvpt'])) {
                 $this->all_mvpt  = Location::decode_all($a['all_mvpt']);
             }
