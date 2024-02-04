@@ -177,7 +177,7 @@ function create_maze(string $maze_name = ''): Maze {
 
     if ($maze_name == '') {
         $maze = new Maze([
-            'title' => '始まりの迷宮', 
+            'name'   => '始まりの迷宮', 
             'size_x' => 21, 
             'size_y' => 21, 
             'size_z' => GlobalVar::Max_of_Maze_Floor
@@ -185,7 +185,7 @@ function create_maze(string $maze_name = ''): Maze {
     } else {
         $mazeinfo = $gv->mazeinfo[$maze_name];
         $maze = new Maze([
-            'title'  => $mazeinfo->mbname, 
+            'name'   => $mazeinfo->mbname, 
             'size_x' => $mazeinfo->size_x, 
             'size_y' => $mazeinfo->size_y, 
             'size_z' => $mazeinfo->size_z
