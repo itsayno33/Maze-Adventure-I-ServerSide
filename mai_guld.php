@@ -9,23 +9,23 @@
     mb_regex_encoding("UTF-8");
 
     // 利用クラス等の読み込み
-    require_once '../lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once './lib/Class_DspMessage.php'; // 画面メッセージの表示用クラス
 
 
     // ダンジョンマップのセルの種類を表す列挙型
-    require_once '../lib/Enum_MzKind.php';
+    require_once './lib/Enum_MzKind.php';
 
     // 方向を表すクラス
-    require_once '../lib/Class_Direct.php';
+    require_once './lib/Class_Direct.php';
 
     // 位置・経路を表すクラス全般
-    require_once '../lib/Class_PointSet.php';
+    require_once './lib/Class_PointSet.php';
 
     // MAZE関係クラス全般
-    require_once '../lib/Class_Maze.php';
+    require_once './lib/Class_Maze.php';
 
     // パーティークラス全般
-    require_once '../lib/Class_Team.php';
+    require_once './lib/Class_Team.php';
 
 /*******************************************************************************/
 /*                                                                             */
@@ -34,11 +34,8 @@
 /*******************************************************************************/
 
     init();
-    $ga->mode = 'new'; // 暫定
     switch ($ga->mode) {
         case 'new':
-            $gv->maze->create_maze(0);
-            $gv->team = new_team();
             break;
         default:
             break;
@@ -63,22 +60,6 @@ function new_team(): Team {
 /*                                                                             */
 /*******************************************************************************/
 
-
-
-    function display_maze(): void {
-        global $gv;
-
-        echo "<pre>\n";
-        echo  $gv->maze->to_string() . PHP_EOL;
-        echo "</pre>\n";
-
-        return;
-    }
-
-    function display_cntl(): void {
-        global $gv,$ga;
-        return;
-    }
 
 
 /*******************************************************************************/
@@ -145,11 +126,12 @@ function new_team(): Team {
         }
     }
     
-    
-    // POST引数の設定
-    class GlobalArguments {
+        // POST引数の設定
+
+        class GlobalArguments {
         public string $mode;
         public int    $pid = 1;
+        public string $opt = '';
 
         public function __construct() {
             global $gv;
@@ -160,7 +142,7 @@ function new_team(): Team {
                 if ( array_key_exists('mode', $_POST) &&  $_POST['mode'] != '') {
                     $this->mode     = $_POST['mode'];
                 } else {
-                    $this->mode     = 'view';
+                    $this->mode     = 'new';
                 } 
             }
             if ( array_key_exists('pid', $_GET) && is_numeric($_GET['pid'])) {
@@ -170,6 +152,15 @@ function new_team(): Team {
                     $this->pid      = intval($_POST['pid']);
                 } else {
                     $this->pid      = 1;
+                } 
+            }
+            if ( array_key_exists('opt', $_GET) && is_string($_GET['opt'])) {
+                $this->opt          = $_GET ['opt'];
+            } else {
+                if ( array_key_exists('opt', $_POST) &&  is_string($_POST['opt'])) {
+                    $this->opt      = $_POST['opt'];
+                } else {
+                    $this->opt      = '';
                 } 
             }
             $gv->mes->set_nor_message("MODE = [{$this->mode}]");
@@ -230,117 +221,140 @@ function new_team(): Team {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0 ,user-scalable=0, shrink-to-fit=no, viewport-fit=cover">
     <title>Maze Adventure I</title>
-    <link rel="stylesheet" href="css.php?time=<?php echo date("Y-m-d_H:i:s"); ?>&file=mai_index" />
-    <script src="./js/bundle.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
+    <link rel="stylesheet" href="css.php?time=<?php echo date("Y-m-d_H:i:s"); ?>&file=mai_guld" />
+    <script src="./js/mai_guld.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
 </head>
 <body id='body'>
-    <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
-    <article class='Maze_view_pane' id='Maze_view_pane'>
-        <div id='Maze_view_switch'>
-            <div id='Maze_view_switch_maze'>
-                <div id='Maze_view3D'>
-                    <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
-                    <p id='Maze_view3D_direction_info'></p>
-                </div>
-            </div>
-            <div id='Maze_view_switch_camp'>
-                <ul id='camp_list'>
-                    <li id='camp_load'>冒険の復活
-                        <p>以前保存した冒険を再開できます</p></li>
-                    <li id='camp_save'>冒険の記録
-                        <p>直前までの冒険を保存できます</p></li>
-                    <li id='camp_hres'>冒険者の準備
-                        <p>冒険者の情報を見たり装備を替えたりできます(未実装)</p></li>
+    <h1 class='h1'>ダンジョンアドベンチャーⅠ【ギルド】</h1>
+    <article class='gld_view_pane' id='gld_view_pane'>
+        <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
+        <div id='gld_view_message_div'>
+            <button id='r_cp1' name='r_cp1' value='R'>ギルド窓口に戻る</button>
+            <button id='s_cp1' name='s_cp1' value='S'>リスト切替</button>
+            <p id='gld_view_message'></p>
+        </div>
+        <div id='gld_view_switch'>
+            <div id='gld_view_switch_guld'>
+                <h2>冒険者ギルド窓口</h2>
+                <ul id='guld_menu_list'>
+                    <li id='guld_hres'>冒険者情報
+                        <p>　冒険者情報を見ることができます</p></li>
+                    <!-- li id='guld_edit'>冒険者編集
+                        <p>　既存キャラクターを編集出来ます(デバッグモードのみ)(未実装)</p></li -->
+                    <!-- li id='guld_appd'>冒険者募集
+                        <p>　新しいキャラクターを募集出来ます</p></li -->
+                    <li id='guld_load'>冒険の呼び出し
+                        <p>　冒険情報をロードできます</p></li>
+                    <li id='guld_save'>冒険の記録
+                        <p>　冒険情報をセーブできます</p></li>
+                    <li id='guld_tomz'>冒険出発
+                        <p>　ダンジョンに出発します</p></li>
                 </dl>
             </div>
-            <div id='Maze_view_switch_load'>
-                <form id='load_data_form'>
-                    <input id='load_data_id' for='load_data_form' type='hidden' name='load_data_id' value='-1' />
-                </form>
-                <ul id='load_data_list'></ul>
-                <fieldset id='load_data_fields'>
-                <legend>セーブ情報</legend>
-                <ul id='load_data_detail'>
-                    <li>
-                        <label for='load_data_time'>保存日時:</label>
-                        <p id='load_data_time'></p>
-                    </li>
-                    <li>
-                        <label for='load_data_point'>保存場所:</label>
-                        <p id='load_data_point'></p>
-                    </li>
-                    <li>
-                        <label for='load_data_detail'>詳細:</label>
-                        <textarea id='load_data_detail' for='load_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)' readonly></textarea>
-                    </li>
-                </ul>
+            <div id='gld_view_switch_hres'>
+                <h2>冒険者情報の一覧</h2>
+                <fieldset id='hres_team_fields'>
+                    <legend>パーティ・メンバー</legend>
+                    <ul id='team_list'></ul>
+                </fieldset>
+                <fieldset id='hres_guld_fields'>
+                    <legend>ギルド・メンバー</legend>
+                    <ul id='guld_list'></ul>
+                </fieldset>
+                <fieldset id='hres_appd_fields'>
+                    <legend>求人募集メンバー</legend>
+                    <ul id='appd_list'></ul>
+                </fieldset>
+                <fieldset id='hres_menu_fields'>
+                <legend>コマンド</legend>
+                    <ul id='menu_list'></ul>
+                </fieldset>
+                <fieldset id='hres_inpt_fields'>
+                <legend>入力</legend>
+                    <ul id='inpt_list'></ul>
+                    <button id='y_cp1' name='y_cp1' value='Y'>はい</button>
+                    <button id='n_cp1' name='n_cp1' value='N'>いいえ</button>
+                </fieldset>
+                <fieldset id='hres_hero_fields'>
+                    <legend>冒険者の詳細情報</legend>
+                    <ul id='hres_hero_info'></ul>
                 </fieldset>
             </div>
-            <div id='Maze_view_switch_save'>
-                <form id='save_data_form'>
-                    <input id='save_data_id' for='save_data_form' type='hidden' name='save_data_id' value='-1' />
-                </form>
-                <ul id='save_data_list'></ul>
-                <fieldset id='save_data_fields'>
-                    <legend>セーブ情報を入力して下さい</legend>
-                    <ul id='save_data_detail'>
-                        <li>
-                            <label for='save_data_time'>保存日時:</label>
-                            <p id='save_data_time'></p>
-                        </li>
-                        <li>
-                            <label for='save_data_point'>保存場所:</label>
-                            <p id='save_data_point'></p>
-                        </li>
-                        <li>
-                            <label for='save_data_detail'>詳細(任意):</label>
-                            <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
-                        </li>
-                    </ul>
-                </fieldset>
-            </div>
-            <!-- div id='Maze_view_switch_hres'>
-                <ul id='hres_list'></ul>
-                <fieldset id='hero_fields'>
+            <!-- div id='gld_view_switch_edit'>
+                <h2>冒険者情報の編集</h2>
+                <ul id='edit_list'></ul>
+                <fieldset id='edit_hero_fields'>
                     <legend>冒険者の情報</legend>
-                    <ul id='hero_info'></ul>
+                    <ul id='edit_hero_info'></ul>
                 </fieldset>
             </div -->
+            <!-- div id='gld_view_switch_appd'>
+                <h2>冒険者の募集票</h2>
+                <ul id='appd_list'></ul>
+                <fieldset id='appd_hero_fields'>
+                    <legend>冒険者の情報</legend>
+                    <ul id='appd_hero_info'></ul>
+                </fieldset>
+            </div -->
+            <div id='gld_view_switch_load'>
+                <h2>冒険の呼び出し</h2>
+                <ul id='load_list'></ul>
+                <fieldset id='load_info_fields'>
+                    <legend>今までの記録</legend>
+                    <ul id='load_info_detail'></ul>
+                </fieldset>
+            </div>
+            <div id='gld_view_switch_save'>
+                <h2>冒険の記録</h2>
+                <ul id='save_list'></ul>
+                <fieldset id='save_info_fields'>
+                    <legend>今までの記録</legend>
+                    <ul id='save_info_detail'></ul>
+                </fieldset>
+            </div>
+            <div id='gld_view_switch_tomz'>
+                <h2>迷宮への挑戦</h2>
+                <fieldset id='tomz_maze_fields'>
+                    <legend>新たな迷宮への入り口</legend>
+                    <ul id='maze_list'></ul>
+                </fieldset>
+                <fieldset id='tomz_mvpt_fields'>
+                    <legend>攻略中の迷宮に戻る</legend>
+                    <ul id='mvpt_list'></ul>
+                </fieldset>
+            </div>
         </div>
-        <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>
-        <?php /* display_maze(); */ ?>
     </article>
-    <article id='Maze_view2D_pane'>
-        <div id='Maze_view2D'>
-                <pre id='Maze_view2D_pre'></pre>
-                <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
-        </div>
-    </article>
-    <article class='Maze_info' id='Maze_info_pane'>
-        <div id ='move_ctl_view'><div id='move_ctl_panel'>
-            <button id='u_arrow' type='button' name='u_arrow' value='U'>↑</button>
-            <button id='d_arrow' type='button' name='d_arrow' value='D'>↓</button>
-            <button id='l_arrow' type='button' name='l_arrow' value='L'>←</button>
-            <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
-            <button id='y_btn'   type='button' name='y_btn'   value='U'>〇</button>
-            <button id='n_btn'   type='button' name='n_btn'   value='N'>✖</button>
-            <button id='c_btn'   type='button' name='c_btn'   value='C'>キャンプ（Ｃ）</button>
+    <article class='gld_ctl' id='gld_ctl_pane'>
+        <div id ='ctl_view'><div id='ctl_panel'>
+            <button id='u_arr' type='button' name='u_arrow' value='U'>↑</button>
+            <button id='d_arr' type='button' name='d_arrow' value='D'>↓</button>
+            <button id='l_arr' type='button' name='l_arrow' value='L'>←</button>
+            <button id='r_arr' type='button' name='r_arrow' value='R'>→</button>
+            <button id='y_btn' type='button' name='y_btn'   value='U'>〇</button>
+            <button id='n_btn' type='button' name='n_btn'   value='N'>✖</button>
+            <button id='s_btn' type='button' name='s_btn'   value='S'>選</button>
+            <button id='r_btn' type='button' name='r_btn'   value='R'>戻</button>
         </div></div>
-        <?php /* display_cntl(); */ ?>
     </article>
     <article class='message_pane' id='message_pane'>
-        <!-- div id='client_message'></div -->
+        <div id='client_message'></div>
         <?php 
             $gv->mes->display_err_message(); 
             $gv->mes->display_nor_message(); 
         ?>
     </article>
     <footer id='footer_pane'>
-        <a href='../../md/'><img src='../icon-img/kkrn_icon_home_3.png' /></a>
-        <p class='foot_print'>Maze Adventure Ⅰ.</p>
+        <a href='../../md/'><img src='./icon-img/kkrn_icon_home_3.png' /></a>
+        <p class='foot_print'>Guild in Maze Adventure I.</p>
     </footer>
     <script>
-        window.tsCall.get_init_data('<?php echo $gv->cgi_base; ?>', <?php echo $ga->pid; ?>);
+        window.tsCall.start_game(
+            '<?php echo $ga->mode; ?>', 
+            '<?php echo $gv->script_path; ?>', 
+             <?php echo $ga->pid; ?>, 
+            '<?php echo $ga->opt; ?>', 
+        );
     </script>
 </body>
 <?php

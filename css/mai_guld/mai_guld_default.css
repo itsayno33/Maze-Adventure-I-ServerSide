@@ -42,7 +42,7 @@
     --body_grid_row_footer_height:  20px;
 */
 
-    --body_grid_gap: 1rem 1.5rem;
+    --body_grid_gap: 0 0;
     --body_grid_cols: 
             3rem
             [h1-start footer-start view-start message-start]
@@ -64,6 +64,9 @@
             [footer-end]
             ;
 
+    --detail_font:  0.9rem;
+    --detait_heght: 1.1rem;
+        
     --view_message_font_size: 1.1rem;
     --view_message_height:    3.5rem;
 

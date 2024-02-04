@@ -12,6 +12,7 @@
     
     // 利用クラス等の読み込み
     require_once 'Class_DspMessage.php'; // 画面メッセージの表示用クラス
+    require_once 'Class_Rand.php'; 
     
     // ダンジョンマップのセルの種類を表す列挙型
     // MzKind::NoDef: 未定義・不明
@@ -54,9 +55,6 @@
 
             $k = MzKind::tryFrom($kind_id);
             if (is_null($k)) {
-                $gv->mes->set_err_message("ダンジョンに不正なセルを代入しようとしてます。(3)");
-                $gv->mes->set_err_message("Value = 『{$kind_id}』");
-
                 $this->cell =  MzKind::NoDef;
                 return false;
             }
@@ -89,13 +87,14 @@
     class Maze {
         protected int    $maze_id;
         protected int    $save_id;
+        protected string $uniq_id;
         protected int    $maze_floor;
-        protected string $title;
+        protected string $name;
 
         protected int    $size_x;  /* 外壁も含めたセルの数(横) */ 
         protected int    $size_y;  /* 外壁も含めたセルの数(縦) */
         protected int    $size_z;  /* Mazeの階層の数 */
-        protected int    $limit_of_room; /* ランダム生成の際の部屋の数の最大数 */
+        protected int    $num_of_room; /* ランダム生成の際の部屋の数の最大数 */
         protected int    $max_size_of_room; /* ランダム生成の際の部屋の大きさ */
         protected array  $cells;
         protected array  $masks;
@@ -111,20 +110,21 @@
 
             $this->maze_id    = 0;
             $this->save_id    = 0;
+            $this->uniq_id    = Rand::uniq_id('mai_maze#');
             $this->maze_floor = 0;
-            $this->title      = 'NewMaze_'. sprintf("%03x",$this->maze_id);
+            $this->name       = 'NewMaze_'. sprintf("%03x",$this->maze_id);
 
 
             $this->size_x           = Maze::Max_x;
             $this->size_y           = Maze::Max_y;
             $this->size_z           = Maze::Max_z;
-            $this->limit_of_room    = Maze::Limit_of_room;
+            $this->num_of_room      = Maze::Limit_of_room;
             $this->max_size_of_room = Maze::Max_size_of_room;
 
             $this->cells = [];
             $this->masks = [];
 
-            $this->set_maze($pp);
+            $this->decode($pp);
         }
 
         public function set_maze(?array $pp = null) {
@@ -134,16 +134,17 @@
                 if(array_key_exists('fill_kind', $pp) && ($pp['fill_kind'] instanceof MzKind)) {
                     $fill_kind = $pp['fill_kind'];
                 }
-                if(array_key_exists('id', $pp) && (is_numeric($pp['id']))) {
+                if(array_key_exists('id', $pp) && is_numeric($pp['id'])) {
                     $this->maze_id    = $pp['id'];
                 }
-                if(array_key_exists('floor', $pp) && (is_numeric($pp['floor']) && $pp['floor'] > 0)) {
+                if(array_key_exists('uniq_id', $pp) && ($pp['uniq_id'] != '')) {
+                    $this->uniq_id    = $pp['uniq_id'];
+                }
+                if(array_key_exists('floor', $pp) && is_numeric($pp['floor'] && $pp['floor'] > 0)) {
                     $this->maze_floor = $pp['floor'];
                 }
-                if(array_key_exists('title', $pp) && ($pp['title'] != '')) {
-                    $this->title      = $pp['title'];
-                } else {
-                    $this->title      = 'NewMaze_'. sprintf("%x03",$this->maze_id);
+                if(array_key_exists('name', $pp) && is_string($pp['name'])) {
+                    $this->name       = $pp['name'];
                 }
                 if(array_key_exists('size_x', $pp) && is_numeric($pp['size_x']) && $pp['size_x'] > 3) {
                     $this->size_x     = $pp['size_x'];
@@ -155,7 +156,10 @@
                     $this->size_z     = $pp['size_z'];
                 }
                 if(array_key_exists('limit_room', $pp) && is_numeric($pp['limit_room']) && $pp['limit_room'] > 0) {
-                    $this->limit_of_room = $pp['limit_room'];
+                    $this->num_of_room = $pp['limit_room'];
+                }
+                if(array_key_exists('max_room', $pp) && is_numeric($pp['max_room']) && $pp['max_room'] > 0) {
+                    $this->num_of_room = $pp['max_room'];
                 }
                 if(array_key_exists('room_size', $pp) && is_numeric($pp['room_size']) && $pp['room_size'] >= 3) {
                     $this->max_size_of_room = $pp['room_size'];
@@ -177,6 +181,8 @@
             }
         }
 
+        public function uid(): string {return $this->uniq_id;}
+
         public function within_XYZ(int $pos_x, int $pos_y, int $pos_z): bool {
             return (    $pos_x >  0 && $pos_x < $this->size_x
                      && $pos_y >  0 && $pos_y < $this->size_y
@@ -186,7 +192,7 @@
         public function get_size_x(): int {return $this->size_x;}
         public function get_size_y(): int {return $this->size_y;}
         public function get_size_z(): int {return $this->size_z;}
-        public function get_title():  string {return $this->title;}
+        public function get_name():   string {return $this->name;}
 
         public function get_cell(int $pos_x, int $pos_y, int $pos_z): MzKind {
             if (!$this->within_XYZ($pos_x, $pos_y, $pos_z)) return false;
@@ -194,7 +200,7 @@
         }
 
         public function set_cell(MzKind $kind, int $pos_x, int $pos_y, int $pos_z = 0): bool {
-                return $this->cells[$pos_z][$pos_y][$pos_x]->set_cell($kind);
+            return $this->cells[$pos_z][$pos_y][$pos_x]->set_cell($kind);
         }
 
         public function fill_cell(MzKind $kind, int $floor = 0): void {
@@ -269,7 +275,7 @@
     
             // 乱数でいくつか部屋を作る
             $rooms_array = [];
-            $num_of_room = random_int(0, $this->limit_of_room);
+            $num_of_room = random_int(0, $this->num_of_room);
             for ($cnt = 0; $cnt < $num_of_room; $cnt++) {
                 $leng_x = random_int(1,  $this->max_size_of_room) * 2 + 1;
                 $leng_y = random_int(1,  $this->max_size_of_room) * 2 + 1;
@@ -347,8 +353,8 @@
             if ($trace_set->is_exist($x, $y) == true)  return [true,  $trace_set];
 
             $p = $point_set->get_point($x, $y);
-            $trace_set->push(new PointLink($x, $y, $p->di));
-            switch ($p->di) {
+            $trace_set->push(new PointLink($x, $y, PointLink::cast($p)->di));
+            switch (PointLink::cast($p)->di) {
                 case Direct::N:  // 北
                     $next_x = $x;
                     $next_y = $y - 2;
@@ -426,6 +432,161 @@
             return $this;
         }
 
+
+        public static function get_from_odb_all(PDO $db_mai, DspMessage $mes, int $save_id): array {
+            [$rslt0, $maze_array] = self::get_from_tbl_all($db_mai, $mes, $save_id);
+            if (!$rslt0 || $mes->is_err()) {
+                return [false, []];
+            }
+/*
+            foreach ($maze_array as $maze) {
+                foreach ($maze->all_exist as $exist) {
+                    $rslt1 = $exist->set_to_odb($db_mai, $mes, $save_id, $maze->id);
+                    if (!$rslt1 || $mes->is_err()) {
+                        return false;
+                    }
+                }
+            }
+*/
+            return [true, $maze_array];
+        }
+
+
+        public function set_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            [$rslt0, $mase_id] = $this->add_tbl($db_mai, $mes, $save_id);
+            if (!$rslt0 || $mes->is_err()) {
+                return false;
+            }
+            /*
+            foreach ($this->all_exist as $exist) {
+                $rslt1 = $exist->set_to_odb($db_mai, $mes, $save_id, $this->id);
+                if (!$rslt1 || $mes->is_err()) {
+                    return false;
+                }
+            }
+            */
+            return true;
+        }
+
+        
+        public function del_to_odb(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $rslt = $this->del_tbl($db_mai, $mes, $save_id);
+            if (!$rslt || $mes->is_err()) {
+                return false;
+            }
+            /*
+            foreach ($this->all_exist as $exist) {
+                $rslt1 = $exist->del_to_odb($db_mai, $mes, $save_id, $this->id);
+                if (!$rslt1 || $mes->is_err()) {
+                    return false;
+                }
+            }
+            */
+            return true;
+        }
+
+
+
+        // DB処理。save_idで指定されたmazeレコードセットを読み込み
+        // Mazeクラスの配列にセットする
+        // 
+        protected static function get_from_tbl_all(
+                PDO $db_mai, 
+                DspMessage $mes, 
+                int $save_id
+            ): array {
+                $get_maze_SQL =<<<GET_MAZE01
+                SELECT 	id, save_id, uniq_id, name, 
+                        size_x, size_y, size_z, maps AS maze, mask 
+                FROM tbl_maze
+                WHERE   save_id = :save_id
+GET_MAZE01;
+            try {
+                $get_maze_stmt = $db_mai->prepare($get_maze_SQL);
+                $get_maze_stmt->bindValue(':save_id',  $save_id);
+                $get_maze_stmt->execute();
+                $resultRecordSet = $get_maze_stmt->fetchAll();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 33: {$get_maze_SQL}");
+                return [false, []];
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 35: {$get_maze_SQL}");
+                return [false, []];
+            } 
+        
+            if (count($resultRecordSet) < 1) {
+                return [true,  []];
+            }
+            $maze_array = [];
+            foreach ($resultRecordSet as $resultRecord) {
+                array_push($maze_array,  (new Maze())->decode($resultRecord));
+            }
+            return [true, $maze_array];
+        }
+        
+
+        // DB処理。mazeテーブルに自身のデータを追加(insert)して
+        // そのID(maze_id)を返す
+        // 
+        protected function add_tbl(
+                PDO $db_mai, 
+                DspMessage $mes, 
+                int $save_id
+            ): array {
+
+            $insert_maze_SQL =<<<INSERT_MAZE01
+                INSERT INTO tbl_maze (
+                    save_id, uniq_id, name, 
+                    size_x, size_y, size_z, maps, mask
+                )
+                VALUES (
+                    :save_id, :uniq_id, :name, 
+                    :size_x, :size_y, :size_z, :maps, :mask 
+                )
+INSERT_MAZE01;
+            try {
+                $insert_maze_stmt = $db_mai->prepare($insert_maze_SQL);
+                $insert_maze_stmt->bindValue(':save_id', $save_id); 
+                $insert_maze_stmt->bindValue(':uniq_id', $this->uniq_id); 
+                $insert_maze_stmt->bindValue(':name',    $this->name); 
+                $insert_maze_stmt->bindValue(':size_x',  $this->size_x); 
+                $insert_maze_stmt->bindValue(':size_y',  $this->size_y); 
+                $insert_maze_stmt->bindValue(':size_z',  $this->size_z); 
+                $insert_maze_stmt->bindValue(':maps',    $this->__encode_maze()); 
+                $insert_maze_stmt->bindValue(':mask',    $this->__encode_mask()); 
+                $insert_maze_stmt->execute();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 3: {$insert_maze_SQL}");
+                return [false, -1];
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 5: {$insert_maze_SQL}");
+                return [false, -1];
+            } 
+            $this->maze_id =  intval($db_mai->lastInsertId());
+            return [true, $this->maze_id];
+        }
+        
+        // DB処理。save_idで指定されたレコード(複数)を削除(delete)する
+        // 
+        public static function del_tbl(PDO $db_mai, DspMessage $mes, int $save_id): bool {
+            $delete_maze_SQL =<<<DELETE_MAZE01
+                DELETE FROM tbl_maze 
+                WHERE  save_id = :save_id
+DELETE_MAZE01;
+            try {
+                $delete_maze_stmt = $db_mai->prepare($delete_maze_SQL);
+                $delete_maze_stmt->bindValue(':save_id', $save_id);
+                $delete_maze_stmt->execute();
+            } catch (PDOException $e) {
+                $mes->pdo_error($e, "SQLエラー 12: {$delete_maze_SQL}");
+                return false;
+            } catch (Throwable $ee) {
+                $mes->pdo_error($ee, "SQLの致命的エラー 13: {$delete_maze_SQL}");
+                return false;
+            } 
+            return true;
+        }
+        
         public function encode(): array {
             $maze_str = $this->__encode_maze();
             $mask_str = $this->__encode_mask();
@@ -433,8 +594,9 @@
             $ret = [    
                 'id'      => $this->maze_id,
                 'save_id' => $this->save_id,
+                'uniq_id' => $this->uniq_id,
                 'floor'   => $this->maze_floor,
-                'title'   => $this->title,
+                'name'    => $this->name,
                 'size_x'  => $this->size_x,
                 'size_y'  => $this->size_y,
                 'size_z'  => $this->size_z,
@@ -481,39 +643,61 @@
             return  implode('Z', $flr_array);
         }
 
-        public function decode(array $e): void {
+        public function decode(?array $e): Maze {
+            if (is_null($e) || !is_array($e)) return $this;
 
-            if(array_key_exists('maze_id', $e) && is_numeric($e['maze_id'])) {
+            $resize = false;
+
+            if (array_key_exists('maze_id', $e) && is_numeric($e['maze_id'])) {
                 $this->maze_id    = $e['maze_id'];
             }
-            if(array_key_exists('save_id', $e) && is_numeric($e['save_id'])) {
-                $this->maze_id    = $e['save_id'];
+            if (array_key_exists('save_id', $e) && is_numeric($e['save_id'])) {
+                $this->save_id    = $e['save_id'];
             }
-            if(array_key_exists('floor', $e) && is_numeric($e['floor'])) {
+            if (array_key_exists('uniq_id', $e) && is_string($e['uniq_id'])) {
+                $this->uniq_id    = $e['uniq_id'];
+            }
+            if (array_key_exists('floor', $e) && is_numeric($e['floor'])) {
                 $this->maze_floor = $e['floor'];
             }
-            if(array_key_exists('title', $e) && $e['title'] != '') {
-                $this->title      = $e['title'];
+            if (array_key_exists('name', $e)  && $e['name'] != '') {
+                $this->name      = $e['name'];
             }
-            if(array_key_exists('size_x', $e) && is_numeric($e['size_x'])) {
+            if (array_key_exists('size_x', $e) && is_numeric($e['size_x'])) {
                 $this->size_x     = $e['size_x'];
+                $resize = true;
             }
-            if(array_key_exists('size_y', $e) && is_numeric($e['size_y'])) {
+            if (array_key_exists('size_y', $e) && is_numeric($e['size_y'])) {
                 $this->size_y     = $e['size_y'];
+                $resize = true;
             }
-            if(array_key_exists('size_z', $e) && is_numeric($e['size_z'])) {
+            if (array_key_exists('size_z', $e) && is_numeric($e['size_z'])) {
                 $this->size_z     = $e['size_z'];
+                $resize = true;
+            }
+
+            // MAZEとMASKのリサイズ
+            if ($resize) {
+                $this->cells = [];
+                $this->masks = [];
+                for ($z = 0; $z < $this->size_z; $z++) {
+                    $this->cells[$z] = [];
+                    $this->masks[$z] = [];
+                    for ($y = 0; $y < $this->size_y; $y++) {
+                        $this->cells[$z][$y] = [];
+                        $this->masks[$z][$y] = [];
+                        for ($x = 0; $x < $this->size_x; $x++) {
+                            array_push($this->cells[$z][$y], new MazeCell(MzKind::Empty));
+                            array_push($this->masks[$z][$y], true);
+                        }
+                    }
+                }
             }
 
             // MAZEの復元
-            if(is_array($e) && array_key_exists('maze', $e) && $e['maze'] != '') {
+            if (is_array($e) && array_key_exists('maze', $e) && $e['maze'] != '') {
                 $maze_str         = $e['maze'];
 
-                for ($d = 0; $d < $this->size_z; $d++) 
-                    for ($h = 0; $h < $this->size_y; $h++) 
-                        for ($w = 0; $w < $this->size_x; $w++) 
-                            $this->set_cell(MzKind::Empty, $w, $h, $d);
-            
                 $flr_array = explode('Z', $maze_str);
                 $size_z    = min($this->size_z, count($flr_array));
                 for ($d = 0; $d < $size_z; $d++) { 
@@ -530,7 +714,7 @@
             }
 
             // MASKの復元
-            if(is_array($e) && array_key_exists('mask', $e) && $e['mask'] != '') {
+            if (is_array($e) && array_key_exists('mask', $e) && $e['mask'] != '') {
                 $mask_str         = $e['mask'];
                 $flr_array = explode('Z', $mask_str);
                 $size_z    = min($this->size_z, count($flr_array));
@@ -551,7 +735,25 @@
                 }
             }
 
-            return;
+            return $this;
+        }
+        public static function encode_all(array $a): array {
+            $all_maze_data = [];
+            if (!is_null($a) && is_array($a)) {
+                foreach ($a as $maze) {
+                    array_push($all_maze_data, $maze->encode());
+                }
+            }
+            return $all_maze_data;
+        }
+        public static function decode_all(array $a): array {
+            $all_maze = [];
+            if (!is_null($a) && is_array($a)) {
+                foreach ($a as $maze_data) {
+                    array_push($all_maze, (new Maze())->decode($maze_data));
+                }
+            }
+            return $all_maze;
         }
     }
 
