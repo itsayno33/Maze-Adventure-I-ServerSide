@@ -231,6 +231,8 @@ function new_team(): Team {
         <div id='gld_view_message_div'>
             <button id='r_cp1' name='r_cp1' value='R'>ギルド窓口に戻る</button>
             <button id='s_cp1' name='s_cp1' value='S'>リスト切替</button>
+            <button id='y_cp1' name='y_cp1' value='Y'>はい</button>
+            <button id='n_cp1' name='n_cp1' value='N'>いいえ</button>
             <p id='gld_view_message'></p>
         </div>
         <div id='gld_view_switch'>
@@ -272,8 +274,6 @@ function new_team(): Team {
                 <fieldset id='hres_inpt_fields'>
                 <legend>入力</legend>
                     <ul id='inpt_list'></ul>
-                    <button id='y_cp1' name='y_cp1' value='Y'>はい</button>
-                    <button id='n_cp1' name='n_cp1' value='N'>いいえ</button>
                 </fieldset>
                 <fieldset id='hres_hero_fields'>
                     <legend>冒険者の詳細情報</legend>
