@@ -129,9 +129,19 @@ p#gld_view_message {
     clear: left;
 }
 button#s_cp1 {
+    margin-left: 1.0rem;
     float: right;
 }
 button#r_cp1 {
+    margin-left: 1.0rem;
+    float: right;
+}
+button#y_cp1 {
+    margin-left: 1.0rem;
+    float: right;
+}
+button#n_cp1 {
+    margin-left: 1.0rem;
     float: right;
 }
 
