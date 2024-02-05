@@ -244,15 +244,15 @@
             // 乱数で得た座標に階段を置く
             if ($floor >= 1) {
                 if ($this->get_cell($pos_x, $pos_y, $floor - 1) !== MzKind::StrUp) {
-                    $this->set_cell(MzKind::StrDn, $pos_x, $pos_y, $floor);
+                    $this->set_cell(MzKind::StrDn, $pos_x, $pos_y, $floor - 1);
                 } else {
-                    $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor);
+                    $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor - 1);
                 }
             }
             if ($this->get_cell($pos_x, $pos_y, $floor    ) !== MzKind::StrDn) {
-                $this->set_cell(MzKind::StrUp, $pos_x, $pos_y, $floor + 1);
+                $this->set_cell(MzKind::StrUp, $pos_x, $pos_y, $floor);
             } else {
-                $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor + 1);
+                $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor);
             }
 
             return ['x' => $pos_x, 'y' => $pos_y, 'z' => $floor, 'd' => $pos_d];
