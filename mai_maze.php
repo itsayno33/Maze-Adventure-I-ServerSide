@@ -332,13 +332,13 @@ function new_team(): Team {
     </article>
     <article class='Maze_info' id='Maze_info_pane'>
         <div id ='move_ctl_view'><div id='move_ctl_panel'>
-            <button id='u_arrow' type='button' name='u_arrow' value='U'>↑</button>
-            <button id='d_arrow' type='button' name='d_arrow' value='D'>↓</button>
-            <button id='l_arrow' type='button' name='l_arrow' value='L'>←</button>
-            <button id='r_arrow' type='button' name='r_arrow' value='R'>→</button>
-            <button id='y_btn'   type='button' name='y_btn'   value='U'>〇</button>
-            <button id='n_btn'   type='button' name='n_btn'   value='N'>✖</button>
-            <button id='c_btn'   type='button' name='c_btn'   value='C'>キャンプ（Ｃ）</button>
+            <button id='u_arr' type='button' name='u_arr' value='U'>↑</button>
+            <button id='d_arr' type='button' name='d_arr' value='D'>↓</button>
+            <button id='l_arr' type='button' name='l_arr' value='L'>←</button>
+            <button id='r_arr' type='button' name='r_arr' value='R'>→</button>
+            <button id='y_btn' type='button' name='y_btn' value='U'>〇</button>
+            <button id='n_btn' type='button' name='n_btn' value='N'>✖</button>
+            <button id='c_btn' type='button' name='c_btn' value='C'>キャンプ（Ｃ）</button>
         </div></div>
         <?php /* display_cntl(); */ ?>
     </article>

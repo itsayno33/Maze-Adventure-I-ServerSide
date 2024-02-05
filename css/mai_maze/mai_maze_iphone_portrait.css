@@ -84,10 +84,10 @@
     --view_message_height:    2.5CSrem;
     --view_message_font_size: 0.8rem;
 
-    --lr_arrow_width:   3.0rem;
-    --lr_arrow_height:  3.0rem;
-    --ud_arrow_width:   3.0rem;
-    --ud_arrow_height:  3.0rem;
+    --lr_arr_width:     3.0rem;
+    --lr_arr_height:    3.0rem;
+    --ud_arr_width:     3.0rem;
+    --ud_arr_height:    3.0rem;
     --camp_btn_height:  3.0rem;
 
     --message_width:     16rem;

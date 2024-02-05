@@ -70,10 +70,10 @@
     --view_message_height:    3.5rem;
     --view_message_font_size: 1.1rem;
 
-    --lr_arrow_width:   2.3rem;
-    --lr_arrow_height:  2.3rem;
-    --ud_arrow_width:   2.3rem;
-    --ud_arrow_height:  2.3rem;
+    --lr_arr_width:     2.3rem;
+    --lr_arr_height:    2.3rem;
+    --ud_arr_width:     2.3rem;
+    --ud_arr_height:    2.3rem;
     --camp_btn_height:  2.3rem;
 
     --message_width:     33rem;
