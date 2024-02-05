@@ -53,18 +53,18 @@
             );
             break;
         case 'new_maze':
-            $new_maze = create_maze($ga->maze_name); 
+            [$new_maze, $new_pos] = create_maze($ga->maze_name); 
             $ret_JSON = all_encode(
                 0, 
                 [
                     'maze' => $new_maze->encode(),
-                    'pos'  => create_pos($new_maze),
+                    'pos'  => $new_pos,
                 ],
             );
             break;
         case 'new_game':
-            $new_maze = create_maze(''); 
-            $new_team = create_team($new_maze); 
+            [$new_maze, $new_pos] = create_maze(''); 
+            $new_team = create_team($new_maze, $new_pos); 
             $new_save = new_save($new_maze, $new_team);
             $ret_JSON = save_encode(0, $new_save);
 /*
@@ -172,7 +172,7 @@ function new_save(Maze $maze, Team $team): SaveData {
     ]);
 }
 
-function create_maze(string $maze_name = ''): Maze {
+function create_maze(string $maze_name = ''): array {
     global $gv, $ga;
 
     if ($maze_name == '') {
@@ -193,36 +193,15 @@ function create_maze(string $maze_name = ''): Maze {
     }
     for ($i = 0; $i < $maze->get_size_z(); $i++) {
         $maze->create_maze($i);
-    }
-    for ($i = 0; $i < $maze->get_size_z() - 1; $i++) {
+    } 
+    for ($i = 1; $i < $maze->get_size_z(); $i++) {
         $maze->create_stair($i);
     }
-    return $maze;
+    $pos = $maze->create_stair(0);
+    return [$maze, $pos];
 }
 
-function new_team(Maze $maze): Team {
-    global $gv, $ga;
-
-    $pos = create_pos($maze);
-
-    $loc  = new Location();
-    $loc->decode([
-        'kind'    => 'Guld',
-        'name'    => $maze->get_name(),
-        'loc_uid' => $maze->uid(),
-        'loc_pos' => $pos,
-    ]);
-
-    $team = new Team();
-    $team->set_name('ひよこさんチーム');
-    $team->set_loc($loc);
-    for ($i = 0; $i <= 3; $i++) { 
-        $team->append_hero((new Hero())->random_make());
-    }
-
-    return $team;
-}
-
+/*
 // 迷宮探索 新規ゲーム用の暫定版処置。その一
 function create_pos(Maze $maze): array {
     $x = 2 * random_int(0, (($maze->get_size_x() - 1) / 2) - 1) + 1;
@@ -232,6 +211,7 @@ function create_pos(Maze $maze): array {
     $d = random_int(0, Direct::MAX);
     return ['x' => $x, 'y' => $y, 'z' => $z, 'd' => $d];
 }
+*/
 
 // 迷宮探索 新規ゲーム用の暫定版処置。その二
 function create_hres(): array {
@@ -243,24 +223,28 @@ function create_hres(): array {
     return $hres;
 }
 
-function create_team(Maze $maze): Team {
+function create_team(Maze $maze, array $pos): Team {
+/*
     $x = 2 * random_int(0, (($maze->get_size_x() - 1) / 2) - 1) + 1;
     $y = 2 * random_int(0, (($maze->get_size_y() - 1) / 2) - 1) + 1;
     $z = 0;  //    $z = 1 * random_int(0,  ($gv->maze->get_size_z() - 1));
 
     $d = random_int(0, Direct::MAX);
-
+*/
     $loc  = new Location();
     $loc->decode([
         'kind'    => 'Maze',
         'name'    => $maze->get_name(),
         'loc_uid' => $maze->uid(),
+        'loc_pos' => $pos,
+/*
         'loc_pos' => [
             'x'   => $x,
             'y'   => $y,
             'z'   => $z,
             'd'   => $d,
         ],
+*/
     ]);
 
     $team = new Team();
