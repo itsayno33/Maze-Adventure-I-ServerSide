@@ -43,9 +43,11 @@ article#Maze_view_pane {
     grid-area: view3d;
 }
 
+/*
 article#Maze_view2D_pane {
     grid-area: view2d;
 }
+*/
 
 article#Maze_info_pane {
     grid-area: info;
@@ -57,6 +59,21 @@ article#message_pane {
 
 footer#footer_pane {
     grid-area: footer;
+}
+
+div#Maze_viewXD {
+    display: grid;
+    gap:                   var(--maze_grid_gap, 1rem 1.5rem);
+    grid-template-columns: var(--maze_grid_cols);
+    grid-template-rows:    var(--maze_grid_rows);
+}
+
+div#Maze_view3D {
+    grid-area: view3D;
+}
+
+div#Maze_view2D {
+    grid-area: view2D;
 }
 
 /* Headerの見栄え */
@@ -119,6 +136,7 @@ p#Maze_view_message {
     font-size:  var(--view_message_font_size, 1.1rem);
 }
 
+/*
 div#Maze_view_switch {
     width: max(
         var(--view3D_canvas_width,  320px), 
@@ -126,6 +144,7 @@ div#Maze_view_switch {
         var(--view3D_info_width,  23rem)
         );
 }
+*/
 
 /*
 div#Maze_view_switch button#view_switch {
@@ -213,7 +232,7 @@ ul#save_data_list {
     padding-top:    0.5em;
     padding-bottom: 0.5em;
 
-    column-count: 2;
+    column-count: var(--save_data_list_cols, 2);
 /*    columns: auto 100px; */
 }
 
@@ -261,7 +280,7 @@ article#Maze_info_pane h2  {
 }
 */
 
-article#Maze_view2D_pane div#Maze_view2D {
+div#Maze_view2D {
     justify-self:center; 
     text-align:  center;
 }

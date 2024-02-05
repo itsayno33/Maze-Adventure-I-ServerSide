@@ -42,21 +42,35 @@
             var(--body_lyt_left_gap, 3rem)
             [h1-start footer-start view3d-start message-start]
             var(--body_lyt_col_left_width,  auto)
-            [view3d-end view2d-start info-start message-end]
+            [info-start message-end]
             var(--body_lyt_col_right_width, auto)
-            [h1-end footer-end view2d_end info-end]
+            [h1-end view3d-end footer-end info-end]
             var(--body_lyt_right_gap, 3rem)
             ;
     --body_grid_rows:
             [h1-start]
             var(--body_lyt_row_header_height,  100px)
-            [h1-end view3d-start view2d-start]
+            [h1-end view3d-start]
             var(--body_lyt_row_main_height,      1fr)
-            [view3d-end view2d-end info-start message-start]
+            [view3d-end info-start message-start]
             var(--body_lyt_row_message_height,   1fr)
             [info-end message-end footer-start]
             var(--body_lyt_row_footer_height,  100px)
             [footer-end]
+            ;
+
+    --maze_grid_gap: 1rem 1.5rem;
+    --maze_grid_cols: 
+            [view3D-start]
+            1fr
+            [view3D-end view2D-start]
+            1fr
+            [view2D-end]
+            ;
+    --maze_grid_rows:
+            [view3D-start view2D-start]
+            1fr
+            [view3D-end view2D-end]
             ;
 
     --info_h2_font_size:  16px;
@@ -76,5 +90,6 @@
     --ud_arr_height:    2.3rem;
     --camp_btn_height:  2.3rem;
 
+    --save_data_list_cols:   4;
     --message_width:     33rem;
 }

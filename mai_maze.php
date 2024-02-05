@@ -250,10 +250,17 @@ function new_team(): Team {
     <article class='Maze_view_pane' id='Maze_view_pane'>
         <div id='Maze_view_switch'>
             <div id='Maze_view_switch_maze'>
-                <div id='Maze_view3D'>
-                    <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
-                    <p id='Maze_view3D_direction_info'></p>
+                <div id='Maze_viewXD'>
+                    <div id='Maze_view3D'>
+                        <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
+                        <p id='Maze_view3D_direction_info'></p>
+                    </div>
+    <!-- article id='Maze_view2D_pane' -->
+                    <div id='Maze_view2D'>
+                        <pre id='Maze_view2D_pre'></pre>
+                    </div>
                 </div>
+    <!-- /article -->
             </div>
             <div id='Maze_view_switch_camp'>
                 <ul id='camp_list'>
@@ -323,11 +330,6 @@ function new_team(): Team {
         </div>
         <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>
         <?php /* display_maze(); */ ?>
-    </article>
-    <article id='Maze_view2D_pane'>
-        <div id='Maze_view2D'>
-                <pre id='Maze_view2D_pre'></pre>
-        </div>
     </article>
     <article class='Maze_info' id='Maze_info_pane'>
         <div id ='move_ctl_view'><div id='move_ctl_panel'>
