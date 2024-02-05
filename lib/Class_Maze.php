@@ -126,7 +126,7 @@
 
             $this->decode($pp);
         }
-
+/*
         public function set_maze(?array $pp = null) {
 
             $fill_kind              = MzKind::Empty;
@@ -180,6 +180,7 @@
                 }
             }
         }
+*/
 
         public function uid(): string {return $this->uniq_id;}
 
@@ -233,23 +234,28 @@
         }
 
         // 階上と階下に階段を設置する
-        public function create_stair(int $floor): void {
+        public function create_stair(int $floor): array {
             $H_size_x       = ($this->size_x - 1) / 2;
             $H_size_y       = ($this->size_y - 1) / 2;
             $pos_x = 2 * random_int(0, $H_size_x - 1) + 1;
             $pos_y = 2 * random_int(0, $H_size_y - 1) + 1;
+            $pos_d =     random_int(0, Direct::MAX);
 
             // 乱数で得た座標に階段を置く
-            if ($this->get_cell($pos_x, $pos_y, $floor) !== MzKind::StrUp) {
-                $this->set_cell(MzKind::StrDn, $pos_x, $pos_y, $floor);
+            if ($floor >= 1) {
+                if ($this->get_cell($pos_x, $pos_y, $floor - 1) !== MzKind::StrUp) {
+                    $this->set_cell(MzKind::StrDn, $pos_x, $pos_y, $floor - 1);
+                } else {
+                    $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor - 1);
+                }
+            }
+            if ($this->get_cell($pos_x, $pos_y, $floor    ) !== MzKind::StrDn) {
+                $this->set_cell(MzKind::StrUp, $pos_x, $pos_y, $floor);
             } else {
                 $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor);
             }
-            if ($this->get_cell($pos_x, $pos_y, $floor + 1) !== MzKind::StrDn) {
-                $this->set_cell(MzKind::StrUp, $pos_x, $pos_y, $floor + 1);
-            } else {
-                $this->set_cell(MzKind::StrUD, $pos_x, $pos_y, $floor + 1);
-            }
+
+            return ['x' => $pos_x, 'y' => $pos_y, 'z' => $floor, 'd' => $pos_d];
         }
 
         public function create_maze(int $floor = 0): void {
