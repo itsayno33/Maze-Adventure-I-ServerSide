@@ -282,15 +282,17 @@ div#move_ctl_panel {
     grid-template-columns: 
         [l_arr-start n_btn-start c_btn-start]
         var(--lr_arr_width, 2.3rem)
-        [l_arr-end n_btn-end u_arr-start d_arr-start]
+        [l_arr-end n_btn-end u_arr-start d_arr-start debug_btn-start]
         var(--ud_arr_width, 2.3rem)
         [u_arr-end d_arr-end r_arr-start y_btn-start]
         var(--lr_arr_width, 2.3rem)
-        [r_arr-end y_btn-end c_btn-end]
+        [r_arr-end y_btn-end c_btn-end debug_btn-end]
         ;
 
     grid-template-rows: 
-        [u_arr-start]
+        [debug_btn-start]
+        var(--debug_btn_height,  2.3rem)
+        [debug_btn-end u_arr-start]
         var(--ud_arr_height,  2.3rem)
         [u_arr-end l_arr-start r_arr-start]
         var(--lr_arr_height,  2.3rem)
@@ -303,6 +305,11 @@ div#move_ctl_panel {
         [c_btn-end]
         ;
 
+}
+
+div#move_ctl_panel button#debug_mode {
+    grid-area: debug_btn;
+    font-size: x-small;
 }
 
 div#move_ctl_panel button#y_btn {

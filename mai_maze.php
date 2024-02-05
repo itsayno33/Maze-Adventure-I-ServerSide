@@ -327,11 +327,11 @@ function new_team(): Team {
     <article id='Maze_view2D_pane'>
         <div id='Maze_view2D'>
                 <pre id='Maze_view2D_pre'></pre>
-                <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
         </div>
     </article>
     <article class='Maze_info' id='Maze_info_pane'>
         <div id ='move_ctl_view'><div id='move_ctl_panel'>
+            <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
             <button id='u_arr' type='button' name='u_arr' value='U'>↑</button>
             <button id='d_arr' type='button' name='d_arr' value='D'>↓</button>
             <button id='l_arr' type='button' name='l_arr' value='L'>←</button>
