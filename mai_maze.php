@@ -248,6 +248,7 @@ function new_team(): Team {
 <body id='body'>
     <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
     <article class='Maze_view_pane' id='Maze_view_pane'>
+        <button id='r_cp1' type='button' name='r_cp1' value='R'>戻る（Ｒ）</button>
         <div id='Maze_view_switch'>
             <div id='Maze_view_switch_maze'>
                 <div id='Maze_viewXD'>
@@ -328,18 +329,25 @@ function new_team(): Team {
                 </fieldset>
             </div -->
         </div>
-        <div id='Maze_view_message_div'><p id='Maze_view_message'></p></div>
+        <div id='Maze_view_message_div'>
+            <p id='Maze_view_message'></p>
+            <button id='n_cp1' type='button' name='n_cp1' value='N'>いいえ</button>
+            <button id='y_cp1' type='button' name='y_cp1' value='Y'>はい</button>
+            <button id='s_cp1' type='button' name='s_cp1' value='S'>切替</button>
+        </div>
         <?php /* display_maze(); */ ?>
     </article>
     <article class='Maze_info' id='Maze_info_pane'>
         <div id ='move_ctl_view'><div id='move_ctl_panel'>
-            <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常モード</button>
+            <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常</button>
             <button id='u_arr' type='button' name='u_arr' value='U'>↑</button>
             <button id='d_arr' type='button' name='d_arr' value='D'>↓</button>
             <button id='l_arr' type='button' name='l_arr' value='L'>←</button>
             <button id='r_arr' type='button' name='r_arr' value='R'>→</button>
             <button id='y_btn' type='button' name='y_btn' value='U'>〇</button>
             <button id='n_btn' type='button' name='n_btn' value='N'>✖</button>
+            <button id='s_btn' type='button' name='s_btn' value='S'>選</button>
+            <button id='r_btn' type='button' name='r_btn' value='T'>戻</button>
             <button id='c_btn' type='button' name='c_btn' value='C'>キャンプ（Ｃ）</button>
         </div></div>
         <?php /* display_cntl(); */ ?>

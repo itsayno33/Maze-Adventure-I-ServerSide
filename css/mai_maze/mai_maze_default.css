@@ -84,12 +84,15 @@
     --view_message_height:    3.5rem;
     --view_message_font_size: 1.1rem;
 
+    --view_button_font_size:  0.8rem;
+    --ctl_font_size: 2.0rem;
+/*
     --lr_arr_width:     2.3rem;
     --lr_arr_height:    2.3rem;
     --ud_arr_width:     2.3rem;
     --ud_arr_height:    2.3rem;
     --camp_btn_height:  2.3rem;
-
+*/
     --save_data_list_cols:   4;
     --message_width:     33rem;
 }

@@ -238,9 +238,12 @@ div#ctl_panel button#s_btn {
 
 div#ctl_panel button#r_btn {
     grid-area: r_btn;
-
+/*
     color: #df7803;
     background-color:rgb(255, 235, 239);
+*/
+    color:chocolate ;
+    background-color:ivory;
 
     font-family: sans-serif;
     font-weight: bold;

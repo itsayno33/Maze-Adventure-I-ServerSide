@@ -14,7 +14,7 @@ img {
 
 /* レイアウトCSSの判別　*/
 h1::after {
-    content: "\A『" var(--layout_mode, "Common") "』レイアウト\A";
+    content: "\A『" var(--layout_mode, "Common") "』\A";
     white-space: pre;
 
     color: var(--h1_text_color, darkgoldenrod);
@@ -130,21 +130,76 @@ div#Maze_view_message_div {
     width:         var(--message_width, 33rem);
 }
 p#Maze_view_message {
+    float: left;
+
     color: inherit;
     background-color: inherit;
     word-break: break-all;
     font-size:  var(--view_message_font_size, 1.1rem);
 }
 
-/*
+button#y_cp1 {
+    float: left;
+    
+    color: darkgreen ;
+    background-color:#ccffcc;
+
+    margin: 0.2rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:  var(--view_button_font_size, 0.8rem);
+}
+
+button#n_cp1 {
+    float: left;
+    
+    color: #ff00ff;
+    background-color:pink;
+
+    margin: 0.2rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:  var(--view_button_font_size, 0.8rem);
+}
+
+button#s_cp1 {
+    float: right;
+    
+    color: #03ec0f;
+    background-color:rgb(253, 255, 233);
+
+    margin: 0.2rem;
+    margin-bottom: 0.5rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:  var(--view_button_font_size, 0.8rem);
+}
+
+button#r_cp1 {
+    float: right;
+    
+    color:chocolate ;
+    background-color:ivory;
+
+    margin: 0.2rem;
+    margin-bottom: 0.5rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:  var(--view_button_font_size, 0.8rem);
+}
+
+
+
 div#Maze_view_switch {
+    clear: both;
+/*
     width: max(
         var(--view3D_canvas_width,  320px), 
         calc(var(--view2D_pre_font_size, 0.8rem) * 23),
         var(--view3D_info_width,  23rem)
         );
-}
 */
+}
 
 /*
 div#Maze_view_switch button#view_switch {
@@ -297,30 +352,34 @@ article#Maze_info_pane div#move_ctl_view {
 div#move_ctl_panel {
     display: grid;
 
+    font-size: var(--ctl_font_size, 2.0rem);
+
     gap: 0.5rem 0.5rem;
     grid-template-columns: 
-        [l_arr-start n_btn-start c_btn-start]
-        var(--lr_arr_width, 2.3rem)
-        [l_arr-end n_btn-end u_arr-start d_arr-start debug_btn-start]
-        var(--ud_arr_width, 2.3rem)
-        [u_arr-end d_arr-end r_arr-start y_btn-start]
-        var(--lr_arr_width, 2.3rem)
-        [r_arr-end y_btn-end c_btn-end debug_btn-end]
+        [l_arr-start n_btn-start s_btn-start c_btn-start]
+        var(--lr_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [l_arr-end n_btn-end s_btn-end u_arr-start d_arr-start debug_btn-start]
+        var(--ud_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [u_arr-end d_arr-end r_arr-start r_btn-start y_btn-start]
+        var(--lr_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [r_arr-end r_btn-end y_btn-end c_btn-end debug_btn-end]
         ;
 
     grid-template-rows: 
         [debug_btn-start]
-        var(--debug_btn_height,  2.3rem)
-        [debug_btn-end u_arr-start]
-        var(--ud_arr_height,  2.3rem)
+        var(--debug_btn_height, calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [debug_btn-end s_btn-start r_btn-start]
+        var(--r_btn_height,     calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [s_btn-end r_btn-end u_arr-start]
+        var(--ud_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [u_arr-end l_arr-start r_arr-start]
-        var(--lr_arr_height,  2.3rem)
+        var(--lr_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [l_arr-end r_arr-end d_arr-start]
-        var(--ud_arr_height,  2.3rem)
+        var(--ud_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [d_arr-end y_btn-start n_btn-start]
-        var(--ud_arr_height,  2.3rem)
+        var(--ud_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [y_btn-end n_btn-end c_btn-start]
-        var(--camp_btn_height,  2.3rem)
+        var(--camp_btn_height,  calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [c_btn-end]
         ;
 
@@ -361,6 +420,26 @@ div#move_ctl_panel button#c_btn {
     font-weight: bold;
 }
 
+div#move_ctl_panel button#s_btn {
+    grid-area: s_btn;
+
+    color: #03ec0f;
+    background-color:rgb(253, 255, 233);
+
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+div#move_ctl_panel button#r_btn {
+    grid-area: r_btn;
+
+    color:chocolate ;
+    background-color:ivory;
+
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
 div#move_ctl_panel button#u_arr {
     grid-area: u_arr;
 }
@@ -376,6 +455,10 @@ div#move_ctl_panel button#l_arr {
 div#move_ctl_panel button#r_arr {
     grid-area: r_arr;
 }
+
+
+
+
 
 article#message_pane {
     width:       var(--message_width, 33rem);
