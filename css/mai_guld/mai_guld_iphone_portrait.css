@@ -51,9 +51,9 @@
             [h1-end view-start]
             1fr
             [view-end  cntl-start]
-            1fr
+            auto
             [cntl-end message-start]
-            1fr
+            auto
             [message-end footer-start]
             100px
             [footer-end]
@@ -72,14 +72,14 @@
 
     --info_h2_font_size:     16px;
 
-    --view_message_height:    2.5CSrem;
+    --view_message_height:    2.5rem;
     --view_message_font_size: 0.8rem;
 
-    --lr_arrow_width:   3.0rem;
-    --lr_arrow_height:  3.0rem;
-    --ud_arrow_width:   3.0rem;
-    --ud_arrow_height:  3.0rem;
-    --camp_btn_height:  3.0rem;
+    --lr_arrow_width:   2.3rem;
+    --lr_arrow_height:  2.3rem;
+    --ud_arrow_width:   2.3rem;
+    --ud_arrow_height:  2.3rem;
+    --camp_btn_height:  2.3rem;
 
     --message_width:     16rem;
 

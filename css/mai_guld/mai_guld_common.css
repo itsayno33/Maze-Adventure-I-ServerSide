@@ -64,6 +64,7 @@ header {
 
 /* Footerの見栄え */
 footer {
+    display: grid;
     justify-self:center;
     align-self: auto;
 }
@@ -105,6 +106,7 @@ ul#team_list,
 ul#guld_list,
 ul#appd_list,
 ul#menu_list,
+ul#inpt_list,
 ul#load_list, 
 ul#save_list,
 ul#maze_list,
@@ -151,7 +153,6 @@ div#gld_view_message_div {
     line-height: var(--view_message_height,    3.5rem);
 
 }
-
 
 
 article#gld_ctl_pane {
@@ -276,13 +277,13 @@ div#ctl_panel button#r_arr {
 }
 
 article#message_pane {
-    width:       var(--message_width,        33rem);
-    font-size:   var(--message_font_size,   0.6rem);
-    line-height: var(--message_line_height, 0.7rem);
-    max-height: calc( var(--message_line_height, 0.7rem) * 6);
-    overflow-y: scroll;
-    justify-self:center;
-    align-self: auto;
+/*    width:       var(--message_width,        33rem); */
+    font-size:    var(--message_font_size,   0.6rem);
+    line-height:  var(--message_line_height, 0.7rem);
+    max-height:   calc( var(--message_line_height, 0.7rem) * 6);
+    overflow-y:   scroll;
+    justify-self: auto;
+    align-self:   auto;
 }
 
 article#message_pane p {
