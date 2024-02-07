@@ -133,18 +133,26 @@ p#gld_view_message {
 button#s_cp1 {
     margin-left: 1.0rem;
     float: right;
+    color: #03ec0f;
+    background-color:rgb(253, 255, 233);
 }
 button#r_cp1 {
     margin-left: 1.0rem;
     float: right;
+    color:chocolate ;
+    background-color:ivory;
 }
 button#y_cp1 {
     margin-left: 1.0rem;
     float: right;
+    color: darkgreen ;
+    background-color:#ccffcc;
 }
 button#n_cp1 {
     margin-left: 1.0rem;
     float: right;
+    color: #ff00ff;
+    background-color:pink;
 }
 
 
