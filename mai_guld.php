@@ -337,7 +337,7 @@ function new_team(): Team {
             <button id='r_btn' type='button' name='r_btn'   value='R'>戻</button>
         </div></div>
     </article>
-    <article class='message_pane' id='message_pane'>
+    <article class='message_pane' id='pane_sytm_logs'>
         <div id='client_message'></div>
         <?php 
             $gv->mes->display_err_message(); 

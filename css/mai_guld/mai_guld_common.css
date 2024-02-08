@@ -284,7 +284,7 @@ div#ctl_panel button#r_arr {
     grid-area: r_arrow;
 }
 
-article#message_pane {
+article#pane_sytm_logs {
 /*    width:       var(--message_width,        33rem); */
     font-size:    var(--message_font_size,   0.6rem);
     line-height:  var(--message_line_height, 0.7rem);
@@ -294,7 +294,7 @@ article#message_pane {
     align-self:   auto;
 }
 
-article#message_pane p {
+article#pane_sytm_logs p {
     word-break: break-all;
 }
 

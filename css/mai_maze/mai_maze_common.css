@@ -27,54 +27,127 @@ h1::after {
 /* 全体のレイアウト関係 */
 body {
     background-color: var(--body_lyt_bgcolor,#ccffcc);
+}
 
+
+/* 探索画面のレイアウト関係 */
+body.move {
     display: grid;
-
-    gap:                   var(--body_grid_gap, 1rem 1.5rem);
-    grid-template-columns: var(--body_grid_cols);
-    grid-template-rows:    var(--body_grid_rows);
+    gap:                   var(--body_move_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_move_cols);
+    grid-template-rows:    var(--body_move_rows);
 }
 
-h1 {
-    grid-area: h1;
-}
+#pane_header.move,
+#pane_maze_vw3D.move,
+#pane_maze_vw2D.move,
+#pane_maze_mesg.move,
+#pane_ctls_boad.move,
+#pane_sytm_logs.move,
+#pane_footer.move
+{display: block;}
 
-article#Maze_view_pane {
-    grid-area: view3d;
-}
+#pane_camp_list.move,
+#pane_load_list.move,
+#pane_load_data.move,
+#pane_save_list.move,
+#pane_save_data.move,
+#pane_camp_mesg.move 
+{display: none;}
 
-/*
-article#Maze_view2D_pane {
-    grid-area: view2d;
-}
-*/
 
-article#Maze_info_pane {
-    grid-area: info;
-}
-
-article#message_pane {
-    grid-area: message;
-}
-
-footer#footer_pane {
-    grid-area: footer;
-}
-
-div#Maze_viewXD {
+/* キャンプ画面のレイアウト関係 */
+body.camp {
     display: grid;
-    gap:                   var(--maze_grid_gap, 1rem 1.5rem);
-    grid-template-columns: var(--maze_grid_cols);
-    grid-template-rows:    var(--maze_grid_rows);
+    gap:                   var(--body_camp_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_camp_cols);
+    grid-template-rows:    var(--body_camp_rows);
 }
 
-div#Maze_view3D {
-    grid-area: view3D;
+#pane_header.camp,
+#pane_camp_list.camp,
+#pane_camp_mesg.camp,
+#pane_ctls_boad.camp,
+#pane_sytm_logs.camp,
+#pane_footer.camp
+{display: block;}
+
+#pane_maze_vw3D.camp,
+#pane_maze_vw2D.camp,
+#pane_load_list.camp,
+#pane_load_data.camp,
+#pane_save_list.camp,
+#pane_save_data.camp,
+#pane_maze_mesg.camp 
+{display: none;}
+
+
+/* ロード・セーブ画面のレイアウト関係 */
+body.load {
+    display: grid;
+    gap:                   var(--body_load_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_load_cols);
+    grid-template-rows:    var(--body_load_rows);
 }
 
-div#Maze_view2D {
-    grid-area: view2D;
+#pane_header.load,
+#pane_load_list.load,
+#pane_load_data.load,
+#pane_camp_mesg.load,
+#pane_ctls_boad.load,
+#pane_sytm_logs.load,
+#pane_footer.load
+{display: block;}
+
+#pane_maze_vw3D.load,
+#pane_maze_vw2D.load,
+#pane_camp_list.load,
+#pane_save_list.load,
+#pane_save_data.load,
+#pane_maze_mesg.load 
+{display: none; }
+
+
+/* セーブ画面のレイアウト関係 */
+body.save {
+    display: grid;
+    gap:                   var(--body_save_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_save_cols);
+    grid-template-rows:    var(--body_save_rows);
 }
+
+#pane_header.save,
+#pane_save_list.save,
+#pane_save_data.save,
+#pane_camp_mesg.save,
+#pane_ctls_boad.save,
+#pane_sytm_logs.save,
+#pane_footer.save 
+{display: block;}
+
+#pane_maze_vw3D.save,
+#pane_maze_vw2D.save,
+#pane_camp_list.save,
+#pane_load_list.save,
+#pane_load_data.save,
+#pane_maze_mesg.save 
+{display: none; }
+
+
+#pane_header    {grid-area: header;}
+#pane_maze_vw3D {grid-area: view3d;}
+#pane_maze_vw2D {grid-area: view2d;}
+#pane_camp_list {grid-area: camp_l;}
+#pane_load_list {grid-area: load_l;}
+#pane_load_data {grid-area: load_d;}
+#pane_save_list {grid-area: save_l;}
+#pane_save_data {grid-area: save_d;}
+#pane_camp_mesg {grid-area: camp_m;}
+#pane_maze_mesg {grid-area: maze_m;}
+#pane_ctls_boad {grid-area: contls;}
+#pane_sytm_logs {grid-area: message;}
+#pane_footer    {grid-area: footer;}
+
 
 /* Headerの見栄え */
 header {
@@ -116,11 +189,14 @@ h1 {
     font-size:   var(--h1_font_size,   22px);
     line-height: var(--h1_line_heght,  26px);
 }
-article#Maze_view_pane{
+
+
+#pane_maze_vw3D {
     justify-self:center;
     align-self: auto;
 }
-div#Maze_view_message_div {
+
+#pane_camp_mesg {
     min-height: var(--view_message_height, 3.5rem);
     max-height: 3.5rem;
     overflow-y: scroll;
@@ -129,7 +205,25 @@ div#Maze_view_message_div {
     margin-bottom: var(--view_message_margin_UD, 1.2rem);
     width:         var(--message_width, 33rem);
 }
-p#Maze_view_message {
+p#camp_mesg {
+    float: left;
+
+    color: inherit;
+    background-color: inherit;
+    word-break: break-all;
+    font-size:  var(--view_message_font_size, 1.1rem);
+}
+
+#pane_maze_mesg {
+    min-height: var(--view_message_height, 3.5rem);
+    max-height: 3.5rem;
+    overflow-y: scroll;
+
+    margin-top:    var(--view_message_margin_UD, 1.2rem);
+    margin-bottom: var(--view_message_margin_UD, 1.2rem);
+    width:         var(--message_width, 33rem);
+}
+p#maze_mesg {
     float: left;
 
     color: inherit;
@@ -190,46 +284,29 @@ button#r_cp1 {
 
 
 
-div#Maze_view_switch {
-    clear: both;
-/*
-    width: max(
-        var(--view3D_canvas_width,  320px), 
-        calc(var(--view2D_pre_font_size, 0.8rem) * 23),
-        var(--view3D_info_width,  23rem)
-        );
-*/
-}
-
-/*
-div#Maze_view_switch button#view_switch {
-    float: left;
-}
-*/
-
-pre#Maze_view2D_pre {
+pre#maze_view2D_pre {
     margin:      var(--view2D_pre_margin,      0.8rem);
     width:       var(--view2D_pre_width,        320px);
     height:      var(--view2D_pre_height,       283px); 
     font-family: var(--view2D_pre_font_family, monospace);
-/*
-    font-size:   var(--view2D_pre_font_size,   0.8rem);
-    line-height: var(--view2D_pre_line_height, 0.9rem);
-*/
     text-align: center;
 }
-
+#pane_maze_vw3D {
+    text-align: center;
+}
+/*
 div#Maze_view3D {
     text-align: center;
 }
+*/
 
-canvas#Maze_view3D_canvas {
+canvas#maze_view3D_canvas {
     margin: var(--view3D_canvas_margin,  1rem);
     width:  var(--view3D_canvas_width,  320px);
     height: var(--view3D_canvas_height, 203px);
 }
 
-p#Maze_view3D_direction_info {
+p#maze_view3D_direction_info {
     text-align: center;
 
     width:       var(--view3D_info_width,  23rem);
@@ -239,36 +316,36 @@ p#Maze_view3D_direction_info {
     line-height: var(--view3D_line_heght,  1.6rem);
 }
 
-p#Maze_view3D_direction_info .direction_N {
+p#maze_view3D_direction_info .direction_N {
     color: #000000;
     background-color: #00ff00;
 }
 
-p#Maze_view3D_direction_info .direction_E {
+p#maze_view3D_direction_info .direction_E {
     color: #ffffff;
     background-color: #0000ff;
 }
 
-p#Maze_view3D_direction_info .direction_S {
+p#maze_view3D_direction_info .direction_S {
     color: #ffffff;
     background-color: #ff0000;
 }
 
-p#Maze_view3D_direction_info .direction_W {
+p#maze_view3D_direction_info .direction_W {
     color: #000000;
     background-color: #ffd700;
 }
 
-p#Maze_view3D_direction_info .direction_D {
+p#maze_view3D_direction_info .direction_D {
     color: #ffffff;
     background-color: #000000;
 }
 
-p#Maze_view3D_direction_info span#direction_X {
+p#maze_view3D_direction_info span#direction_X {
     color: #ff00ff;
 }
 
-p#Maze_view3D_direction_info span#direction_Y {
+p#maze_view3D_direction_info span#direction_Y {
     color: #ffa500;
 }
 
@@ -316,43 +393,29 @@ ul#camp_list {
     background-color: cornsilk;
 }
 
-/*
-article#Maze_info_pane {
-    display: grid;
-    gap:                   var(--maze_info_grid_gap, 1.0rem 0.5rem);
-    grid-template-columns: var(--maze_info_grid_cols);
-    grid-template-rows:    var(--maze_info_grid_rows);
-}
-*/
 
-/*
-article#Maze_info_pane h2  {
-    grid-area: h2;
-    justify-self:center;
+div#pane_maze_vw2D {
+    justify-self:center; 
     text-align:  center;
-
-    font-size: var(--info_h2_font_size, 1.75rem);
 }
-*/
-
+/*
 div#Maze_view2D {
     justify-self:center; 
     text-align:  center;
 }
+*/
 
-article#Maze_info_pane{
+article#pane_ctls_boad {
     display: grid;
 }
 
-article#Maze_info_pane div#move_ctl_view { 
+article#pane_ctls_boad + div { 
     justify-self:center; 
     text-align:  center;
 }
 
-div#move_ctl_panel {
+#ctls_boad {
     display: grid;
-
-    font-size: var(--ctl_font_size, 2.0rem);
 
     gap: 0.5rem 0.5rem;
     grid-template-columns: 
@@ -383,84 +446,59 @@ div#move_ctl_panel {
         [c_btn-end]
         ;
 
+        font-size:   var(--ctl_font_size, 2.0rem);
+        font-family: sans-serif;
+        font-weight: bold;
 }
 
-div#move_ctl_panel button#debug_mode {
-    grid-area: debug_btn;
+#debug_mode { grid-area: debug_btn;}
+
+#u_arr {grid-area: u_arr;}
+#d_arr {grid-area: d_arr;}
+#l_arr {grid-area: l_arr;}
+#r_arr {grid-area: r_arr;}
+
+#y_btn {grid-area: y_btn;}
+#n_btn {grid-area: n_btn;}
+#c_btn {grid-area: c_btn;}
+#s_btn {grid-area: s_btn;}
+#r_btn {grid-area: r_btn;}
+
+
+#debug_mode {
     font-size: x-small;
 }
-
-div#move_ctl_panel button#y_btn {
-    grid-area: y_btn;
-
+#y_btn {
     color: darkgreen ;
     background-color:#ccffcc;
 
-    font-family: sans-serif;
-    font-weight: bold;
 }
-
-div#move_ctl_panel button#n_btn {
-    grid-area: n_btn;
-
+#n_btn {
     color: #ff00ff;
     background-color:pink;
-
-    font-family: sans-serif;
-    font-weight: bold;
 }
 
-div#move_ctl_panel button#c_btn {
-    grid-area: c_btn;
-
+#c_btn {
     color: rgb(139, 141, 0) ;
     background-color:#f6ffcc;
-
-    font-family: sans-serif;
-    font-weight: bold;
 }
 
-div#move_ctl_panel button#s_btn {
-    grid-area: s_btn;
-
+#s_btn {
     color: #03ec0f;
     background-color:rgb(253, 255, 233);
-
-    font-family: sans-serif;
-    font-weight: bold;
 }
 
-div#move_ctl_panel button#r_btn {
-    grid-area: r_btn;
-
+#r_btn {
     color:chocolate ;
     background-color:ivory;
 
-    font-family: sans-serif;
-    font-weight: bold;
-}
-
-div#move_ctl_panel button#u_arr {
-    grid-area: u_arr;
-}
-
-div#move_ctl_panel button#d_arr {
-    grid-area: d_arr;
-}
-
-div#move_ctl_panel button#l_arr {
-    grid-area: l_arr;
-}
-
-div#move_ctl_panel button#r_arr {
-    grid-area: r_arr;
 }
 
 
 
 
 
-article#message_pane {
+#pane_sytm_logs {
     width:       var(--message_width, 33rem);
     font-size:   var(--message_font_size,   0.6rem);
     line-height: var(--message_line_height, 0.7rem);
@@ -470,6 +508,6 @@ article#message_pane {
     align-self: auto;
 }
 
-article#message_pane p {
+#pane_sytm_logs p {
     word-break: break-all;
 }

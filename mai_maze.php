@@ -246,99 +246,89 @@ function new_team(): Team {
     <script src="./js/mai_maze.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
 </head>
 <body id='body'>
-    <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
-    <article class='Maze_view_pane' id='Maze_view_pane'>
-        <button id='r_cp1' type='button' name='r_cp1' value='R'>戻る（Ｒ）</button>
-        <div id='Maze_view_switch'>
-            <div id='Maze_view_switch_maze'>
-                <div id='Maze_viewXD'>
-                    <div id='Maze_view3D'>
-                        <canvas id='Maze_view3D_canvas' width='320' height='200'></canvas>
-                        <p id='Maze_view3D_direction_info'></p>
-                    </div>
-    <!-- article id='Maze_view2D_pane' -->
-                    <div id='Maze_view2D'>
-                        <pre id='Maze_view2D_pre'></pre>
-                    </div>
-                </div>
-    <!-- /article -->
-            </div>
-            <div id='Maze_view_switch_camp'>
-                <ul id='camp_list'>
-                    <li id='camp_load'>冒険の復活
-                        <p>以前保存した冒険を再開できます</p></li>
-                    <li id='camp_save'>冒険の記録
-                        <p>直前までの冒険を保存できます</p></li>
-                    <li id='camp_mvpt'>街への帰還
-                        <p>街(冒険者ギルド)へジャンプします</p></li>
-                    <!-- li id='camp_hres'>冒険者の準備
-                        <p>冒険者の情報を見たり装備を替えたりできます(未実装)</p></li -->
-                </dl>
-            </div>
-            <div id='Maze_view_switch_load'>
-                <form id='load_data_form'>
-                    <input id='load_data_id' for='load_data_form' type='hidden' name='load_data_id' value='-1' />
-                </form>
-                <ul id='load_data_list'></ul>
-                <fieldset id='load_data_fields'>
-                <legend>セーブ情報</legend>
-                <ul id='load_data_detail'>
-                    <li>
-                        <label for='load_data_time'>保存日時:</label>
-                        <p id='load_data_time'></p>
-                    </li>
-                    <li>
-                        <label for='load_data_point'>保存場所:</label>
-                        <p id='load_data_point'></p>
-                    </li>
-                    <li>
-                        <label for='load_data_detail'>詳細:</label>
-                        <textarea id='load_data_detail' for='load_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)' readonly></textarea>
-                    </li>
-                </ul>
-                </fieldset>
-            </div>
-            <div id='Maze_view_switch_save'>
-                <form id='save_data_form'>
-                    <input id='save_data_id' for='save_data_form' type='hidden' name='save_data_id' value='-1' />
-                </form>
-                <ul id='save_data_list'></ul>
-                <fieldset id='save_data_fields'>
-                    <legend>セーブ情報を入力して下さい</legend>
-                    <ul id='save_data_detail'>
-                        <li>
-                            <label for='save_data_time'>保存日時:</label>
-                            <p id='save_data_time'></p>
-                        </li>
-                        <li>
-                            <label for='save_data_point'>保存場所:</label>
-                            <p id='save_data_point'></p>
-                        </li>
-                        <li>
-                            <label for='save_data_detail'>詳細(任意):</label>
-                            <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
-                        </li>
-                    </ul>
-                </fieldset>
-            </div>
-            <!-- div id='Maze_view_switch_hres'>
-                <ul id='hres_list'></ul>
-                <fieldset id='hero_fields'>
-                    <legend>冒険者の情報</legend>
-                    <ul id='hero_info'></ul>
-                </fieldset>
-            </div -->
-        </div>
-        <div id='Maze_view_message_div'>
-            <p id='Maze_view_message'></p>
-            <button id='n_cp1' type='button' name='n_cp1' value='N'>いいえ</button>
-            <button id='y_cp1' type='button' name='y_cp1' value='Y'>はい</button>
-            <button id='s_cp1' type='button' name='s_cp1' value='S'>切替</button>
-        </div>
-        <?php /* display_maze(); */ ?>
+    <header id='pane_header'>
+        <h1 class='h1'>ダンジョンアドベンチャーⅠ</h1>
+    </header>
+    <article id='pane_maze_vw3D'>
+        <canvas id='maze_view3D_canvas' width='320' height='200'></canvas>
+        <p id='maze_view3D_direction_info'></p>
     </article>
-    <article class='Maze_info' id='Maze_info_pane'>
-        <div id ='move_ctl_view'><div id='move_ctl_panel'>
+    <article id='pane_maze_vw2D'>
+        <pre id='maze_view2D_pre'></pre>
+    </article>
+    <article id='pane_camp_list'>
+        <ul id='camp_list'>
+            <li id='camp_load'>冒険の復活
+                <p>以前保存した冒険を再開できます</p></li>
+            <li id='camp_save'>冒険の記録
+                <p>直前までの冒険を保存できます</p></li>
+            <li id='camp_mvpt'>街への帰還
+                <p>街(冒険者ギルド)へジャンプします</p></li>
+        </ul>
+    </article>
+    <article id='pane_load_list'>
+        <form id='load_data_form'>
+            <input id='load_data_id' for='load_data_form' type='hidden' name='load_data_id' value='-1' />
+        </form>
+        <ul id='load_data_list'></ul>
+    </article>
+    <article id='pane_load_data'>
+        <fieldset id='load_data_fields'>
+            <legend>セーブ情報</legend>
+            <ul id='load_data_detail'>
+                <li>
+                    <label for='load_data_time'>保存日時:</label>
+                    <p id='load_data_time'></p>
+                </li>
+                <li>
+                    <label for='load_data_point'>保存場所:</label>
+                    <p id='load_data_point'></p>
+                </li>
+                <li>
+                    <label for='load_data_detail'>詳細:</label>
+                    <textarea id='load_data_detail' for='load_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)' readonly></textarea>
+                </li>
+            </ul>
+        </fieldset>
+    </article>
+    <article id='pane_save_list'>
+        <form id='save_data_form'>
+            <input id='save_data_id' for='save_data_form' type='hidden' name='save_data_id' value='-1' />
+        </form>
+        <ul id='save_data_list'></ul>
+    </article>
+    <article id='pane_save_data'>
+        <fieldset id='save_data_fields'>
+            <legend>セーブ情報を入力して下さい</legend>
+            <ul id='save_data_detail'>
+                <li>
+                    <label for='save_data_time'>保存日時:</label>
+                    <p id='save_data_time'></p>
+                </li>
+                <li>
+                    <label for='save_data_point'>保存場所:</label>
+                    <p id='save_data_point'></p>
+                </li>
+                <li>
+                    <label for='save_data_detail'>詳細(任意):</label>
+                    <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
+                </li>
+            </ul>
+        </fieldset>
+    </article>
+    <article id='pane_camp_mesg'>
+        <button id='r_cp1' type='button' name='r_cp1' value='R'>戻る（Ｒ）</button>
+        <p id='camp_mesg'></p>
+        <button id='n_cp1' type='button' name='n_cp1' value='N'>いいえ</button>
+        <button id='y_cp1' type='button' name='y_cp1' value='Y'>はい</button>
+        <button id='s_cp1' type='button' name='s_cp1' value='S'>切替</button>
+    </article>
+    <article id='pane_maze_mesg'>
+        <p id='maze_mesg'></p>
+    </article>
+    <article id ='pane_ctls_boad'> 
+        <div>
+        <div id='ctls_boad'>
             <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常</button>
             <button id='u_arr' type='button' name='u_arr' value='U'>↑</button>
             <button id='d_arr' type='button' name='d_arr' value='D'>↓</button>
@@ -349,21 +339,21 @@ function new_team(): Team {
             <button id='s_btn' type='button' name='s_btn' value='S'>選</button>
             <button id='r_btn' type='button' name='r_btn' value='T'>戻</button>
             <button id='c_btn' type='button' name='c_btn' value='C'>キャンプ（Ｃ）</button>
-        </div></div>
-        <?php /* display_cntl(); */ ?>
+        </div>
+        </div>
     </article>
-    <article class='message_pane' id='message_pane'>
+    <article id ='pane_sytm_logs'>
         <!-- div id='client_message'></div -->
         <?php 
             $gv->mes->display_err_message(); 
             $gv->mes->display_nor_message(); 
         ?>
     </article>
-    <footer id='footer_pane'>
+    <footer id='pane_footer'>
         <a href='../md/'><img src='./icon-img/kkrn_icon_home_3.png' /></a>
         <p class='foot_print'>Maze Adventure Ⅰ.</p>
     </footer>
-    <script>
+    <script id='ts_caller'>
         window.tsCall.start_game(
             '<?php echo $ga->mode; ?>', 
             '<?php echo $gv->script_path; ?>', 
