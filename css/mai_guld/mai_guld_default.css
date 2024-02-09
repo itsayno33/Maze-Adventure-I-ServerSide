@@ -45,11 +45,11 @@
     --body_grid_gap: 0 0;
     --body_grid_cols: 
             3rem
-            [h1-start footer-start view-start pane_sytm_logs-start]
+            [h1-start footer-start view-start message-start]
             auto
             [view-end cntl-start]
             auto
-            [h1-end footer-end  pane_sytm_logs-end cntl-end]
+            [h1-end footer-end  message-end cntl-end]
             3rem
             ;
     --body_grid_rows:
@@ -57,9 +57,9 @@
             100px
             [h1-end view-start cntl-start]
             1fr
-            [view-end cntl-end pane_sytm_logs-start]
+            [view-end cntl-end message-start]
             auto
-            [pane_sytm_logs-end footer-start]
+            [message-end footer-start]
             100px
             [footer-end]
             ;

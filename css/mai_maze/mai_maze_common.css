@@ -48,10 +48,8 @@ body.move {
 {display: block;}
 
 #pane_camp_list.move,
-#pane_load_list.move,
-#pane_load_data.move,
-#pane_save_list.move,
-#pane_save_data.move,
+#pane_ldsv_list.move,
+#pane_ldsv_data.move,
 #pane_camp_mesg.move 
 {display: none;}
 
@@ -74,63 +72,33 @@ body.camp {
 
 #pane_maze_vw3D.camp,
 #pane_maze_vw2D.camp,
-#pane_load_list.camp,
-#pane_load_data.camp,
-#pane_save_list.camp,
-#pane_save_data.camp,
+#pane_ldsv_list.camp,
+#pane_ldsv_data.camp,
 #pane_maze_mesg.camp 
 {display: none;}
 
 
 /* ロード・セーブ画面のレイアウト関係 */
-body.load {
+body.ldsv {
     display: grid;
-    gap:                   var(--body_load_gap, 1rem 1.5rem);
-    grid-template-columns: var(--body_load_cols);
-    grid-template-rows:    var(--body_load_rows);
+    gap:                   var(--body_ldsv_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_ldsv_cols);
+    grid-template-rows:    var(--body_ldsv_rows);
 }
 
-#pane_header.load,
-#pane_load_list.load,
-#pane_load_data.load,
-#pane_camp_mesg.load,
-#pane_ctls_boad.load,
-#pane_sytm_logs.load,
-#pane_footer.load
+#pane_header.ldsv,
+#pane_ldsv_list.ldsv,
+#pane_ldsv_data.ldsv,
+#pane_camp_mesg.ldsv,
+#pane_ctls_boad.ldsv,
+#pane_sytm_logs.ldsv,
+#pane_footer.ldsv
 {display: block;}
 
-#pane_maze_vw3D.load,
-#pane_maze_vw2D.load,
-#pane_camp_list.load,
-#pane_save_list.load,
-#pane_save_data.load,
-#pane_maze_mesg.load 
-{display: none; }
-
-
-/* セーブ画面のレイアウト関係 */
-body.save {
-    display: grid;
-    gap:                   var(--body_save_gap, 1rem 1.5rem);
-    grid-template-columns: var(--body_save_cols);
-    grid-template-rows:    var(--body_save_rows);
-}
-
-#pane_header.save,
-#pane_save_list.save,
-#pane_save_data.save,
-#pane_camp_mesg.save,
-#pane_ctls_boad.save,
-#pane_sytm_logs.save,
-#pane_footer.save 
-{display: block;}
-
-#pane_maze_vw3D.save,
-#pane_maze_vw2D.save,
-#pane_camp_list.save,
-#pane_load_list.save,
-#pane_load_data.save,
-#pane_maze_mesg.save 
+#pane_maze_vw3D.ldsv,
+#pane_maze_vw2D.ldsv,
+#pane_camp_list.ldsv,
+#pane_maze_mesg.ldsv 
 {display: none; }
 
 
@@ -138,10 +106,8 @@ body.save {
 #pane_maze_vw3D {grid-area: view3d;}
 #pane_maze_vw2D {grid-area: view2d;}
 #pane_camp_list {grid-area: camp_l;}
-#pane_load_list {grid-area: load_l;}
-#pane_load_data {grid-area: load_d;}
-#pane_save_list {grid-area: save_l;}
-#pane_save_data {grid-area: save_d;}
+#pane_ldsv_list {grid-area: ldsv_l;}
+#pane_ldsv_data {grid-area: ldsv_d;}
 #pane_camp_mesg {grid-area: camp_m;}
 #pane_maze_mesg {grid-area: maze_m;}
 #pane_ctls_boad {grid-area: contls;}
@@ -203,7 +169,7 @@ h1 {
 
     margin-top:    var(--view_message_margin_UD, 1.2rem);
     margin-bottom: var(--view_message_margin_UD, 1.2rem);
-    width:         var(--message_width, 33rem);
+/*    width:         var(--message_width, 33rem); */
 }
 p#camp_mesg {
     float: left;
@@ -211,7 +177,7 @@ p#camp_mesg {
     color: inherit;
     background-color: inherit;
     word-break: break-all;
-    font-size:  var(--view_message_font_size, 1.1rem);
+    font-size:  var(--view_camp_msg_font_size, 1.1rem);
 }
 
 #pane_maze_mesg {
@@ -221,7 +187,7 @@ p#camp_mesg {
 
     margin-top:    var(--view_message_margin_UD, 1.2rem);
     margin-bottom: var(--view_message_margin_UD, 1.2rem);
-    width:         var(--message_width, 33rem);
+/*    width:         var(--message_width, 33rem); */
 }
 p#maze_mesg {
     float: left;
@@ -229,7 +195,7 @@ p#maze_mesg {
     color: inherit;
     background-color: inherit;
     word-break: break-all;
-    font-size:  var(--view_message_font_size, 1.1rem);
+    font-size:  var(--view_maze_msg_font_size, 1.1rem);
 }
 
 button#y_cp1 {
@@ -282,23 +248,21 @@ button#r_cp1 {
     font-size:  var(--view_button_font_size, 0.8rem);
 }
 
-
+#div_maze_vw2D {
+    display: grid;
+}
 
 pre#maze_view2D_pre {
-    margin:      var(--view2D_pre_margin,      0.8rem);
-    width:       var(--view2D_pre_width,        320px);
-    height:      var(--view2D_pre_height,       283px); 
-    font-family: var(--view2D_pre_font_family, monospace);
-    text-align: center;
+    margin:       var(--view2D_pre_margin,      0.8rem);
+    width:        var(--view2D_pre_width,        320px);
+    height:       var(--view2D_pre_height,       283px); 
+    font-family:  var(--view2D_pre_font_family, monospace);
+    justify-self: center; 
+    text-align:   center;
 }
 #pane_maze_vw3D {
     text-align: center;
 }
-/*
-div#Maze_view3D {
-    text-align: center;
-}
-*/
 
 canvas#maze_view3D_canvas {
     margin: var(--view3D_canvas_margin,  1rem);
@@ -309,7 +273,7 @@ canvas#maze_view3D_canvas {
 p#maze_view3D_direction_info {
     text-align: center;
 
-    width:       var(--view3D_info_width,  23rem);
+/*    width:       var(--view3D_info_width,  23rem); */
     color:       var(--view3D_text_color,darkgreen);
     font-family: var(--view3D_font_family, sans-serif);
     font-size:   var(--view3D_font_size,   1.3rem);
@@ -353,44 +317,46 @@ p#maze_view3D_direction_info span#direction_Y {
     background-color: #98fb98;
 }
 
-ul#load_data_list,
-ul#save_data_list {
+#ldsv_data_list {
     color:            chocolate;
     background-color: cornsilk;
 
-    font-size:    var(--save_data_list_font_size,   0.9rem);
-    line-height:  var(--save_data_list_line_height, 1.0rem);
+    font-size:    var(--ldsv_data_list_font_size,   0.9rem);
+    line-height:  var(--ldsv_data_list_line_height, 1.0rem);
 
     padding-top:    0.5em;
     padding-bottom: 0.5em;
 
-    column-count: var(--save_data_list_cols, 2);
+    column-count: var(--ldsv_data_list_cols, 2);
 /*    columns: auto 100px; */
 }
 
-ul#load_data_list li,
-ul#save_data_list li{
+#camp_list      li,
+#ldsv_data_list li{
     margin-top:    0.0em;
     margin-bottom: 0.5em;
 }
 
-ul#load_data_list legend,
-ul#load_data_list label,
-ul#load_data_list input,
-ul#load_data_list textarea,
-
-ul#save_data_list legend,
-ul#save_data_list label,
-ul#save_data_list input,
-ul#save_data_list textarea
+#ldsv_data_list legend,
+#ldsv_data_list label,
+#ldsv_data_list input,
+#ldsv_data_list textarea
 {
-    font-size:    var(--save_data_list_font_size,   0.9rem);
-    line-height:  var(--save_data_list_line_height, 1.0rem);
+    font-size:    var(--ldsv_data_list_font_size,   0.9rem);
+    line-height:  var(--ldsv_data_list_line_height, 1.0rem);
 }
 
-ul#camp_list {
+#camp_list {
     color:            chocolate;
     background-color: cornsilk;
+
+    font-size:    var(--camp_menu_list_font_size, 0.9rem);
+    line-height:  var(--camp_menu_list_line_hght, 1.0rem);
+
+    padding-top:    0.0em;
+    padding-bottom: 0.2em;
+
+    column-count: 1;
 }
 
 
@@ -405,16 +371,20 @@ div#Maze_view2D {
 }
 */
 
+/*
 article#pane_ctls_boad {
     display: grid;
 }
+*/
 
-article#pane_ctls_boad + div { 
-    justify-self:center; 
-    text-align:  center;
+article#pane_ctls_boad #div_ctls_boad { 
+    display: grid;
 }
 
 #ctls_boad {
+    justify-self:center; 
+    text-align:  center;
+
     display: grid;
 
     gap: 0.5rem 0.5rem;
@@ -499,7 +469,7 @@ article#pane_ctls_boad + div {
 
 
 #pane_sytm_logs {
-    width:       var(--message_width, 33rem);
+/*    width:       var(--message_width, 33rem); */
     font-size:   var(--message_font_size,   0.6rem);
     line-height: var(--message_line_height, 0.7rem);
     max-height: calc( var(--message_line_height, 0.7rem) * 6);

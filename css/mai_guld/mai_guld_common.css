@@ -47,7 +47,7 @@ article#gld_ctl_pane {
 }
 
 article#pane_sytm_logs {
-    grid-area: pane_sytm_logs;
+    grid-area: message;
 }
 
 footer#footer_pane {

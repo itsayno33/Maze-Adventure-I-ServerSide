@@ -254,7 +254,9 @@ function new_team(): Team {
         <p id='maze_view3D_direction_info'></p>
     </article>
     <article id='pane_maze_vw2D'>
+        <div id='div_maze_vw2D'>
         <pre id='maze_view2D_pre'></pre>
+        </div>
     </article>
     <article id='pane_camp_list'>
         <ul id='camp_list'>
@@ -266,32 +268,34 @@ function new_team(): Team {
                 <p>街(冒険者ギルド)へジャンプします</p></li>
         </ul>
     </article>
-    <article id='pane_load_list'>
-        <form id='load_data_form'>
-            <input id='load_data_id' for='load_data_form' type='hidden' name='load_data_id' value='-1' />
+    <article id='pane_ldsv_list'>
+        <form id='ldsv_data_form'>
+            <input id='ldsv_data_id' for='ldsv_data_form' type='hidden' name='ldsv_data_id' value='-1' />
         </form>
-        <ul id='load_data_list'></ul>
+        <ul id='ldsv_data_list'></ul>
     </article>
-    <article id='pane_load_data'>
-        <fieldset id='load_data_fields'>
-            <legend>セーブ情報</legend>
-            <ul id='load_data_detail'>
+    <article id='pane_ldsv_data'>
+        <fieldset id='ldsv_data_fields'>
+            <legend id='ldsv_data_legend'>
+                セーブ情報
+            </legend>
+            <ul id='ldsv_data_detail'>
                 <li>
-                    <label for='load_data_time'>保存日時:</label>
-                    <p id='load_data_time'></p>
+                    <label for='ldsv_data_time'>保存日時:</label>
+                    <p id='ldsv_data_time'></p>
                 </li>
                 <li>
-                    <label for='load_data_point'>保存場所:</label>
-                    <p id='load_data_point'></p>
+                    <label for='ldsv_data_point'>保存場所:</label>
+                    <p id='ldsv_data_point'></p>
                 </li>
                 <li>
-                    <label for='load_data_detail'>詳細:</label>
-                    <textarea id='load_data_detail' for='load_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)' readonly></textarea>
+                    <label for='ldsv_data_detail'>詳細:</label>
+                    <textarea id='ldsv_data_detail' for='load_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)' readonly></textarea>
                 </li>
             </ul>
         </fieldset>
     </article>
-    <article id='pane_save_list'>
+    <!-- article id='pane_save_list'>
         <form id='save_data_form'>
             <input id='save_data_id' for='save_data_form' type='hidden' name='save_data_id' value='-1' />
         </form>
@@ -315,7 +319,7 @@ function new_team(): Team {
                 </li>
             </ul>
         </fieldset>
-    </article>
+    </article -->
     <article id='pane_camp_mesg'>
         <button id='r_cp1' type='button' name='r_cp1' value='R'>戻る（Ｒ）</button>
         <p id='camp_mesg'></p>
@@ -327,7 +331,7 @@ function new_team(): Team {
         <p id='maze_mesg'></p>
     </article>
     <article id ='pane_ctls_boad'> 
-        <div>
+        <div id ='div_ctls_boad'>
         <div id='ctls_boad'>
             <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常</button>
             <button id='u_arr' type='button' name='u_arr' value='U'>↑</button>
