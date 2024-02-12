@@ -14,7 +14,7 @@ img {
 
 /* レイアウトCSSの判別　*/
 h1::after {
-    content: "\A『" var(--layout_mode, "Common") "』レイアウト\A";
+    content: "\A『" var(--layout_mode, "Common") "』\A";
     white-space: pre;
 
     color: var(--h1_text_color, darkgoldenrod);
@@ -27,37 +27,93 @@ h1::after {
 /* 全体のレイアウト関係 */
 body {
     background-color: var(--body_lyt_bgcolor,#ccffcc);
+}
 
+
+/* 探索画面のレイアウト関係 */
+body.move {
     display: grid;
-
-    gap:                   var(--body_grid_gap, 1rem 1.5rem);
-    grid-template-columns: var(--body_grid_cols);
-    grid-template-rows:    var(--body_grid_rows);
+    gap:                   var(--body_move_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_move_cols);
+    grid-template-rows:    var(--body_move_rows);
 }
 
-h1 {
-    grid-area: h1;
+#pane_header.move,
+#pane_maze_vw3D.move,
+#pane_maze_vw2D.move,
+#pane_maze_mesg.move,
+#pane_ctls_boad.move,
+#pane_sytm_logs.move,
+#pane_footer.move
+{display: block;}
+
+#pane_camp_list.move,
+#pane_ldsv_list.move,
+#pane_ldsv_data.move,
+#pane_camp_mesg.move 
+{display: none;}
+
+
+/* キャンプ画面のレイアウト関係 */
+body.camp {
+    display: grid;
+    gap:                   var(--body_camp_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_camp_cols);
+    grid-template-rows:    var(--body_camp_rows);
 }
 
-article#Maze_view_pane {
-    grid-area: view3d;
+#pane_header.camp,
+#pane_camp_list.camp,
+#pane_camp_mesg.camp,
+#pane_ctls_boad.camp,
+#pane_sytm_logs.camp,
+#pane_footer.camp
+{display: block;}
+
+#pane_maze_vw3D.camp,
+#pane_maze_vw2D.camp,
+#pane_ldsv_list.camp,
+#pane_ldsv_data.camp,
+#pane_maze_mesg.camp 
+{display: none;}
+
+
+/* ロード・セーブ画面のレイアウト関係 */
+body.ldsv {
+    display: grid;
+    gap:                   var(--body_ldsv_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_ldsv_cols);
+    grid-template-rows:    var(--body_ldsv_rows);
 }
 
-article#Maze_view2D_pane {
-    grid-area: view2d;
-}
+#pane_header.ldsv,
+#pane_ldsv_list.ldsv,
+#pane_ldsv_data.ldsv,
+#pane_camp_mesg.ldsv,
+#pane_ctls_boad.ldsv,
+#pane_sytm_logs.ldsv,
+#pane_footer.ldsv
+{display: block;}
 
-article#Maze_info_pane {
-    grid-area: info;
-}
+#pane_maze_vw3D.ldsv,
+#pane_maze_vw2D.ldsv,
+#pane_camp_list.ldsv,
+#pane_maze_mesg.ldsv 
+{display: none; }
 
-article#message_pane {
-    grid-area: message;
-}
 
-footer#footer_pane {
-    grid-area: footer;
-}
+#pane_header    {grid-area: header;}
+#pane_maze_vw3D {grid-area: view3d;}
+#pane_maze_vw2D {grid-area: view2d;}
+#pane_camp_list {grid-area: camp_l;}
+#pane_ldsv_list {grid-area: ldsv_l;}
+#pane_ldsv_data {grid-area: ldsv_d;}
+#pane_camp_mesg {grid-area: camp_m;}
+#pane_maze_mesg {grid-area: maze_m;}
+#pane_ctls_boad {grid-area: contls;}
+#pane_sytm_logs {grid-area: message;}
+#pane_footer    {grid-area: footer;}
+
 
 /* Headerの見栄え */
 header {
@@ -99,102 +155,160 @@ h1 {
     font-size:   var(--h1_font_size,   22px);
     line-height: var(--h1_line_heght,  26px);
 }
-article#Maze_view_pane{
+
+
+#pane_maze_vw3D {
     justify-self:center;
     align-self: auto;
 }
-div#Maze_view_message_div {
-    min-height: var(--view_message_height, 3.5rem);
+
+#pane_camp_mesg {
+    min-height: var(--view_message_hght, 3.5rem);
     max-height: 3.5rem;
     overflow-y: scroll;
 
-    margin-top:    var(--view_message_margin_UD, 1.2rem);
-    margin-bottom: var(--view_message_margin_UD, 1.2rem);
-    width:         var(--message_width, 33rem);
+    margin-top:    var(--view_camp_msg_margin_UD, 1.2rem);
+    margin-bottom: var(--view_camp_msg_margin_UD, 1.2rem);
+/*    width:         var(--message_width, 33rem); */
 }
-p#Maze_view_message {
+p#camp_mesg {
+    float: left;
+
     color: inherit;
     background-color: inherit;
     word-break: break-all;
-    font-size:  var(--view_message_font_size, 1.1rem);
+    font-size:  var(--view_camp_msg_font_size, 1.1rem);
 }
 
-div#Maze_view_switch {
-    width: max(
-        var(--view3D_canvas_width,  320px), 
-        calc(var(--view2D_pre_font_size, 0.8rem) * 23),
-        var(--view3D_info_width,  23rem)
-        );
-}
+#pane_maze_mesg {
+    min-height: var(--view_maze_msg_hght, 3.5rem);
+    max-height: 3.5rem;
+    overflow-y: scroll;
 
-/*
-div#Maze_view_switch button#view_switch {
+    margin-top:    var(--view_maze_msg_margin_UD, 1.2rem);
+    margin-bottom: var(--view_maze_msg_margin_UD, 1.2rem);
+}
+p#maze_mesg {
     float: left;
-}
-*/
 
-pre#Maze_view2D_pre {
-    margin:      var(--view2D_pre_margin,      0.8rem);
-    width:       var(--view2D_pre_width,        320px);
-    height:      var(--view2D_pre_height,       283px); 
-    font-family: var(--view2D_pre_font_family, monospace);
-/*
-    font-size:   var(--view2D_pre_font_size,   0.8rem);
-    line-height: var(--view2D_pre_line_height, 0.9rem);
-*/
+    color: inherit;
+    background-color: inherit;
+    word-break: break-all;
+    font-size:  var(--view_maze_msg_font_size, 1.1rem);
+}
+
+button#y_cp1 {
+    float: left;
+    
+    color: darkgreen ;
+    background-color:#ccffcc;
+
+    margin: 0.2rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:  var(--view_button_font_size, 0.8rem);
+}
+
+button#n_cp1 {
+    float: left;
+    
+    color: #ff00ff;
+    background-color:pink;
+
+    margin: 0.2rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:  var(--view_button_font_size, 0.8rem);
+}
+
+button#s_cp1 {
+    float: right;
+    
+    color: #03ec0f;
+    background-color:rgb(253, 255, 233);
+
+    margin: 0.2rem;
+    margin-bottom: 0.5rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:  var(--view_button_font_size, 0.8rem);
+}
+
+button#r_cp1 {
+    float: right;
+    
+    color:chocolate ;
+    background-color:ivory;
+
+    margin: 0.2rem;
+    margin-bottom: 0.5rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:  var(--view_button_font_size, 0.8rem);
+}
+
+#div_maze_vw2D {
+    display: grid;
+}
+
+pre#maze_view2D_pre {
+    margin:       var(--view2D_pre_margin,      0.8rem);
+    width:        var(--view2D_pre_wdth,        320px);
+    height:       var(--view2D_pre_hght,        283px); 
+    font-family:  var(--view2D_pre_font_family, monospace);
+    justify-self: center; 
+    text-align:   center;
+}
+#pane_maze_vw3D {
     text-align: center;
 }
 
-div#Maze_view3D {
-    text-align: center;
+canvas#maze_view3D_canvas {
+    margin: var(--view3D_canvas_margin, 1rem);
+    width:  var(--view3D_canvas_wdth,   320px);
+    height: var(--view3D_canvas_hght,   203px);
 }
 
-canvas#Maze_view3D_canvas {
-    margin: var(--view3D_canvas_margin,  1rem);
-    width:  var(--view3D_canvas_width,  320px);
-    height: var(--view3D_canvas_height, 203px);
-}
-
-p#Maze_view3D_direction_info {
+p#maze_view3D_direction_info {
     text-align: center;
 
-    width:       var(--view3D_info_width,  23rem);
+/*    width:       var(--view3D_info_width,  23rem); */
     color:       var(--view3D_text_color,darkgreen);
     font-family: var(--view3D_font_family, sans-serif);
     font-size:   var(--view3D_font_size,   1.3rem);
     line-height: var(--view3D_line_heght,  1.6rem);
 }
 
-p#Maze_view3D_direction_info .direction_N {
+p#maze_view3D_direction_info .direction_N {
     color: #000000;
     background-color: #00ff00;
 }
 
-p#Maze_view3D_direction_info .direction_E {
+p#maze_view3D_direction_info .direction_E {
     color: #ffffff;
     background-color: #0000ff;
 }
 
-p#Maze_view3D_direction_info .direction_S {
+p#maze_view3D_direction_info .direction_S {
     color: #ffffff;
     background-color: #ff0000;
 }
 
-p#Maze_view3D_direction_info .direction_W {
+p#maze_view3D_direction_info .direction_W {
     color: #000000;
     background-color: #ffd700;
 }
 
-p#Maze_view3D_direction_info .direction_D {
+p#maze_view3D_direction_info .direction_D {
     color: #ffffff;
     background-color: #000000;
 }
 
-p#Maze_view3D_direction_info span#direction_X {
+p#maze_view3D_direction_info span#direction_X {
     color: #ff00ff;
 }
 
-p#Maze_view3D_direction_info span#direction_Y {
+p#maze_view3D_direction_info span#direction_Y {
     color: #ffa500;
 }
 
@@ -202,157 +316,161 @@ p#Maze_view3D_direction_info span#direction_Y {
     background-color: #98fb98;
 }
 
-ul#load_data_list,
-ul#save_data_list {
+#ldsv_data_list {
     color:            chocolate;
     background-color: cornsilk;
 
-    font-size:    var(--save_data_list_font_size,   0.9rem);
-    line-height:  var(--save_data_list_line_height, 1.0rem);
+    font-size:    var(--ldsv_data_list_font_size, 0.9rem);
+    line-height:  var(--ldsv_data_list_line_hght, 1.0rem);
 
     padding-top:    0.5em;
     padding-bottom: 0.5em;
 
-    column-count: 2;
+    column-count: var(--ldsv_data_list_cols, 2);
 /*    columns: auto 100px; */
 }
 
-ul#load_data_list li,
-ul#save_data_list li{
+#camp_list      li,
+#ldsv_data_list li{
     margin-top:    0.0em;
     margin-bottom: 0.5em;
 }
-
-ul#load_data_list legend,
-ul#load_data_list label,
-ul#load_data_list input,
-ul#load_data_list textarea,
-
-ul#save_data_list legend,
-ul#save_data_list label,
-ul#save_data_list input,
-ul#save_data_list textarea
+/*
+#ldsv_data_list legend,
+#ldsv_data_list label,
+#ldsv_data_list input,
+#ldsv_data_list textarea
+*/
+#ldsv_data_detail
 {
-    font-size:    var(--save_data_list_font_size,   0.9rem);
-    line-height:  var(--save_data_list_line_height, 1.0rem);
+    font-size:    var(--ldsv_data_dtil_font_size, 0.9rem);
+    line-height:  var(--ldsv_data_dtil_line_hght, 1.0rem);
 }
 
-ul#camp_list {
+#camp_list {
     color:            chocolate;
     background-color: cornsilk;
+
+    font-size:    var(--camp_menu_list_font_size, 0.9rem);
+    line-height:  var(--camp_menu_list_line_hght, 1.0rem);
+
+    padding-top:    0.0em;
+    padding-bottom: 0.2em;
+
+    column-count: 1;
 }
 
+
+div#pane_maze_vw2D {
+    justify-self:center; 
+    text-align:  center;
+}
 /*
-article#Maze_info_pane {
-    display: grid;
-    gap:                   var(--maze_info_grid_gap, 1.0rem 0.5rem);
-    grid-template-columns: var(--maze_info_grid_cols);
-    grid-template-rows:    var(--maze_info_grid_rows);
+div#Maze_view2D {
+    justify-self:center; 
+    text-align:  center;
 }
 */
 
 /*
-article#Maze_info_pane h2  {
-    grid-area: h2;
-    justify-self:center;
-    text-align:  center;
-
-    font-size: var(--info_h2_font_size, 1.75rem);
+article#pane_ctls_boad {
+    display: grid;
 }
 */
 
-article#Maze_view2D_pane div#Maze_view2D {
-    justify-self:center; 
-    text-align:  center;
-}
-
-article#Maze_info_pane{
+article#pane_ctls_boad #div_ctls_boad { 
     display: grid;
 }
 
-article#Maze_info_pane div#move_ctl_view { 
+#ctls_boad {
     justify-self:center; 
     text-align:  center;
-}
 
-div#move_ctl_panel {
     display: grid;
 
     gap: 0.5rem 0.5rem;
     grid-template-columns: 
-        [l_arrow-start n_btn-start c_btn-start]
-        var(--lr_arrow_width, 2.3rem)
-        [l_arrow-end n_btn-end u_arrow-start d_arrow-start]
-        var(--ud_arrow_width, 2.3rem)
-        [u_arrow-end d_arrow-end r_arrow-start y_btn-start]
-        var(--lr_arrow_width, 2.3rem)
-        [r_arrow-end y_btn-end c_btn-end]
+        [l_arr-start n_btn-start s_btn-start c_btn-start]
+        var(--lr_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [l_arr-end n_btn-end s_btn-end u_arr-start d_arr-start debug_btn-start]
+        var(--ud_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [u_arr-end d_arr-end r_arr-start r_btn-start y_btn-start]
+        var(--lr_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [r_arr-end r_btn-end y_btn-end c_btn-end debug_btn-end]
         ;
 
     grid-template-rows: 
-        [u_arrow-start]
-        var(--ud_arrow_height,  2.3rem)
-        [u_arrow-end l_arrow-start r_arrow-start]
-        var(--lr_arrow_height,  2.3rem)
-        [l_arrow-end r_arrow-end d_arrow-start]
-        var(--ud_arrow_height,  2.3rem)
-        [d_arrow-end y_btn-start n_btn-start]
-        var(--ud_arrow_height,  2.3rem)
+        [debug_btn-start]
+        var(--debug_btn_height, calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [debug_btn-end s_btn-start r_btn-start]
+        var(--r_btn_height,     calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [s_btn-end r_btn-end u_arr-start]
+        var(--ud_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [u_arr-end l_arr-start r_arr-start]
+        var(--lr_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [l_arr-end r_arr-end d_arr-start]
+        var(--ud_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [d_arr-end y_btn-start n_btn-start]
+        var(--ud_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [y_btn-end n_btn-end c_btn-start]
-        var(--camp_btn_height,  2.3rem)
+        var(--camp_btn_height,  calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [c_btn-end]
         ;
 
+        font-size:   var(--ctl_font_size, 2.0rem);
+        font-family: sans-serif;
+        font-weight: bold;
 }
 
-div#move_ctl_panel button#y_btn {
-    grid-area: y_btn;
+#debug_mode { grid-area: debug_btn;}
 
+#u_arr {grid-area: u_arr;}
+#d_arr {grid-area: d_arr;}
+#l_arr {grid-area: l_arr;}
+#r_arr {grid-area: r_arr;}
+
+#y_btn {grid-area: y_btn;}
+#n_btn {grid-area: n_btn;}
+#c_btn {grid-area: c_btn;}
+#s_btn {grid-area: s_btn;}
+#r_btn {grid-area: r_btn;}
+
+
+#debug_mode {
+    font-size: x-small;
+}
+#y_btn {
     color: darkgreen ;
     background-color:#ccffcc;
 
-    font-family: sans-serif;
-    font-weight: bold;
 }
-
-div#move_ctl_panel button#n_btn {
-    grid-area: n_btn;
-
+#n_btn {
     color: #ff00ff;
     background-color:pink;
-
-    font-family: sans-serif;
-    font-weight: bold;
 }
 
-div#move_ctl_panel button#c_btn {
-    grid-area: c_btn;
-
+#c_btn {
     color: rgb(139, 141, 0) ;
     background-color:#f6ffcc;
-
-    font-family: sans-serif;
-    font-weight: bold;
 }
 
-div#move_ctl_panel button#u_arrow {
-    grid-area: u_arrow;
+#s_btn {
+    color: #03ec0f;
+    background-color:rgb(253, 255, 233);
 }
 
-div#move_ctl_panel button#d_arrow {
-    grid-area: d_arrow;
+#r_btn {
+    color:chocolate ;
+    background-color:ivory;
+
 }
 
-div#move_ctl_panel button#l_arrow {
-    grid-area: l_arrow;
-}
 
-div#move_ctl_panel button#r_arrow {
-    grid-area: r_arrow;
-}
 
-article#message_pane {
-    width:       var(--message_width, 33rem);
+
+
+#pane_sytm_logs {
+/*    width:       var(--message_width, 33rem); */
     font-size:   var(--message_font_size,   0.6rem);
     line-height: var(--message_line_height, 0.7rem);
     max-height: calc( var(--message_line_height, 0.7rem) * 6);
@@ -361,6 +479,6 @@ article#message_pane {
     align-self: auto;
 }
 
-article#message_pane p {
+#pane_sytm_logs p {
     word-break: break-all;
 }

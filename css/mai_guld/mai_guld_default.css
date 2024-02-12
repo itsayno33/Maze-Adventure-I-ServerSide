@@ -58,7 +58,7 @@
             [h1-end view-start cntl-start]
             1fr
             [view-end cntl-end message-start]
-            1fr
+            auto
             [message-end footer-start]
             100px
             [footer-end]
