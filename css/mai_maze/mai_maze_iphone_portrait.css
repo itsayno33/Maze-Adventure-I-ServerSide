@@ -115,6 +115,33 @@
         ;
 
 
+--body_ldsv_gap: 1.5rem 0.5rem;
+--body_ldsv_cols: 
+        1rem
+        [header-start footer-start camp_m-start ldsv_l-start ldsv_d-start message-start]
+        auto
+        [message-end contls-start]
+        auto
+        [header-end footer-end camp_m-end ldsv_l-end ldsv_d-end contls-end]
+        1rem
+        ;
+--body_ldsv_rows:
+        [header-start]
+        auto
+        [header-end camp_m-start]
+        auto
+        [camp_m-end ldsv_l-start]
+        auto
+        [ldsv_l-end ldsv_d-start]
+        auto
+        [ldsv_d-end message-start contls-start]
+        auto
+        [message-end contls-end footer-start]
+        var(--body_lyt_row_footer_height,  100px)
+        [footer-end]
+        ;
+
+
     font-size: 16px;
 
     --view2D_pre_margin:        0px;
@@ -148,7 +175,7 @@
 
     --view_button_font_size:  0.6rem;
     --ctl_font_size: 2.0rem;
-/*
+/* 
     --lr_arr_width:     3.0rem;
     --lr_arr_height:    3.0rem;
     --ud_arr_width:     3.0rem;
@@ -156,6 +183,9 @@
     --camp_btn_height:  3.0rem;
 */
     --ldsv_data_list_cols:   2;
+    --ldsv_data_list_font_size: 0.9rem;
+    --ldsv_data_list_line_hght: 1.0rem;
+    
     --message_width:     16rem;
 
     touch-action: manipulation;

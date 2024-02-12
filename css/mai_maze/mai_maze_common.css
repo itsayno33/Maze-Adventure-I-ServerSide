@@ -321,8 +321,8 @@ p#maze_view3D_direction_info span#direction_Y {
     color:            chocolate;
     background-color: cornsilk;
 
-    font-size:    var(--ldsv_data_list_font_size,   0.9rem);
-    line-height:  var(--ldsv_data_list_line_height, 1.0rem);
+    font-size:    var(--ldsv_data_list_font_size, 0.9rem);
+    line-height:  var(--ldsv_data_list_line_hght, 1.0rem);
 
     padding-top:    0.5em;
     padding-bottom: 0.5em;

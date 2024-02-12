@@ -92,7 +92,7 @@
     --body_ldsv_cols: 
             var(--body_lyt_left_gap, 3rem)
             [header-start footer-start message-start ldsv_l-start ldsv_d-start camp_m-start]
-            auto
+            1fr
             [message-end ldsv_d-end contls-start]
             auto
             [header-end footer-end ldsv_l-end camp_m-end contls-end]
@@ -102,9 +102,9 @@
             [header-start]
             var(--body_lyt_row_header_height,  100px)
             [header-end camp_m-start]
-            1fr
+            auto
             [camp_m-end ldsv_l-start] 
-            1fr
+            auto
             [ldsv_l-end ldsv_d-start contls-start]
             1fr
             [ldsv_d-end message-start]
@@ -141,6 +141,9 @@
     --ud_arr_height:    2.3rem;
     --camp_btn_height:  2.3rem;
 */
-    --ldsv_data_list_cols:   4;
+    --ldsv_data_list_cols:           4;
+    --ldsv_data_list_font_size: 0.9rem;
+    --ldsv_data_list_line_hght: 1.0rem;
+    
     --message_width:     33rem;
 }
