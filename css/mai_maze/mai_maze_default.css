@@ -124,10 +124,14 @@
     --view3D_font_size:   1.3rem;
     --view3D_line_heght:  1.6rem;
 
-    --view_message_height:      3.5rem;
+    --view_message_hght:        3.5rem;
+    --view_maze_msg_hght:       3.5rem;
+    --view_camp_msg_hght:       3.5rem;
+    
     --view_message_font_size:   1.1rem;
     --view_maze_msg_font_size:  1.1rem;
     --view_camp_msg_font_size:  1.1rem;
+
 
     --camp_menu_list_font_size: 1.1rem;
     --camp_menu_list_line_hght: 1.8rem;
@@ -142,8 +146,12 @@
     --camp_btn_height:  2.3rem;
 */
     --ldsv_data_list_cols:           4;
+
     --ldsv_data_list_font_size: 0.9rem;
     --ldsv_data_list_line_hght: 1.0rem;
+
+    --ldsv_data_dtil_font_size: 0.9rem;
+    --ldsv_data_dtil_line_hght: 1.0rem;
     
     --message_width:     33rem;
 }

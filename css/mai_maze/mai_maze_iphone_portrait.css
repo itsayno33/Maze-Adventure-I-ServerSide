@@ -145,14 +145,14 @@
     font-size: 16px;
 
     --view2D_pre_margin:        0px;
-    --view2D_pre_width:       50dvw;
-    --view2D_pre_height:      175px;
+    --view2D_pre_wdth:        50dvw;
+    --view2D_pre_hght:        175px;
     --view2D_pre_font_family: monospace;
     --view2D_pre_font_size:    08pt;
     --view2D_pre_line_height:  09pt;
 
-    --view3D_canvas_width:    300px;
-    --view3D_canvas_height:   180px;
+    --view3D_canvas_wdth:     300px;
+    --view3D_canvas_hght:     180px;
 
 /*    --view3D_info_width:     100dvw; */
 
@@ -165,7 +165,12 @@
     --view3D_line_heght:  1.1rem;
 
     --view_message_margin_UD:  0.5rem;
-    --view_message_height:     2.5rem;
+
+    --view_message_hght:       2.5rem;
+    --view_maze_msg_hght:      2.5rem;
+    --view_camp_msg_hght:      2.5rem;
+    
+
     --view_message_font_size:  0.8rem;
     --view_maze_msg_font_size: 0.8rem;
     --view_camp_msg_font_size: 0.7rem;
@@ -183,8 +188,12 @@
     --camp_btn_height:  3.0rem;
 */
     --ldsv_data_list_cols:   2;
+
     --ldsv_data_list_font_size: 0.9rem;
     --ldsv_data_list_line_hght: 1.0rem;
+
+    --ldsv_data_dtil_font_size: 0.9rem;
+    --ldsv_data_dtil_line_hght: 1.0rem;
     
     --message_width:     16rem;
 

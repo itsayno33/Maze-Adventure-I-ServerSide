@@ -163,12 +163,12 @@ h1 {
 }
 
 #pane_camp_mesg {
-    min-height: var(--view_message_height, 3.5rem);
+    min-height: var(--view_message_hght, 3.5rem);
     max-height: 3.5rem;
     overflow-y: scroll;
 
-    margin-top:    var(--view_message_margin_UD, 1.2rem);
-    margin-bottom: var(--view_message_margin_UD, 1.2rem);
+    margin-top:    var(--view_camp_msg_margin_UD, 1.2rem);
+    margin-bottom: var(--view_camp_msg_margin_UD, 1.2rem);
 /*    width:         var(--message_width, 33rem); */
 }
 p#camp_mesg {
@@ -181,13 +181,12 @@ p#camp_mesg {
 }
 
 #pane_maze_mesg {
-    min-height: var(--view_message_height, 3.5rem);
+    min-height: var(--view_maze_msg_hght, 3.5rem);
     max-height: 3.5rem;
     overflow-y: scroll;
 
-    margin-top:    var(--view_message_margin_UD, 1.2rem);
-    margin-bottom: var(--view_message_margin_UD, 1.2rem);
-/*    width:         var(--message_width, 33rem); */
+    margin-top:    var(--view_maze_msg_margin_UD, 1.2rem);
+    margin-bottom: var(--view_maze_msg_margin_UD, 1.2rem);
 }
 p#maze_mesg {
     float: left;
@@ -254,8 +253,8 @@ button#r_cp1 {
 
 pre#maze_view2D_pre {
     margin:       var(--view2D_pre_margin,      0.8rem);
-    width:        var(--view2D_pre_width,        320px);
-    height:       var(--view2D_pre_height,       283px); 
+    width:        var(--view2D_pre_wdth,        320px);
+    height:       var(--view2D_pre_hght,        283px); 
     font-family:  var(--view2D_pre_font_family, monospace);
     justify-self: center; 
     text-align:   center;
@@ -265,9 +264,9 @@ pre#maze_view2D_pre {
 }
 
 canvas#maze_view3D_canvas {
-    margin: var(--view3D_canvas_margin,  1rem);
-    width:  var(--view3D_canvas_width,  320px);
-    height: var(--view3D_canvas_height, 203px);
+    margin: var(--view3D_canvas_margin, 1rem);
+    width:  var(--view3D_canvas_wdth,   320px);
+    height: var(--view3D_canvas_hght,   203px);
 }
 
 p#maze_view3D_direction_info {
@@ -336,14 +335,16 @@ p#maze_view3D_direction_info span#direction_Y {
     margin-top:    0.0em;
     margin-bottom: 0.5em;
 }
-
+/*
 #ldsv_data_list legend,
 #ldsv_data_list label,
 #ldsv_data_list input,
 #ldsv_data_list textarea
+*/
+#ldsv_data_detail
 {
-    font-size:    var(--ldsv_data_list_font_size,   0.9rem);
-    line-height:  var(--ldsv_data_list_line_height, 1.0rem);
+    font-size:    var(--ldsv_data_dtil_font_size, 0.9rem);
+    line-height:  var(--ldsv_data_dtil_line_hght, 1.0rem);
 }
 
 #camp_list {
