@@ -229,8 +229,8 @@ function new_team(): Team {
         <h1 class='h1'>ダンジョンアドベンチャーⅠ【ギルド】</h1>
         <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
         <div id='guld_head_button'>
-            <button id='r_cp1' name='r_cp1' value='R'>ギルド窓口に戻る</button>
-            <button id='s_cp1' name='s_cp1' value='S'>リスト切替</button>
+            <button id='r_cp1' name='r_cp1' value='R'>窓口に戻る</button>
+            <button id='s_cp1' name='s_cp1' value='S'>切替</button>
             <button id='y_cp1' name='y_cp1' value='Y'>はい</button>
             <button id='n_cp1' name='n_cp1' value='N'>いいえ</button>
         </div>

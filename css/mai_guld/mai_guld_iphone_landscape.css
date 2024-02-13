@@ -100,9 +100,9 @@
     --body_ldsv_cols: 
             3rem
             [head-start foot-start ls_d-start mssg-start]
-            auto
+            1fr
             [ls_d-end mssg-end ls_l-start ctls-start]
-            auto
+            1fr
             [head-end foot-end ls_l-end ctls-end]
             3rem
             ;
@@ -185,6 +185,6 @@
         "_hr_luk_p _hr_luk_p _hr_luk_m _hr_luk_m"
         ;
 
-    --hres_list_count: 1;
+    --hres_list_count: 2;
 
 }
