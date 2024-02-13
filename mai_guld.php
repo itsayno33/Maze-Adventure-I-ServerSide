@@ -225,126 +225,102 @@ function new_team(): Team {
     <script src="./js/mai_guld.js?time=<?php echo date("Y-m-d_H:i:s"); ?>"></script>
 </head>
 <body id='body'>
-    <h1 class='h1'>ダンジョンアドベンチャーⅠ【ギルド】</h1>
-    <article class='gld_view_pane' id='gld_view_pane'>
+    <article id='guld_head_pane'>
+        <h1 class='h1'>ダンジョンアドベンチャーⅠ【ギルド】</h1>
         <button id='debug_mode' name='debug_mode' value='false' class='normal'>通常モード中</button>
-        <div id='gld_view_message_div'>
+        <div id='guld_head_button'>
             <button id='r_cp1' name='r_cp1' value='R'>ギルド窓口に戻る</button>
             <button id='s_cp1' name='s_cp1' value='S'>リスト切替</button>
             <button id='y_cp1' name='y_cp1' value='Y'>はい</button>
             <button id='n_cp1' name='n_cp1' value='N'>いいえ</button>
-            <p id='gld_view_message'></p>
         </div>
-        <div id='gld_view_switch'>
-            <div id='gld_view_switch_guld'>
-                <h2>冒険者ギルド窓口</h2>
-                <ul id='guld_menu_list'>
-                    <li id='guld_hres'>冒険者情報
-                        <p>　冒険者情報を見ることができます</p></li>
-                    <!-- li id='guld_edit'>冒険者編集
-                        <p>　既存キャラクターを編集出来ます(デバッグモードのみ)(未実装)</p></li -->
-                    <!-- li id='guld_appd'>冒険者募集
-                        <p>　新しいキャラクターを募集出来ます</p></li -->
-                    <li id='guld_load'>冒険の呼び出し
-                        <p>　冒険情報をロードできます</p></li>
-                    <li id='guld_save'>冒険の記録
-                        <p>　冒険情報をセーブできます</p></li>
-                    <li id='guld_tomz'>冒険出発
-                        <p>　ダンジョンに出発します</p></li>
-                </dl>
-            </div>
-            <div id='gld_view_switch_hres'>
-                <h2>冒険者情報の一覧</h2>
-                <fieldset id='hres_team_fields'>
-                    <legend>パーティ・メンバー</legend>
-                    <ul id='team_list'></ul>
-                </fieldset>
-                <fieldset id='hres_guld_fields'>
-                    <legend>ギルド・メンバー</legend>
-                    <ul id='guld_list'></ul>
-                </fieldset>
-                <fieldset id='hres_appd_fields'>
-                    <legend>求人募集メンバー</legend>
-                    <ul id='appd_list'></ul>
-                </fieldset>
-                <fieldset id='hres_menu_fields'>
-                <legend>コマンド</legend>
-                    <ul id='menu_list'></ul>
-                </fieldset>
-                <fieldset id='hres_inpt_fields'>
-                <legend>入力</legend>
-                    <ul id='inpt_list'></ul>
-                </fieldset>
-                <fieldset id='hres_hero_fields'>
-                    <legend>冒険者の詳細情報</legend>
-                    <ul id='hres_hero_info'></ul>
-                </fieldset>
-            </div>
-            <!-- div id='gld_view_switch_edit'>
-                <h2>冒険者情報の編集</h2>
-                <ul id='edit_list'></ul>
-                <fieldset id='edit_hero_fields'>
-                    <legend>冒険者の情報</legend>
-                    <ul id='edit_hero_info'></ul>
-                </fieldset>
-            </div -->
-            <!-- div id='gld_view_switch_appd'>
-                <h2>冒険者の募集票</h2>
-                <ul id='appd_list'></ul>
-                <fieldset id='appd_hero_fields'>
-                    <legend>冒険者の情報</legend>
-                    <ul id='appd_hero_info'></ul>
-                </fieldset>
-            </div -->
-            <div id='gld_view_switch_load'>
-                <h2>冒険の呼び出し</h2>
-                <ul id='load_list'></ul>
-                <fieldset id='load_info_fields'>
-                    <legend>今までの記録</legend>
-                    <ul id='load_info_detail'></ul>
-                </fieldset>
-            </div>
-            <div id='gld_view_switch_save'>
-                <h2>冒険の記録</h2>
-                <ul id='save_list'></ul>
-                <fieldset id='save_info_fields'>
-                    <legend>今までの記録</legend>
-                    <ul id='save_info_detail'></ul>
-                </fieldset>
-            </div>
-            <div id='gld_view_switch_tomz'>
-                <h2>迷宮への挑戦</h2>
-                <fieldset id='tomz_maze_fields'>
-                    <legend>新たな迷宮への入り口</legend>
-                    <ul id='maze_list'></ul>
-                </fieldset>
-                <fieldset id='tomz_mvpt_fields'>
-                    <legend>攻略中の迷宮に戻る</legend>
-                    <ul id='mvpt_list'></ul>
-                </fieldset>
-            </div>
-        </div>
+        <p id='guld_head_message'></p>
     </article>
-    <article class='gld_ctl' id='gld_ctl_pane'>
-        <div id ='ctl_view'><div id='ctl_panel'>
-            <button id='u_arr' type='button' name='u_arrow' value='U'>↑</button>
-            <button id='d_arr' type='button' name='d_arrow' value='D'>↓</button>
-            <button id='l_arr' type='button' name='l_arrow' value='L'>←</button>
-            <button id='r_arr' type='button' name='r_arrow' value='R'>→</button>
-            <button id='y_btn' type='button' name='y_btn'   value='U'>〇</button>
-            <button id='n_btn' type='button' name='n_btn'   value='N'>✖</button>
-            <button id='s_btn' type='button' name='s_btn'   value='S'>選</button>
-            <button id='r_btn' type='button' name='r_btn'   value='R'>戻</button>
+    <article id='guld_menu_list_pane'>
+        <h2>冒険者ギルド窓口</h2>
+        <ul id='guld_menu_list'>
+            <li id='guld_hres'>冒険者情報
+                <p>　冒険者情報を見ることができます</p></li>
+            <li id='guld_load'>冒険の呼び出し
+                <p>　冒険情報をロードできます</p></li>
+            <li id='guld_save'>冒険の記録
+                <p>　冒険情報をセーブできます</p></li>
+            <li id='guld_tomz'>冒険出発
+                <p>　ダンジョンに出発します</p></li>
+        </ul>
+    </article>
+    <article id='guld_hres_list_pane'>
+        <h2>冒険者情報の一覧</h2>
+        <fieldset id='hres_team_fields'>
+            <legend>パーティ・メンバー</legend>
+            <ul id='team_list'></ul>
+        </fieldset>
+        <fieldset id='hres_guld_fields'>
+            <legend>ギルド・メンバー</legend>
+            <ul id='guld_list'></ul>
+        </fieldset>
+        <fieldset id='hres_appd_fields'>
+            <legend>求人募集メンバー</legend>
+            <ul id='appd_list'></ul>
+        </fieldset>
+        <fieldset id='hres_menu_fields'>
+            <legend>コマンド</legend>
+            <ul id='menu_list'></ul>
+        </fieldset>
+        <fieldset id='hres_inpt_fields'>
+            <legend>入力</legend>
+            <ul id='inpt_list'></ul>
+        </fieldset>
+    </article>
+    <article id='guld_hres_data_pane'>
+        <fieldset id='hres_hero_fields'>
+            <legend>冒険者の詳細情報</legend>
+            <ul id='hres_hero_info'></ul>
+        </fieldset>
+    </article>
+    <article id='guld_ldsv_list_pane'>
+        <h2>冒険の呼び出し</h2>
+        <ul id='ldsv_list'></ul>
+    </article>
+    <article id='guld_ldsv_data_pane'>
+                <fieldset id='ldsv_info_fields'>
+                    <legend>今までの記録</legend>
+                    <ul id='ldsv_info_detail'></ul>
+                </fieldset>
+    </article>
+    <article id='guld_tomz_maze_pane'>
+        <h2>迷宮への挑戦</h2>
+        <fieldset id='tomz_maze_fields'>
+            <legend>新たな迷宮への入り口</legend>
+            <ul id='maze_list'></ul>
+        </fieldset>
+    </article>
+    <article id='guld_tomz_mvpt_pane'>
+        <fieldset id='tomz_mvpt_fields'>
+            <legend>攻略中の迷宮に戻る</legend>
+            <ul id='mvpt_list'></ul>
+        </fieldset>
+    </article>
+    <article id='guld_ctls_pane'>
+        <div id ='ctls_view'><div id='ctls_panel'>
+            <button id='u_arr' type='button' name='u_arr' value='U'>↑</button>
+            <button id='d_arr' type='button' name='d_arr' value='D'>↓</button>
+            <button id='l_arr' type='button' name='l_arr' value='L'>←</button>
+            <button id='r_arr' type='button' name='r_arr' value='R'>→</button>
+            <button id='y_btn' type='button' name='y_btn' value='U'>〇</button>
+            <button id='n_btn' type='button' name='n_btn' value='N'>✖</button>
+            <button id='s_btn' type='button' name='s_btn' value='S'>選</button>
+            <button id='r_btn' type='button' name='r_btn' value='R'>戻</button>
         </div></div>
     </article>
-    <article class='pane_sytm_logs' id='pane_sytm_logs'>
+    <article id='sytm_logs_pane'>
         <div id='client_message'></div>
         <?php 
             $gv->mes->display_err_message(); 
             $gv->mes->display_nor_message(); 
         ?>
     </article>
-    <footer id='footer_pane'>
+    <footer id='foot_pane'>
         <a href='../../md/'><img src='./icon-img/kkrn_icon_home_3.png' /></a>
         <p class='foot_print'>Guild in Maze Adventure I.</p>
     </footer>

@@ -38,13 +38,11 @@ body.move {
     grid-template-rows:    var(--body_move_rows);
 }
 
-#pane_header.move,
 #pane_maze_vw3D.move,
 #pane_maze_vw2D.move,
 #pane_maze_mesg.move,
 #pane_ctls_boad.move,
-#pane_sytm_logs.move,
-#pane_footer.move
+#pane_sytm_logs.move
 {display: block;}
 
 #pane_camp_list.move,
@@ -62,12 +60,10 @@ body.camp {
     grid-template-rows:    var(--body_camp_rows);
 }
 
-#pane_header.camp,
 #pane_camp_list.camp,
 #pane_camp_mesg.camp,
 #pane_ctls_boad.camp,
-#pane_sytm_logs.camp,
-#pane_footer.camp
+#pane_sytm_logs.camp
 {display: block;}
 
 #pane_maze_vw3D.camp,
@@ -86,13 +82,11 @@ body.ldsv {
     grid-template-rows:    var(--body_ldsv_rows);
 }
 
-#pane_header.ldsv,
 #pane_ldsv_list.ldsv,
 #pane_ldsv_data.ldsv,
 #pane_camp_mesg.ldsv,
 #pane_ctls_boad.ldsv,
-#pane_sytm_logs.ldsv,
-#pane_footer.ldsv
+#pane_sytm_logs.ldsv
 {display: block;}
 
 #pane_maze_vw3D.ldsv,

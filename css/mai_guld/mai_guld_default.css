@@ -29,40 +29,116 @@
     --h1_font_size: 36px;
     --h1_line_heght: 38px;
 
-/*    
-    --body_grid_col_left_gap:    30px;
-    --body_grid_col_right_gap:   30px;
-    --body_grid_col_main_width:  auto;
-    --body_grid_col_left_width:  auto;
-    --body_grid_col_right_width: auto;
 
-    --body_grid_row_header_height: 100px;
-    --body_grid_row_main_height:     1fr;
-    --body_grid_row_message_height:  1fr;
-    --body_grid_row_footer_height:  20px;
-*/
-
-    --body_grid_gap: 0 0;
-    --body_grid_cols: 
+    --body_menu_gap: 0 0;
+    --body_menu_cols: 
             3rem
-            [h1-start footer-start view-start message-start]
+            [head-start foot-start mn_l-start mssg-start]
             auto
-            [view-end cntl-start]
+            [mn_l-end ctls-start]
             auto
-            [h1-end footer-end  message-end cntl-end]
+            [head-end foot-end  mssg-end ctls-end]
             3rem
             ;
-    --body_grid_rows:
-            [h1-start]
-            100px
-            [h1-end view-start cntl-start]
+    --body_menu_rows:
+            [head-start]
+            auto
+            [head-end mn_l-start ctls-start]
             1fr
-            [view-end cntl-end message-start]
+            [mn_l-end ctls-end mssg-start]
             auto
-            [message-end footer-start]
+            [mssg-end foot-start]
             100px
-            [footer-end]
+            [foot-end]
             ;
+
+
+    --body_hres_gap: 0 0;
+    --body_hres_cols: 
+            3rem
+            [head-start foot-start hr_l-start hr_d-start]
+            auto
+            [hr_l-end hr_d-end ctls-start mssg-start]
+            auto
+            [head-end foot-end  mssg-end ctls-end]
+            3rem
+            ;
+    --body_hres_rows:
+            [head-start]
+            auto
+            [head-end hr_l-start ctls-start]
+            auto
+            [hr_l-end] 
+            auto
+            [hr_d-start] 
+            auto
+            [ctls-end mssg-start]
+            auto 
+            [hr_d-end mssg-end] 
+            auto
+            [foot-start]
+            100px
+            [foot-end]
+            ;
+
+
+    --body_ldsv_gap: 0 0;
+    --body_ldsv_cols: 
+            3rem
+            [head-start foot-start ls_l-start ls_d-start]
+            auto
+            [ls_l-end ls_d-end ctls-start mssg-start]
+            auto
+            [head-end foot-end  mssg-end ctls-end]
+            3rem
+            ;
+    --body_ldsv_rows:
+            [head-start]
+            auto
+            [head-end ls_l-start ctls-start]
+            auto
+            [ls_l-end] 
+            auto
+            [ls_d-start] 
+            auto
+            [ctls-end mssg-start]
+            auto 
+            [ls_d-end mssg-end] 
+            auto
+            [foot-start]
+            100px
+            [foot-end]
+            ;
+
+
+    --body_tomz_gap: 0 0;
+    --body_tomz_cols: 
+            3rem
+            [head-start foot-start mz_l-start vp_l-start]
+            auto
+            [mz_l-end vp_l-end ctls-start mssg-start]
+            auto
+            [head-end foot-end  mssg-end ctls-end]
+            3rem
+            ;
+    --body_tomz_rows:
+            [head-start]
+            auto
+            [head-end mz_l-start ctls-start]
+            auto
+            [mz_l-end] 
+            auto
+            [vp_l-start] 
+            auto
+            [ctls-end mssg-start]
+            auto 
+            [vp_l-end mssg-end] 
+            auto
+            [foot-start]
+            100px
+            [foot-end]
+            ;
+
 
     --detail_font:  0.9rem;
     --detait_heght: 1.1rem;
