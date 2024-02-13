@@ -295,31 +295,6 @@ function new_team(): Team {
             </ul>
         </fieldset>
     </article>
-    <!-- article id='pane_save_list'>
-        <form id='save_data_form'>
-            <input id='save_data_id' for='save_data_form' type='hidden' name='save_data_id' value='-1' />
-        </form>
-        <ul id='save_data_list'></ul>
-    </article>
-    <article id='pane_save_data'>
-        <fieldset id='save_data_fields'>
-            <legend>セーブ情報を入力して下さい</legend>
-            <ul id='save_data_detail'>
-                <li>
-                    <label for='save_data_time'>保存日時:</label>
-                    <p id='save_data_time'></p>
-                </li>
-                <li>
-                    <label for='save_data_point'>保存場所:</label>
-                    <p id='save_data_point'></p>
-                </li>
-                <li>
-                    <label for='save_data_detail'>詳細(任意):</label>
-                    <textarea id='save_data_detail' for='save_data_form' type='text' name='detail' minlength='0' maxlength='99' cols='30' rows='5' placeholder='(任意)'></textarea>
-                </li>
-            </ul>
-        </fieldset>
-    </article -->
     <article id='pane_camp_mesg'>
         <button id='r_cp1' type='button' name='r_cp1' value='R'>戻る（Ｒ）</button>
         <p id='camp_mesg'></p>
