@@ -140,8 +140,10 @@
             ;
 
 
-    --detail_font:  0.9rem;
-    --detait_heght: 1.1rem;
+    --cp_btn_font_size: 1.0rem;
+
+    --detail_font:      0.9rem;
+    --detait_heght:     1.1rem;
         
     --view_message_font_size: 1.1rem;
     --view_message_height:    3.5rem;

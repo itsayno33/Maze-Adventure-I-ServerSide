@@ -175,24 +175,36 @@ h1 {
 }
 
 
-ul#guld_menu_list, 
-ul#team_list,
-ul#guld_list,
-ul#appd_list,
-ul#menu_list,
-ul#inpt_list,
-ul#ldsv_list, 
-ul#maze_list,
-ul#mvpt_list
+#guld_menu_list, 
+#team_list,
+#guld_list,
+#appd_list,
+#menu_list,
+#inpt_list,
+#ldsv_list, 
+#maze_list,
+#mvpt_list
 {
     color:            chocolate;
     background-color: cornsilk;
-
-    font-size:   var(--list_font,  1.0rem);
-    line-height: var(--list_heght, 1.2rem);
 }
 
-fieldset#hres_hero_fields{
+#guld_menu_list li, 
+#team_list li,
+#guld_list li,
+#appd_list li,
+#menu_list li,
+#inpt_list li,
+#ldsv_list li, 
+#maze_list li,
+#mvpt_list li
+{
+    margin-bottom: var(--list_margin_button, 0.5rem);
+    font-size:     var(--list_font,  1.0rem);
+    line-height:   var(--list_heght, 1.2rem);
+}
+
+#hres_hero_fields {
     font-size:   var(--detail_font,  0.9rem);
     line-height: var(--detait_heght, 1.1rem);
 }
@@ -209,26 +221,30 @@ p#guld_head_message {
     clear: both;
 }
 #s_cp1 {
-    margin-left: 1.0rem;
     float: right;
+    margin-left: 1.0rem;
+    font-size: var(--cp_btn_font_size, 1.0rem);
     color: #03ec0f;
     background-color:rgb(253, 255, 233);
 }
 #r_cp1 {
-    margin-left: 1.0rem;
     float: right;
+    margin-left: 1.0rem;
+    font-size: var(--cp_btn_font_size, 1.0rem);
     color:chocolate ;
     background-color:ivory;
 }
 #y_cp1 {
-    margin-left: 1.0rem;
     float: right;
+    margin-left: 1.0rem;
+    font-size: var(--cp_btn_font_size, 1.0rem);
     color: darkgreen ;
     background-color:#ccffcc;
 }
 #n_cp1 {
-    margin-left: 1.0rem;
     float: right;
+    margin-left: 1.0rem;
+    font-size: var(--cp_btn_font_size, 1.0rem);
     color: #ff00ff;
     background-color:pink;
 }
