@@ -217,6 +217,24 @@ h1 {
 #debug_mode {
     float: left;
 }
+#debug_mode.normal {
+    color:            var(--debug_button_fwcolor, #008000);
+    background-color: var(--debug_button_bgcolor, #f0f8ff);
+}
+
+#debug_mode.debug {
+    color:            var(--debug_button_fwcolor, #ffffff);
+    background-color: var(--debug_button_bgcolor, #ff0000);
+}
+
+#alert_mode {
+    float: left;
+}
+#alert_mode.normal {
+    color:            var(--debug_button_fwcolor, #808000);
+    background-color: var(--debug_button_bgcolor, #f0f8ff);
+}
+
 p#guld_head_message {
     clear: both;
 }
@@ -290,17 +308,6 @@ p#guld_head_message {
         ;
 
 }
-
-#debug_mode.normal {
-    color:            var(--debug_button_fwcolor, #008000);
-    background-color: var(--debug_button_bgcolor, #f0f8ff);
-}
-
-#debug_mode.debug {
-    color:            var(--debug_button_fwcolor, #ffffff);
-    background-color: var(--debug_button_bgcolor, #ff0000);
-}
-
 
 #u_arr {grid-area: u_arr;}
 #d_arr {grid-area: d_arr;}

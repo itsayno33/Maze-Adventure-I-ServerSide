@@ -309,11 +309,12 @@ function new_team(): Team {
         <div id ='div_ctls_boad'>
         <div id='ctls_boad'>
             <button id='debug_mode' type='button' name='debug_mode_button' value='false'>通常</button>
+            <button id='alert_mode' type='button' name='alert_mode_button' value='false'>ログ</button>
             <button id='u_arr' type='button' name='u_arr' value='U'>↑</button>
             <button id='d_arr' type='button' name='d_arr' value='D'>↓</button>
             <button id='l_arr' type='button' name='l_arr' value='L'>←</button>
             <button id='r_arr' type='button' name='r_arr' value='R'>→</button>
-            <button id='y_btn' type='button' name='y_btn' value='U'>〇</button>
+            <button id='y_btn' type='button' name='y_btn' value='Y'>〇</button>
             <button id='n_btn' type='button' name='n_btn' value='N'>✖</button>
             <button id='s_btn' type='button' name='s_btn' value='S'>選</button>
             <button id='r_btn' type='button' name='r_btn' value='T'>戻</button>
