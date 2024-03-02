@@ -90,22 +90,22 @@
         [footer-end]
         ;
 
---body_camp_gap: 1.5rem 0.5rem;
---body_camp_cols: 
+--body_menu_gap: 1.5rem 0.5rem;
+--body_menu_cols: 
         1rem
-        [header-start footer-start camp_m-start camp_l-start contls-start message-start]
+        [header-start footer-start menu_m-start menu_l-start contls-start message-start]
         auto
-        [header-end footer-end camp_m-end camp_l-end contls-end message-end]
+        [header-end footer-end menu_m-end menu_l-end contls-end message-end]
         1rem
         ;
---body_camp_rows:
+--body_menu_rows:
         [header-start]
         auto
-        [header-end camp_m-start]
+        [header-end menu_m-start]
         auto
-        [camp_m-end camp_l-start]
+        [menu_m-end menu_l-start]
         auto
-        [camp_l-end contls-start]
+        [menu_l-end contls-start]
         auto
         [contls-end message-start] 
         auto
@@ -118,19 +118,19 @@
 --body_ldsv_gap: 1.5rem 0.5rem;
 --body_ldsv_cols: 
         1rem
-        [header-start footer-start camp_m-start ldsv_l-start ldsv_d-start message-start]
+        [header-start footer-start menu_m-start ldsv_l-start ldsv_d-start message-start]
         auto
         [message-end contls-start]
         auto
-        [header-end footer-end camp_m-end ldsv_l-end ldsv_d-end contls-end]
+        [header-end footer-end menu_m-end ldsv_l-end ldsv_d-end contls-end]
         1rem
         ;
 --body_ldsv_rows:
         [header-start]
         auto
-        [header-end camp_m-start]
+        [header-end menu_m-start]
         auto
-        [camp_m-end ldsv_l-start]
+        [menu_m-end ldsv_l-start]
         auto
         [ldsv_l-end ldsv_d-start]
         auto
@@ -168,15 +168,15 @@
 
     --view_message_hght:       2.5rem;
     --view_maze_msg_hght:      2.5rem;
-    --view_camp_msg_hght:      2.5rem;
+    --view_menu_msg_hght:      2.5rem;
     
 
     --view_message_font_size:  0.8rem;
     --view_maze_msg_font_size: 0.8rem;
-    --view_camp_msg_font_size: 0.7rem;
+    --view_menu_msg_font_size: 0.7rem;
 
-    --camp_menu_list_font_size: 1.0rem;
-    --camp_menu_list_line_hght: 1.5rem;
+    --head_menu_list_font_size: 1.0rem;
+    --head_menu_list_line_hght: 1.5rem;
 
     --view_button_font_size:  0.6rem;
     --ctl_font_size: 2.0rem;
@@ -185,7 +185,7 @@
     --lr_arr_height:    3.0rem;
     --ud_arr_width:     3.0rem;
     --ud_arr_height:    3.0rem;
-    --camp_btn_height:  3.0rem;
+    --menu_btn_height:  3.0rem;
 */
     --ldsv_data_list_cols:   2;
 

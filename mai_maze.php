@@ -258,13 +258,13 @@ function new_team(): Team {
         <pre id='maze_view2D_pre'></pre>
         </div>
     </article>
-    <article id='pane_camp_list'>
-        <ul id='camp_list'>
-            <li id='camp_load'>冒険の復活
+    <article id='pane_menu_list'>
+        <ul id='menu_list'>
+            <li id='menu_load'>冒険の復活
                 <p>以前保存した冒険を再開できます</p></li>
-            <li id='camp_save'>冒険の記録
+            <li id='menu_save'>冒険の記録
                 <p>直前までの冒険を保存できます</p></li>
-            <li id='camp_mvpt'>街への帰還
+            <li id='menu_mvpt'>街への帰還
                 <p>街(冒険者ギルド)へジャンプします</p></li>
         </ul>
     </article>
@@ -295,9 +295,9 @@ function new_team(): Team {
             </ul>
         </fieldset>
     </article>
-    <article id='pane_camp_mesg'>
+    <article id='pane_menu_mesg'>
         <button id='r_cp1' type='button' name='r_cp1' value='R'>戻る（Ｒ）</button>
-        <p id='camp_mesg'></p>
+        <p id='menu_mesg'></p>
         <button id='n_cp1' type='button' name='n_cp1' value='N'>いいえ</button>
         <button id='y_cp1' type='button' name='y_cp1' value='Y'>はい</button>
         <button id='s_cp1' type='button' name='s_cp1' value='S'>切替</button>
@@ -318,7 +318,7 @@ function new_team(): Team {
             <button id='n_btn' type='button' name='n_btn' value='N'>✖</button>
             <button id='s_btn' type='button' name='s_btn' value='S'>選</button>
             <button id='r_btn' type='button' name='r_btn' value='T'>戻</button>
-            <button id='c_btn' type='button' name='c_btn' value='C'>キャンプ（Ｃ）</button>
+            <button id='m_btn' type='button' name='m_btn' value='M'>メニュー（Ｍ）</button>
         </div>
         </div>
     </article>

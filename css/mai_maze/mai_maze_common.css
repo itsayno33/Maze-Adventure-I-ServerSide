@@ -45,32 +45,32 @@ body.move {
 #pane_sytm_logs.move
 {display: block;}
 
-#pane_camp_list.move,
+#pane_menu_list.move,
 #pane_ldsv_list.move,
 #pane_ldsv_data.move,
-#pane_camp_mesg.move 
+#pane_menu_mesg.move 
 {display: none;}
 
 
-/* キャンプ画面のレイアウト関係 */
-body.camp {
+/* メニュー画面のレイアウト関係 */
+body.menu {
     display: grid;
-    gap:                   var(--body_camp_gap, 1rem 1.5rem);
-    grid-template-columns: var(--body_camp_cols);
-    grid-template-rows:    var(--body_camp_rows);
+    gap:                   var(--body_menu_gap, 1rem 1.5rem);
+    grid-template-columns: var(--body_menu_cols);
+    grid-template-rows:    var(--body_menu_rows);
 }
 
-#pane_camp_list.camp,
-#pane_camp_mesg.camp,
-#pane_ctls_boad.camp,
-#pane_sytm_logs.camp
+#pane_menu_list.menu,
+#pane_menu_mesg.menu,
+#pane_ctls_boad.menu,
+#pane_sytm_logs.menu
 {display: block;}
 
-#pane_maze_vw3D.camp,
-#pane_maze_vw2D.camp,
-#pane_ldsv_list.camp,
-#pane_ldsv_data.camp,
-#pane_maze_mesg.camp 
+#pane_maze_vw3D.menu,
+#pane_maze_vw2D.menu,
+#pane_ldsv_list.menu,
+#pane_ldsv_data.menu,
+#pane_maze_mesg.menu 
 {display: none;}
 
 
@@ -84,14 +84,14 @@ body.ldsv {
 
 #pane_ldsv_list.ldsv,
 #pane_ldsv_data.ldsv,
-#pane_camp_mesg.ldsv,
+#pane_menu_mesg.ldsv,
 #pane_ctls_boad.ldsv,
 #pane_sytm_logs.ldsv
 {display: block;}
 
 #pane_maze_vw3D.ldsv,
 #pane_maze_vw2D.ldsv,
-#pane_camp_list.ldsv,
+#pane_menu_list.ldsv,
 #pane_maze_mesg.ldsv 
 {display: none; }
 
@@ -99,10 +99,10 @@ body.ldsv {
 #pane_header    {grid-area: header;}
 #pane_maze_vw3D {grid-area: view3d;}
 #pane_maze_vw2D {grid-area: view2d;}
-#pane_camp_list {grid-area: camp_l;}
+#pane_menu_list {grid-area: menu_l;}
 #pane_ldsv_list {grid-area: ldsv_l;}
 #pane_ldsv_data {grid-area: ldsv_d;}
-#pane_camp_mesg {grid-area: camp_m;}
+#pane_menu_mesg {grid-area: menu_m;}
 #pane_maze_mesg {grid-area: maze_m;}
 #pane_ctls_boad {grid-area: contls;}
 #pane_sytm_logs {grid-area: message;}
@@ -156,22 +156,22 @@ h1 {
     align-self: auto;
 }
 
-#pane_camp_mesg {
+#pane_menu_mesg {
     min-height: var(--view_message_hght, 3.5rem);
     max-height: 3.5rem;
     overflow-y: scroll;
 
-    margin-top:    var(--view_camp_msg_margin_UD, 1.2rem);
-    margin-bottom: var(--view_camp_msg_margin_UD, 1.2rem);
+    margin-top:    var(--view_menu_msg_margin_UD, 1.2rem);
+    margin-bottom: var(--view_menu_msg_margin_UD, 1.2rem);
 /*    width:         var(--message_width, 33rem); */
 }
-p#camp_mesg {
+p#menu_mesg {
     float: left;
 
     color: inherit;
     background-color: inherit;
     word-break: break-all;
-    font-size:  var(--view_camp_msg_font_size, 1.1rem);
+    font-size:  var(--view_menu_msg_font_size, 1.1rem);
 }
 
 #pane_maze_mesg {
@@ -324,7 +324,7 @@ p#maze_view3D_direction_info span#direction_Y {
 /*    columns: auto 100px; */
 }
 
-#camp_list      li,
+#menu_list      li,
 #ldsv_data_list li{
     margin-top:    0.0em;
     margin-bottom: 0.5em;
@@ -341,12 +341,12 @@ p#maze_view3D_direction_info span#direction_Y {
     line-height:  var(--ldsv_data_dtil_line_hght, 1.0rem);
 }
 
-#camp_list {
+#menu_list {
     color:            chocolate;
     background-color: cornsilk;
 
-    font-size:    var(--camp_menu_list_font_size, 0.9rem);
-    line-height:  var(--camp_menu_list_line_hght, 1.0rem);
+    font-size:    var(--head_menu_list_font_size, 0.9rem);
+    line-height:  var(--head_menu_list_line_hght, 1.0rem);
 
     padding-top:    0.0em;
     padding-bottom: 0.2em;
@@ -384,13 +384,13 @@ article#pane_ctls_boad #div_ctls_boad {
 
     gap: 0.5rem 0.5rem;
     grid-template-columns: 
-        [l_arr-start n_btn-start s_btn-start c_btn-start alert_btn-start]
+        [l_arr-start n_btn-start s_btn-start m_btn-start alert_btn-start]
         var(--lr_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [l_arr-end n_btn-end s_btn-end u_arr-start d_arr-start alert_btn-end debug_btn-start]
         var(--ud_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [u_arr-end d_arr-end r_arr-start r_btn-start y_btn-start]
         var(--lr_arr_width, calc(var(--ctl_font_size, 2.0rem) * 1.1))
-        [r_arr-end r_btn-end y_btn-end c_btn-end debug_btn-end]
+        [r_arr-end r_btn-end y_btn-end m_btn-end debug_btn-end]
         ;
 
     grid-template-rows: 
@@ -406,9 +406,9 @@ article#pane_ctls_boad #div_ctls_boad {
         var(--ud_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
         [d_arr-end y_btn-start n_btn-start]
         var(--ud_arr_height,    calc(var(--ctl_font_size, 2.0rem) * 1.1))
-        [y_btn-end n_btn-end c_btn-start]
-        var(--camp_btn_height,  calc(var(--ctl_font_size, 2.0rem) * 1.1))
-        [c_btn-end]
+        [y_btn-end n_btn-end m_btn-start]
+        var(--menu_btn_height,  calc(var(--ctl_font_size, 2.0rem) * 1.1))
+        [m_btn-end]
         ;
 
         font-size:   var(--ctl_font_size, 2.0rem);
@@ -426,7 +426,7 @@ article#pane_ctls_boad #div_ctls_boad {
 
 #y_btn {grid-area: y_btn;}
 #n_btn {grid-area: n_btn;}
-#c_btn {grid-area: c_btn;}
+#m_btn {grid-area: m_btn;}
 #s_btn {grid-area: s_btn;}
 #r_btn {grid-area: r_btn;}
 
@@ -458,7 +458,7 @@ article#pane_ctls_boad #div_ctls_boad {
     background-color:pink;
 }
 
-#c_btn {
+#m_btn {
     color: rgb(139, 141, 0) ;
     background-color:#f6ffcc;
 }
