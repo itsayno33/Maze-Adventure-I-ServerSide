@@ -57,14 +57,18 @@
 
         public function encode(): array {
             $a = [];
-            $a['gold'] = $this->gold;
+            $a['gold'] = [$this->gold];
             return $a;
         }
-
+ 
         public function decode(array $a): self {
             if (!is_null($a) && is_array($a)) {
-                if (array_key_exists('gold', $a) && (is_numeric($a['gold']))) {
-                    $this->gold = intval($a['gold']);
+                if (
+                    array_key_exists('gold', $a) 
+                    && is_array($a['gold']) 
+                    && is_numeric($a['gold'][0]) 
+                ) {
+                    $this->gold = intval($a['gold'][0]);
                 }
             }
             return $this;
