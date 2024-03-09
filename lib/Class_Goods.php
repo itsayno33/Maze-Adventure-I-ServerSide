@@ -66,7 +66,8 @@
                 if (
                     array_key_exists('gold', $a) 
                     && is_array($a['gold']) 
-                    && is_numeric($a['gold'][0]) 
+                    && array_key_exists('0', $a['gold']) 
+                    && is_numeric($a['gold']['0']) 
                 ) {
                     $this->gold = intval($a['gold'][0]);
                 }
